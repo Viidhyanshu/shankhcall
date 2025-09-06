@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OceanWatch Crowdsourced Ocean Hazard Monitor </title>
+  <!-- Leaflet & plugins -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <style>
+    :root{
+      --bg:#0b1120; /* slate-950 */
+      --panel:#0f172aee; /* slate-900 + alpha */
+      --muted:#94a3b8; /* slate-400 */
+      --text:#e2e8f0; /* slate-200 */
+      --accent:#38bdf8; /* sky-400 */
+      --accent-2:#34d399; /* emerald-400 */
+      --danger:#f43f5e; /* rose-500 */
+      --warn:#f59e0b; /* amber-500 */
+      --ok:#10b981; /* green-500 */
+      --card:#0b122acc;
+      --glass: blur(10px) saturate(120%);
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:radial-gradient(1200px 600px at 80% -20%, #ffffff 10%, transparent 60%),
+               radial-gradient(1200px 600px at -10% 120%, #ffffff 0%, transparent 60%),
+               var(--bg);
+      color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; overflow:hidden;
+    }
+    header{
+      display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid #1f2937aa;backdrop-filter:var(--glass);
+      background:linear-gradient(180deg, #0b122aee, #0b122acc); position:sticky; top:0; z-index:50;
+    }
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo{
+      width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg, var(--accent), #2563eb);
+      display:grid;place-items:center; box-shadow: var(--shadow);
+    }
+    .brand h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.4px}
+    .tag{font-size:12px;color:var(--muted)}
+    .spacer{flex:1}
+    .pill{display:flex;gap:8px;align-items:center;background:#0b122a; border:1px solid #1f2937; padding:8px 10px;border-radius:999px}
+    .pill select,.pill button,.pill input{background:transparent;border:none;color:var(--text);outline:none}
+    .pill button{cursor:pointer;padding:6px 10px;border-radius:999px}
+    .btn{background:linear-gradient(135deg, var(--accent), #2563eb); color:white;border:none;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;box-shadow:var(--shadow)}
+    .btn.secondary{background:#0b122a;border:1px solid #1f2937;color:var(--text)}
+
+    /* Layout */
+    .wrap{display:grid;grid-template-columns:300px 1fr 380px;height:calc(100% - 66px)}
+    aside, main, .right{padding:14px; overflow:auto}
+    aside{border-right:1px solid #1f2937aa; backdrop-filter:var(--glass)}
+    .right{border-left:1px solid #1f2937aa; backdrop-filter:var(--glass)}
+
+    .card{background:var(--card); border:1px solid #1f2937; border-radius:var(--radius); box-shadow:var(--shadow); padding:14px; margin-bottom:14px}
+    .card h3{margin:0 0 8px 0; font-size:14px; text-transform:uppercase; letter-spacing:.12em; color:#a5b4fc}
+
+    /* Filters */
+    label{display:block; font-size:12px; color:var(--muted); margin:8px 0 4px}
+    select,input,textarea{width:100%; background:#0b122a; color:var(--text); border:1px solid #1f2937; border-radius:12px; padding:10px}
+    input[type="date"]{padding:8px 10px}
+
+    /* Map */
+    #map{height:55vh; min-height:360px; border-radius:var(--radius); border:1px solid #1f2937; box-shadow:var(--shadow)}
+
+    /* List */
+    .list{display:flex;flex-direction:column; gap:10px;}
+    .row{display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:center; background:#0b122a; border:1px solid #1f2937; border-radius:14px; padding:10px}
+    .row .meta{font-size:12px; color:var(--muted)}
+    .chip{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid #1f2937; background:#0c142f}
+    .chip.ok{border-color:var(--ok); color:var(--ok)}
+    .chip.warn{border-color:var(--warn); color:var(--warn)}
+    .chip.danger{border-color:var(--danger); color:var(--danger)}
+
+    /* Charts */
+    .charts{display:grid; grid-template-columns:1fr; gap:14px}
+    @media(min-width:1200px){ .charts{ grid-template-columns:1fr 1fr } }
+
+    /* Modal */
+    dialog{border:none; border-radius:20px; background:#0b122a; color:var(--text); width:min(720px, 92vw); box-shadow:var(--shadow)}
+    dialog::backdrop{background:rgba(0,0,0,.6)}
+    .modal-header{display:flex; align-items:center; justify-content:space-between; padding:10px 6px}
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .preview{display:flex; gap:8px; flex-wrap:wrap}
+    .preview img, .preview video{width:120px; height:80px; object-fit:cover; border-radius:10px; border:1px solid #1f2937}
+
+    .lang-switch{cursor:pointer; font-size:12px; color:#cbd5e1}
+    .legend{display:flex; gap:8px; font-size:12px; color:var(--muted)}
+    .legend span{display:inline-flex; align-items:center; gap:6px}
+    .dot{width:10px; height:10px; border-radius:999px; display:inline-block}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo"><i class="fa-solid fa-cloud"></i></div>
+      <div>
+        <h1>शंखcall</h1>
+        <div class="tag">Unified citizen + social hazard intelligence</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="pill">
+      <i class="fa-regular fa-user"></i>
+      <select id="role">
+        <option value="citizen">Citizen</option>
+        <option value="official">Official</option>
+        <option value="analyst">Analyst</option>
+      </select>
+    </div>
+    <div class="pill">
+      <i class="fa-solid fa-language"></i>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+    </div>
+    <button id="reportBtn" class="btn"><i class="fa-solid fa-plus"></i> <span data-i18n="report">Report Hazard</span></button>
+  </header>
+
+  <div class="wrap">
+    <!-- Left: Filters -->
+    <aside>
+      <div class="card">
+        <h3>Filters</h3>
+        <label data-i18n="eventType">Event Type</label>
+        <select id="filterType">
+          <option value="all">All</option>
+          <option value="tide">Unusual Tide</option>
+          <option value="flood">Flooding</option>
+          <option value="damage">Coastal Damage</option>
+          <option value="tsunami">Tsunami</option>
+          <option value="swell">Swell Surge</option>
+          <option value="waves">High Waves</option>
+        </select>
+        <label data-i18n="source">Source</label>
+        <select id="filterSource">
+          <option value="all">All</option>
+          <option value="citizen">Citizen</option>
+          <option value="social">Social</option>
+          <option value="verified">Verified</option>
+        </select>
+        <div class="grid2">
+          <div>
+            <label>From</label>
+            <input type="date" id="fromDate" />
+          </div>
+          <div>
+            <label>To</label>
+            <input type="date" id="toDate" />
+          </div>
+        </div>
+        <label>Location (search)</label>
+        <input id="searchBox" placeholder="e.g., Chennai, Visakhapatnam" />
+        <div style="margin-top:10px; display:flex; gap:8px">
+          <button id="applyFilters" class="btn secondary">Apply</button>
+          <button id="resetFilters" class="btn secondary">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Hotspots</h3>
+        <div class="legend">
+          <span><span class="dot" style="background:#22d3ee"></span> Reports density</span>
+          <span><span class="dot" style="background:#34d399"></span> Keyword spikes</span>
+          <span><span class="dot" style="background:#f43f5e"></span> Verified incidents</span>
+        </div>
+        <p class="tag">Heat layer shows density; clusters show localized hotspots. Toggle in map controls.</p>
+      </div>
+
+      <div class="card">
+        <h3>About</h3>
+        <p class="tag">A hackathon project that provides a unified platform for citizens, volunteers, and disaster managers to report ocean hazards and monitor social media trends in real time. <br> Built with ♡ Team Wisdom Weave.</p>
+      </div>
+    </aside>
+
+    <!-- Middle: Map + charts -->
+    <main>
+      <div id="map"></div>
+      <div class="charts" style="margin-top:14px">
+        <div class="card">
+          <h3>Trend: Reports per hour</h3>
+          <canvas id="trendChart" height="100"></canvas>
+        </div>
+        <div class="card">
+          <h3>Sentiment</h3>
+          <canvas id="sentimentChart" height="100"></canvas>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right: Live feed -->
+    <section class="right">
+      <div class="card">
+        <h3>Unified Feed</h3>
+        <div class="list" id="feed"></div>
+      </div>
+      <div class="card">
+        <h3>Social Monitor (NLP)</h3>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+          <button id="ingestSample" class="btn secondary"><i class="fa-solid fa-download"></i> Load Sample Social Posts</button>
+          <button id="runNlp" class="btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Analyze</button>
+        </div>
+        <textarea id="socialRaw" rows="6" placeholder="Paste recent Twitter/X, YouTube comments, public FB posts... one per line."></textarea>
+        <div class="list" id="nlpSummary" style="margin-top:10px"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Report Modal -->
+  <dialog id="reportModal">
+    <form method="dialog">
+      <div class="modal-header">
+        <h2 style="margin:0">New Hazard Report</h2>
+        <button class="btn secondary" onclick="reportModal.close();return false;">Close</button>
+      </div>
+      <div class="grid2">
+        <div>
+          <label>Event Type</label>
+          <select id="rType" required>
+            <option value="tide">Unusual Tide</option>
+            <option value="flood">Flooding</option>
+            <option value="damage">Coastal Damage</option>
+            <option value="tsunami">Tsunami</option>
+            <option value="swell">Swell Surge</option>
+            <option value="waves">High Waves</option>
+          </select>
+          <label>Description</label>
+          <textarea id="rDesc" rows="4" placeholder="What did you observe?" required></textarea>
+          <label>When</label>
+          <input id="rTime" type="datetime-local" />
+          <label>Language</label>
+          <select id="rLang">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+          </select>
+        </div>
+        <div>
+          <label>Location</label>
+          <div style="display:flex; gap:8px">
+            <input id="rLat" placeholder="Lat" />
+            <input id="rLng" placeholder="Lng" />
+            <button id="geoBtn" class="btn secondary" type="button"><i class="fa-solid fa-location-crosshairs"></i></button>
+          </div>
+          <label>Media (images/videos)</label>
+          <input id="rMedia" type="file" accept="image/*,video/*" multiple />
+          <div class="preview" id="mediaPreview"></div>
+          <label>Consent</label>
+          <div class="tag">By submitting, you confirm media is yours or permitted and does not include personal data without consent.</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
+        <button class="btn secondary" value="cancel">Cancel</button>
+        <button id="submitReport" class="btn" value="default">Submit</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+  // -----------------------------
+  // Simple i18n (English / Hindi)
+  // -----------------------------
+  const I18N = {
+    en: { report: 'Report Hazard', eventType:'Event Type', source:'Source' },
+    hi: { report: 'रिपोर्ट दर्ज करें', eventType:'घटना प्रकार', source:'स्रोत' }
+  };
+  const t = (k) => I18N[localStorage.getItem('lang')||'en'][k]||k;
+  const applyI18n = () => {
+    document.querySelectorAll('[data-i18n]').forEach(el=> el.textContent = t(el.getAttribute('data-i18n')));
+  };
+
+  // -----------------------------
+  // Data store (simulated backend)
+  // -----------------------------
+  const store = {
+    reports: [], // unified reports incl. social derived
+    pending: []  // queued when offline
+  };
+  const saveStore = () => localStorage.setItem('oceanwatch_store', JSON.stringify(store));
+  const loadStore = () => {
+    const raw = localStorage.getItem('oceanwatch_store');
+    if(raw){ const obj = JSON.parse(raw); store.reports = obj.reports||[]; store.pending = obj.pending||[]; }
+  };
+
+  // Seed sample data
+  const seed = () => {
+    if(store.reports.length) return;
+    const now = Date.now();
+    const samples = [
+      {lat:13.0827,lng:80.2707, type:'swell', desc:'Strong swell surges hitting Marina Beach', src:'citizen', verified:false, ts: now-1000*60*60*2, lang:'en'},
+      {lat:17.6868,lng:83.2185, type:'waves', desc:'High waves near RK Beach; fishermen advised caution', src:'official', verified:true, ts: now-1000*60*60*1.5, lang:'en'},
+      {lat:19.0760,lng:72.8777, type:'flood', desc:'लोकल बाढ़ की सूचना, कोलाबा साइड', src:'citizen', verified:false, ts: now-1000*60*45, lang:'hi'},
+      {lat:20.2961,lng:85.8245, type:'tide', desc:'Unusual high tide reported by lighthouse team', src:'citizen', verified:false, ts: now-1000*60*30, lang:'en'},
+      {lat:21.1458,lng:79.0882, type:'damage', desc:'Sea wall damage spotted after storm surge', src:'citizen', verified:false, ts: now-1000*60*15, lang:'en'}
+    ];
+    samples.forEach((s,i)=> store.reports.push({id:'seed'+i, ...s, media:[], sentiment: scoreSentiment(s.desc)}));
+  };
+
+  // -----------------------------
+  // Map setup (Leaflet)
+  // -----------------------------
+  let map, clusterLayer, heatLayer;
+  const iconByType = {
+    tide: 'fa-water', flood:'fa-house-flood-water', damage:'fa-road-circle-exclamation', tsunami:'fa-wave-square', swell:'fa-water', waves:'fa-water'
+  };
+  function initMap(){
+    map = L.map('map',{zoomControl:true}).setView([15.9129, 79.74], 5); // India focus
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    clusterLayer = L.markerClusterGroup();
+    map.addLayer(clusterLayer);
+    heatLayer = L.heatLayer([], {radius:25, blur:15, maxZoom:17});
+    heatLayer.addTo(map);
+
+    renderMapLayers();
+  }
+
+  function markerFor(r){
+    const icon = L.divIcon({html:`<div style="display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#0ea5e9;border:2px solid #1f2937;color:white"><i class=\"fa-solid ${iconByType[r.type]||'fa-circle'}\"></i></div>`});
+    const m = L.marker([r.lat,r.lng], {icon});
+    const s = r.sentiment;
+    const sChip = s>0.2? '<span class="chip ok">positive</span>' : s<-0.2? '<span class="chip danger">negative</span>' : '<span class="chip warn">neutral</span>';
+    m.bindPopup(`
+      <b>${r.type.toUpperCase()}</b> ${r.verified? ' <span class=\"chip ok\">verified</span>':''}<br/>
+      <small>${new Date(r.ts).toLocaleString()}</small><br/>
+      <div style='margin-top:6px'>${escapeHtml(r.desc)}</div>
+      <div style='margin-top:6px'>Source: <b>${r.src}</b> • ${sChip}</div>
+    `);
+    return m;
+  }
+
+  function renderMapLayers(){
+    clusterLayer.clearLayers();
+    const filtered = applyCurrentFilters();
+    const heatpoints = [];
+    filtered.forEach(r=>{
+      clusterLayer.addLayer(markerFor(r));
+      heatpoints.push([r.lat, r.lng, 0.5]);
+    });
+    heatLayer.setLatLngs(heatpoints);
+  }
+
+  // -----------------------------
+  // Filters + Feed
+  // -----------------------------
+  function applyCurrentFilters(){
+    const ft = document.getElementById('filterType').value;
+    const fs = document.getElementById('filterSource').value;
+    const fd = document.getElementById('fromDate').value? new Date(document.getElementById('fromDate').value).getTime() : -Infinity;
+    const td = document.getElementById('toDate').value? new Date(document.getElementById('toDate').value).getTime()+86400000 : Infinity;
+    return store.reports.filter(r=> (ft==='all'||r.type===ft) &&
+                                   (fs==='all'|| (fs==='verified'? r.verified : r.src===fs)) &&
+                                   (r.ts>=fd && r.ts<=td));
+  }
+
+  function renderFeed(){
+    const feed = document.getElementById('feed');
+    feed.innerHTML='';
+    const rows = applyCurrentFilters().sort((a,b)=>b.ts-a.ts).slice(0,50).map(r=>{
+      const chipCls = r.verified? 'ok':'warn';
+      const s = r.sentiment; const sCls = s>0.2?'ok': s<-0.2?'danger':'warn';
+      return `<div class="row">
+        <div>
+          <div><b>${r.type.toUpperCase()}</b> • <span class="meta">${new Date(r.ts).toLocaleString()}</span></div>
+          <div class="meta">${escapeHtml(r.desc)}</div>
+          <div class="meta">${r.src} • <span class="chip ${chipCls}">${r.verified? 'verified':'unverified'}</span> • <span class="chip ${sCls}">sentiment ${s.toFixed(2)}</span></div>
+        </div>
+        <div>
+          <span class="chip">${r.lang}</span>
+        </div>
+      </div>`;
+    }).join('');
+    feed.innerHTML = rows || '<div class="tag">No items match filters.</div>';
+  }
+
+  // -----------------------------
+  // Charts
+  // -----------------------------
+  let trendChart, sentimentChart;
+  function renderCharts(){
+    const arr = applyCurrentFilters();
+    const buckets = Array.from({length:12},(_,i)=>({label:`-${11-i}h`, count:0}));
+    const now = Date.now();
+    arr.forEach(r=>{
+      const diffh = Math.floor((now - r.ts)/3600000);
+      if(diffh>=0 && diffh<12) buckets[11-diffh].count++;
+    });
+    const labels = buckets.map(b=>b.label);
+    const data = buckets.map(b=>b.count);
+
+    if(trendChart) trendChart.destroy();
+    trendChart = new Chart(document.getElementById('trendChart'),{
+      type:'line', data:{labels, datasets:[{label:'Reports', data, tension:.3, fill:true}]}, options:{responsive:true, plugins:{legend:{display:false}}}
+    });
+
+    const pos = arr.filter(r=>r.sentiment>0.2).length;
+    const neu = arr.filter(r=>r.sentiment<=0.2 && r.sentiment>=-0.2).length;
+    const neg = arr.filter(r=>r.sentiment<-0.2).length;
+    if(sentimentChart) sentimentChart.destroy();
+    sentimentChart = new Chart(document.getElementById('sentimentChart'),{
+      type:'doughnut', data:{labels:['Positive','Neutral','Negative'], datasets:[{data:[pos,neu,neg]}]}, options:{plugins:{legend:{position:'bottom'}}}
+    });
+  }
+
+  // -----------------------------
+  // Simple NLP: keyword + sentiment (rule-based)
+  // -----------------------------
+  const KEYWORDS = {
+    flood:['flood','बाढ़','pani bhar','waterlogging','inundation'],
+    waves:['high waves','wave','लहर','lahar'],
+    tide:['tide','ज्वार','jwar','spring tide','neap'],
+    swell:['swell','surge','सर्ज','उभार'],
+    damage:['damage','टूटा','break','erosion','breach','collapse'],
+    tsunami:['tsunami','सुनामी']
+  };
+  const NEG = ['danger','help','救命','risk','alert','warning','red','evacuate','गंभीर','खतरा','panic'];
+  const POS = ['safe','contained','clear','stabilized','normal'];
+
+  function classify(text){
+    const t = text.toLowerCase();
+    for(const [k, arr] of Object.entries(KEYWORDS)){
+      if(arr.some(w=> t.includes(w))) return k;
+    }
+    return 'waves';
+  }
+  function scoreSentiment(text){
+    const s = text.toLowerCase();
+    let score = 0;
+    POS.forEach(w=>{ if(s.includes(w)) score += 1; });
+    NEG.forEach(w=>{ if(s.includes(w)) score -= 1; });
+    return Math.max(-1, Math.min(1, score/3));
+  }
+
+  function analyzeSocial(raw){
+    const lines = raw.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+    const buckets = {counts:{}, total:lines.length};
+    lines.forEach((line,i)=>{
+      const type = classify(line);
+      buckets.counts[type] = (buckets.counts[type]||0)+1;
+      // fabricate a geotag if found as @lat,lng pattern
+      const m = line.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      const lat = m? parseFloat(m[1]) : 12 + Math.random()*13;
+      const lng = m? parseFloat(m[2]) : 72 + Math.random()*12;
+      const s = scoreSentiment(line);
+      const id = 'soc'+Date.now()+i;
+      store.reports.push({id, lat, lng, type, desc: line, src:'social', verified:false, ts: Date.now()-Math.random()*3600000, media:[], sentiment:s, lang:'en'});
+    });
+    saveStore();
+    return buckets;
+  }
+
+  // -----------------------------
+  // Reporting flow
+  // -----------------------------
+  const reportModal = document.getElementById('reportModal');
+  document.getElementById('reportBtn').addEventListener('click', ()=> reportModal.showModal());
+  document.getElementById('geoBtn').addEventListener('click', ()=>{
+    if(!navigator.geolocation) return alert('Geolocation not supported');
+    navigator.geolocation.getCurrentPosition(pos=>{
+      document.getElementById('rLat').value = pos.coords.latitude.toFixed(6);
+      document.getElementById('rLng').value = pos.coords.longitude.toFixed(6);
+    }, err=> alert('Geolocation error: '+err.message));
+  });
+
+  document.getElementById('rMedia').addEventListener('change', (e)=>{
+    const box = document.getElementById('mediaPreview');
+    box.innerHTML='';
+    [...e.target.files].slice(0,4).forEach(file=>{
+      const url = URL.createObjectURL(file);
+      if(file.type.startsWith('image')){
+        const img = new Image(); img.src=url; box.appendChild(img);
+      } else if(file.type.startsWith('video')){
+        const v = document.createElement('video'); v.src=url; v.controls=true; box.appendChild(v);
+      }
+    });
+  });
+
+  document.getElementById('submitReport').addEventListener('click', (e)=>{
+    e.preventDefault();
+    const lat = parseFloat(document.getElementById('rLat').value);
+    const lng = parseFloat(document.getElementById('rLng').value);
+    if(Number.isNaN(lat)||Number.isNaN(lng)) return alert('Please provide a valid location (use crosshair).');
+    const type = document.getElementById('rType').value;
+    const desc = document.getElementById('rDesc').value.trim();
+    const ts = document.getElementById('rTime').value? new Date(document.getElementById('rTime').value).getTime() : Date.now();
+    const lang = document.getElementById('rLang').value;
+
+    const id = 'rep'+Date.now();
+    const sentiment = scoreSentiment(desc);
+    const report = {id, lat, lng, type, desc, src:'citizen', verified:false, ts: ts, media:[], sentiment, lang};
+
+    if(navigator.onLine){
+      // Simulated POST
+      store.reports.push(report);
+    } else {
+      store.pending.push(report);
+    }
+    saveStore();
+    renderMapLayers(); renderFeed(); renderCharts();
+    reportModal.close();
+  });
+
+  window.addEventListener('online', ()=>{
+    // simulate syncing pending queue
+    if(store.pending.length){
+      store.reports.push(...store.pending);
+      store.pending = [];
+      saveStore();
+      renderMapLayers(); renderFeed(); renderCharts();
+      alert('Pending reports synced.');
+    }
+  });
+
+  // -----------------------------
+  // Search (very simple geocoder using Nominatim API-free pattern -> we cannot call external API in offline demo. Here we just pan to predefined cities.)
+  // -----------------------------
+  const cityCoords = {
+    chennai:[13.0827,80.2707], visakhapatnam:[17.6868,83.2185], mumbai:[19.076,72.8777], goa:[15.2993,74.1240], kolkata:[22.5726,88.3639]
+  };
+  document.getElementById('searchBox').addEventListener('keydown', (e)=>{
+    if(e.key==='Enter') { e.preventDefault(); doSearch(); }
+  });
+  function doSearch(){
+    const q = document.getElementById('searchBox').value.toLowerCase().trim();
+    const k = Object.keys(cityCoords).find(k=> q.includes(k));
+    if(k){ map.setView(cityCoords[k], 11); }
+  }
+
+  // -----------------------------
+  // NLP UI
+  // -----------------------------
+  document.getElementById('ingestSample').addEventListener('click', ()=>{
+    const sample = `High waves crashing near RK Beach, Vizag @17.73,83.32\nWaterlogging reported around Colaba, taxis stuck\nUnusual spring tide observed at Marina, Chennai\nSea wall damage after last night surge near Puri\nPotential tsunami rumor circulating – need verification`;
+    document.getElementById('socialRaw').value = sample;
+  });
+
+  document.getElementById('runNlp').addEventListener('click', ()=>{
+    const raw = document.getElementById('socialRaw').value.trim();
+    if(!raw) return alert('Paste some posts first.');
+    const res = analyzeSocial(raw);
+    const box = document.getElementById('nlpSummary');
+    const items = Object.entries(res.counts).sort((a,b)=>b[1]-a[1]).map(([k,v])=> `<div class='row'><div><b>${k.toUpperCase()}</b> • ${v} mentions</div><div></div></div>`).join('');
+    box.innerHTML = `<div class='meta'>${res.total} social items ingested.</div>` + items;
+    renderMapLayers(); renderFeed(); renderCharts();
+  });
+
+  // -----------------------------
+  // Role-based access (UI gates only in MVP)
+  // -----------------------------
+  document.getElementById('role').addEventListener('change', (e)=>{
+    const role = e.target.value;
+    // Citizen: can submit; Official: can toggle verified; Analyst: NLP + filters focus
+    document.getElementById('reportBtn').style.display = (role==='citizen'||role==='official')? 'inline-flex' : 'none';
+  });
+
+  // Verify toggle for officials (click markers to upgrade)
+  document.addEventListener('keydown', (e)=>{
+    // Secret: press V to verify latest item (official role only)
+    if(e.key.toLowerCase()==='v' && document.getElementById('role').value==='official' && store.reports.length){
+      store.reports[store.reports.length-1].verified = true; saveStore(); renderMapLayers(); renderFeed();
+    }
+  });
+
+  // -----------------------------
+  // Helpers
+  // -----------------------------
+  function escapeHtml(s){ return s.replace(/[&<>\"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c])) }
+
+  // -----------------------------
+  // Filters actions
+  // -----------------------------
+  document.getElementById('applyFilters').addEventListener('click', ()=>{ renderMapLayers(); renderFeed(); renderCharts(); });
+  document.getElementById('resetFilters').addEventListener('click', ()=>{
+    document.getElementById('filterType').value='all';
+    document.getElementById('filterSource').value='all';
+    document.getElementById('fromDate').value='';
+    document.getElementById('toDate').value='';
+    renderMapLayers(); renderFeed(); renderCharts();
+  });
+
+  // -----------------------------
+  // Language switch
+  // -----------------------------
+  document.getElementById('lang').addEventListener('change', (e)=>{
+    localStorage.setItem('lang', e.target.value); applyI18n();
+  });
+
+  // -----------------------------
+  // Boot
+  // -----------------------------
+  (function(){
+    loadStore(); seed();
+    initMap(); renderFeed(); renderCharts();
+    document.getElementById('lang').value = localStorage.getItem('lang')||'en'; applyI18n();
+  })();
+  </script>
+</body>
+</html>
