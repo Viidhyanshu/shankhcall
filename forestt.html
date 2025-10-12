@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>शंखcall: Crowdsourced Disaster Monitoring Platform</title>
+  <!-- Leaflet & plugins -->
+   <link rel="stylesheet" href="forest.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo"><i class="fa-solid fa-cloud"></i></div>
+      <div>
+        <h1>शंखcall</h1>
+        <div class="tag" data-i18n="tagline">Unified citizen + social hazard intelligence</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="pill">
+      <i class="fa-regular fa-user"></i>
+      <select id="role">
+        <option value="citizen" data-i18n="roleCitizen">Citizen</option>
+        <option value="official" data-i18n="roleOfficial">Official</option>
+        <option value="analyst" data-i18n="roleAnalyst">Analyst</option>
+      </select>
+    </div>
+    <div class="pill">
+      <i class="fa-solid fa-language"></i>
+      <select id="lang">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="bn">বাংলা</option>
+          <option value="as">অসমীয়া</option>
+          <option value="ta">தமிழ்</option>
+          <option value="or">ଓଡିଆ</option>
+         <option value="kn">ಕನ್ನಡ</option>
+         <option value="ml">മലയാളം</option>
+         <option value="te">తెలుగు</option>
+      </select>
+    </div>
+    <button id="reportBtn" class="btn"><i class="fa-solid fa-plus"></i> 
+        <span data-i18n="report">Report Hazard</span></button>
+  </header>
+
+  <div class="wrap">
+    <aside>
+      <div class="card">
+        <h3 data-i18n="filters">Filters</h3>
+        <label data-i18n="eventType">Event Type</label>
+        <select id="filterType">
+          <option value="all" data-i18n="all">All</option>
+          <option value="Tree">Unusual Cutting of Trees</option>
+          <option value="Fire">Fire in Forest</option>
+          <option value="Hunting">Hunting</option>
+          <option value="Poaching">Poaching</option>
+          <option value="Logging">Illegal Logging</option>
+          <option value="Wind">Tree Blow Down</option>
+        </select>
+        <label data-i18n="source">Source</label>
+        <select id="filterSource">
+          <option value="all" data-i18n="all">All</option>
+          <option value="citizen">Citizen</option>
+          <option value="social">Social</option>
+          <option value="verified">Verified</option>
+        </select>
+        <div class="grid2">
+          <div>
+            <label data-i18n="from">From</label>
+            <input type="date" id="fromDate" />
+          </div>
+          <div>
+            <label data-i18n="to">To</label>
+            <input type="date" id="toDate" />
+          </div>
+        </div>
+        <label data-i18n="location">Location</label>
+        <input id="searchBox" placeholder="e.g., Assam, Nagaland" data-i18n-placeholder="searchPlaceholder" />
+        <div style="margin-top:10px; display:flex; gap:8px">
+          <button id="applyFilters" class="btn secondary" data-i18n="apply">Apply</button>
+          <button id="resetFilters" class="btn secondary" data-i18n="reset">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="hotspots">Hotspots</h3>
+        <div class="legend">
+          <span><span class="dot" style="background:#22d3ee"></span> <span data-i18n="legendDensity">Reports density,</span></span>
+          <span><span class="dot" style="background:#34d399"></span> <span data-i18n="legendSpikes">Keyword spikes,</span></span>
+          <span><span class="dot" style="background:#f43f5e"></span> <span data-i18n="legendVerified">Verified incidents</span></span>
+        </div>
+        <p class="tag" data-i18n="hotspotsNote">Heat layer shows density; clusters show localized hotspots. Toggle in map controls.</p>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="about">About</h3>
+        <p class="tag" data-i18n="aboutText">Made with love Wisdom Weave aka CodeXPreadtors.</p>
+      </div>
+    </aside>
+
+    <main>
+      <div id="map"></div>
+    </main>
+
+    <section class="right">
+      <div class="card">
+        <h3 data-i18n="unifiedFeed">Unified Feed</h3>
+        <div class="list" id="feed"></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="socialMonitor">Social Monitor</h3>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px">
+          <button id="ingestSample" class="btn secondary"><i class="fa-solid fa-download"></i> <span data-i18n="loadSample">Load Sample Social Posts</span></button>
+          <button id="runNlp" class="btn"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="analyze">Analyze</span></button>
+        </div>
+        <textarea id="socialRaw" rows="6" placeholder="Paste recent social posts, one per line." data-i18n-placeholder="pastePostsPlaceholder"></textarea>
+        <div class="list" id="nlpSummary" style="margin-top:10px"></div>
+      </div>
+    </section>
+  </div>
+
+  <dialog id="reportModal">
+    <form method="dialog">
+      <div class="modal-header">
+        <h2 data-i18n="newReport" style="margin:0">New Disaster Report</h2>
+        <button class="btn secondary" onclick="reportModal.close();return false;" data-i18n="close">Close</button>
+      </div>
+      <div class="grid2">
+        <div>
+          <label data-i18n="eventType">Event Type</label>
+          <select id="rType" required>
+            <option value="all" data-i18n="all">All</option>
+            <option value="Tree">Unusual Cutting of Trees</option>
+            <option value="Fire">Fire in Forest</option>
+            <option value="Hunting">Hunting</option>
+            <option value="Poaching">Poaching</option>
+            <option value="Logging">Illegal Logging</option>
+            <option value="Wind">Tree Blow Down</option>
+          </select>
+          <label data-i18n="description">Description</label>
+          <textarea id="rDesc" rows="4" placeholder="What did you observe?" required data-i18n-placeholder="descPlaceholder"></textarea>
+          <label data-i18n="when">When</label>
+          <input id="rTime" type="datetime-local" />
+          <label data-i18n="language">Language</label>
+          <select id="rLang">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="bn">বাংলা</option>
+            <option value="as">অসমীয়া</option>
+            <option value="ta">தமிழ்</option>
+            <option value="or">ଓଡିଆ</option>
+          </select>
+        </div>
+        <div>
+          <label data-i18n="locationLabel">Location</label>
+          <div style="display:flex; gap:8px">
+            <input id="rLat" placeholder="Lat" />
+            <input id="rLng" placeholder="Lng" />
+            <button id="geoBtn" class="btn secondary" type="button"><i class="fa-solid fa-location-crosshairs"></i></button>
+          </div>
+          <label data-i18n="media">Media (images/videos)</label>
+          <input id="rMedia" type="file" accept="image/*,video/*" multiple />
+          <div class="preview" id="mediaPreview"></div>
+          <label data-i18n="consent">Consent</label>
+          <div class="tag" data-i18n="consentNote">By submitting, you confirm media is yours or permitted and does not include personal data without consent.</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
+        <button class="btn secondary" value="cancel" data-i18n="cancel">Cancel</button>
+        <button id="submitReport" class="btn" value="default" data-i18n="submit">Submit</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="mediaViewer">
+    <div class="modal-header">
+      <h2 id="mediaTitle" style="margin:0">Media</h2>
+      <button class="btn secondary" onclick="mediaViewer.close();return false;" data-i18n="close">Close</button>
+    </div>
+    <div id="mediaContent" style="padding:12px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;"></div>
+  </dialog>
+
+  <script src="forest.js"> </script>
+</body>
+</html>

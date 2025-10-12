@@ -1,0 +1,61 @@
+:root{
+      --bg:#2B4336; /* slate-950 */
+      --panel:#0f172aee; /* slate-900 + alpha */
+      --muted:#94a3b8; /* slate-400 */
+      --text:#e2e8f0; /* slate-200 */
+      --accent:#38bdf8; /* sky-400 */
+      --accent-2:#34d399; /* emerald-400 */
+      --danger:#f43f5e; /* rose-500 */
+      --warn:#f59e0b; /* amber-500 */
+      --ok:#10b981; /* green-500 */
+      --card:#235347;
+      --glass: blur(10px) saturate(120%);
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:radial-gradient(1200px 600px at 80% -20%, #ffffff 10%, transparent 60%),
+               radial-gradient(1200px 600px at -10% 120%, #ffffff 0%, transparent 60%),
+               var(--bg);
+      color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; overflow:hidden;
+    }
+    header{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid beige;backdrop-filter:var(--glass);background:linear-gradient(180deg,#051f20 , #163832); position:sticky; top:0; z-index:50}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg, var(--accent), #b5b89b);display:grid;place-items:center; box-shadow: var(--shadow)}
+    .brand h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.4px}
+    .tag{font-size:12px;color:var(--muted)}
+    .spacer{flex:1}
+    .pill{display:flex;gap:8px;align-items:center;background:#0b2b26; border:1px solid beige; padding:8px 10px;border-radius:999px}
+    .pill select,.pill button,.pill input{background:transparent;border:none;color:var(--text);outline:none}
+    .pill button{cursor:pointer;padding:6px 10px;border-radius:999px}
+    .btn{background:linear-gradient(135deg, var(--accent), #b5b89b); color:white;border:none;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;box-shadow:var(--shadow)}
+    .btn.secondary{background:#0b2b26;border:1px solid beige;color:var(--text)}
+
+    .wrap{display:grid;grid-template-columns:300px 1fr 380px;height:calc(100% - 66px)}
+    aside, main, .right{padding:14px; overflow:auto}
+    aside{border-right:1px solid beige; backdrop-filter:var(--glass)}
+    .right{border-left:1px solid beige; backdrop-filter:var(--glass)}
+
+    .card{background:var(--card); border:1px solid beige; border-radius:var(--radius); box-shadow:var(--shadow); padding:14px; margin-bottom:14px}
+    .card h3{margin:0 0 8px 0; font-size:14px; text-transform:uppercase; letter-spacing:.12em; color:#ffffff}
+
+    label{display:block; font-size:12px; color:var(--muted); margin:8px 0 4px}
+    select,input,textarea{width:100%; background:#0b2b26; color:var(--text); border:1px solid beige; border-radius:12px; padding:10px}
+
+    #map{height:88vh; min-height:360px; border-radius:var(--radius); border:1px solid beige; box-shadow:var(--shadow)}
+    .list{display:flex;flex-direction:column; gap:10px;}
+    .row{display:grid;grid-template-columns: 1fr auto; gap:10px; align-items:center; background:#0b2b26; border:1px solid beige; border-radius:14px; padding:10px}
+    .row .meta{font-size:12px; color:var(--muted)}
+    .chip{font-size:11px; padding:4px 8px; border-radius:999px; border:1px solid beige; background:#0b2b26}
+    .chip.ok{border-color:var(--ok); color:var(--ok)}
+    .chip.warn{border-color:var(--warn); color:var(--warn)}
+    .chip.danger{border-color:var(--danger); color:var(--danger)}
+
+    dialog{border:none; border-radius:20px; background:#0b2b26; color:var(--text); width:min(920px, 96vw); box-shadow:var(--shadow)}
+    dialog::backdrop{background:rgba(0,0,0,.6)}
+    .modal-header{display:flex; align-items:center; justify-content:space-between; padding:10px 6px}
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .preview{display:flex; gap:8px; flex-wrap:wrap}
+    .preview img, .preview video{width:120px; height:80px; object-fit:cover; border-radius:10px; border:1px solid #1f2937}
