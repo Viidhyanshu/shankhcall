@@ -1,9 +1,12 @@
 # 🌊🌲 शंखcall: Crowdsourced Disaster Monitoring Platform
-
+**Ongoing Project**
 
 A comprehensive, multilingual disaster monitoring and reporting platform that provides unified citizen + social hazard intelligence for both **Ocean** and **Forest** disasters. Built with real-time mapping, sentiment analysis, and role-based access control.
 
-[Live Demo Link] (https://shankh-call.netlify.app/land.html)
+[Live Demo Link] ()
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-green)](https://shankh-call.netlify.app/land.html)
+
 
 ## 🌟 Key Features
 
