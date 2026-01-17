@@ -5,141 +5,314 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>शंखcall Disaster Selector</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
   
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+  }
+  
   body {
     height: 100vh;
     width: 100vw;
-    background: linear-gradient(135deg, #2B4336, #14263daa, #122e75);
-    display: flex;
-    flex-direction: column;
-    color: #fff;
-    overflow: hidden;
-  }
-
-  header {
-    padding: 1rem 2rem;
-    font-size: 1.8rem;
-    font-weight: bold;
-    letter-spacing: 1px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    animation: fadeInDown 1s ease forwards;
-  }
-
-  main {
-    flex: 1;
+    background: #0a0e27;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  
+  /* Animated grid background */
+  .grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(rgba(0, 194, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 194, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    perspective: 1000px;
+    transform: rotateX(60deg) translateZ(-100px);
+    transform-origin: center center;
+  }
+  
+  @keyframes gridMove {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
+  }
+  
+  /* Neon glow orbs */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    animation: orbFloat 15s ease-in-out infinite;
+  }
+  
+  .orb1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #00c2ff, transparent);
+    top: -20%;
+    left: -10%;
+  }
+  
+  .orb2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #0066ff, transparent);
+    bottom: -15%;
+    right: -10%;
+    animation-delay: 5s;
+  }
+  
+  .orb3 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #00f0ff, transparent);
+    top: 40%;
+    right: 30%;
+    animation-delay: 10s;
+  }
+  
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(100px, -80px) scale(1.2); }
+    66% { transform: translate(-80px, 100px) scale(0.9); }
+  }
+  
+  header {
+    position: absolute;
+    top: 3rem;
+    left: 3rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    z-index: 10;
+    background: linear-gradient(135deg, #00c2ff, #0066ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: glowPulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(0, 194, 255, 0.5));
+  }
+  
+  @keyframes glowPulse {
+    0%, 100% { filter: drop-shadow(0 0 30px rgba(0, 194, 255, 0.5)); }
+    50% { filter: drop-shadow(0 0 50px rgba(0, 194, 255, 0.9)); }
+  }
+  
+  main {
+    z-index: 5;
     text-align: center;
   }
-
+  
   main h1 {
-    font-size: 3rem;
-    margin-bottom: 3rem;
-    animation: fadeInUp 1s ease forwards;
+    font-size: 4.5rem;
+    margin-bottom: 6rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, #ffffff, #00c2ff, #ffffff);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientShift 4s ease infinite;
+    text-transform: uppercase;
   }
-
+  
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  
   .options {
     display: flex;
-    gap: 3rem;
-    flex-wrap: wrap;
+    gap: 4rem;
   }
-
+  
   .option {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    padding: 3rem 4rem;
+    width: 280px;
+    height: 280px;
+    background: rgba(0, 194, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(0, 194, 255, 0.2);
     border-radius: 20px;
     cursor: pointer;
-    font-size: 1.5rem;
-    font-weight: 600;
-    transition: transform 0.4s, background 0.4s, box-shadow 0.4s;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
   }
-
-  .option:hover {
-    transform: translateY(-10px) scale(1.05);
-    background: rgba(255,255,255,0.2);
-    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
-  }
-
+  
   .option::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    inset: -2px;
+    background: linear-gradient(45deg, #00c2ff, #0066ff, #00f0ff, #00c2ff);
+    background-size: 300% 300%;
+    border-radius: 20px;
+    z-index: -1;
     opacity: 0;
-    transition: opacity 0.5s, transform 0.5s;
+    transition: opacity 0.4s;
+    animation: borderRotate 4s linear infinite;
   }
-
+  
+  @keyframes borderRotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
   .option:hover::before {
     opacity: 1;
-    transform: rotate(30deg);
   }
-
-  @keyframes fadeInDown {
-    0% { opacity: 0; transform: translateY(-50px); }
-    100% { opacity: 1; transform: translateY(0); }
+  
+  .option:hover {
+    transform: translateY(-20px) scale(1.05);
+    background: rgba(0, 194, 255, 0.15);
+    box-shadow: 
+      0 30px 80px rgba(0, 194, 255, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
-
-  @keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(50px); }
-    100% { opacity: 1; transform: translateY(0); }
+  
+  .option:active {
+    transform: translateY(-15px) scale(1.02);
   }
-
-  footer {
+  
+  .icon {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 10px 30px rgba(0, 194, 255, 0.6));
+    transition: all 0.4s;
+    stroke: #00c2ff;
+    stroke-width: 2;
+  }
+  
+  .option:hover .icon {
+    transform: scale(1.2) rotateY(180deg);
+    stroke: #00f0ff;
+    filter: drop-shadow(0 15px 40px rgba(0, 194, 255, 0.9));
+  }
+  
+  .option span {
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  
+  /* Particle effect */
+  .particle {
     position: absolute;
-    bottom: 1rem;
-    width: 100%;
-    text-align: center;
-    font-size: 0.9rem;
-    opacity: 0.8;
+    width: 3px;
+    height: 3px;
+    background: #00c2ff;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particleFloat 3s ease-out forwards;
   }
-
+  
+  @keyframes particleFloat {
+    0% { 
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    100% { 
+      transform: translateY(-100px) scale(0);
+      opacity: 0;
+    }
+  }
+  
   @media(max-width: 768px){
-    main h1 { font-size: 2.2rem; margin-bottom: 2rem; }
-    .option { padding: 2rem 3rem; font-size: 1.2rem; }
-    .options { gap: 1.5rem; }
+    header {
+      top: 2rem;
+      left: 2rem;
+      font-size: 1.8rem;
+    }
+    main h1 { 
+      font-size: 2.5rem; 
+      margin-bottom: 4rem;
+      letter-spacing: 2px;
+    }
+    .options { 
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .option {
+      width: 240px;
+      height: 240px;
+    }
+    .icon {
+      width: 60px;
+      height: 60px;
+    }
+    .option span {
+      font-size: 1.2rem;
+    }
   }
-
 </style>
 </head>
 <body>
+<div class="grid"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
 
 <header>शंखcall</header>
-
 <main>
-  <h1>Select Disaster Type</h1>
+  <h1>Select Disaster</h1>
   <div class="options">
-    <div class="option" id="forest"> Forest Disaster</div>
-    <div class="option" id="ocean"> Ocean Disaster</div>
+    <div class="option" id="forest">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L8 8H10L7 14H9L6 22H18L15 14H17L14 8H16L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Forest</span>
+    </div>
+    <div class="option" id="ocean">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 12C2 12 4 9 8 9C12 9 10 12 14 12C18 12 20 9 20 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 17C2 17 4 14 8 14C12 14 10 17 14 17C18 17 20 14 20 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <span>Ocean</span>
+    </div>
   </div>
 </main>
 
-
 <script>
-  const forest = document.getElementById('forest');
-  const ocean = document.getElementById('ocean');
-
-  forest.addEventListener('click', () => {
-    alert("Forest Disaster selected!");
-    window.location.href = "forestt.html"; 
+  const options = document.querySelectorAll('.option');
+  
+  options.forEach(option => {
+    option.addEventListener('mouseenter', (e) => {
+      for(let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = e.clientX + (Math.random() - 0.5) * 100 + 'px';
+        particle.style.top = e.clientY + (Math.random() - 0.5) * 100 + 'px';
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 3000);
+      }
+    });
   });
-
-  ocean.addEventListener('click', () => {
-    alert("Ocean Disaster selected!");
-    window.location.href = "ocean.html"; 
+  
+  document.getElementById('forest').addEventListener('click', () => {
+    setTimeout(() => window.location.href = "forestt.html", 300);
+  });
+  
+  document.getElementById('ocean').addEventListener('click', () => {
+    setTimeout(() => window.location.href = "ocean.html", 300);
   });
 </script>
-
 </body>
 </html>
