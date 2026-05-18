@@ -7,8 +7,8 @@ import { SupportedLanguages, getTranslation } from '@/lib/i18n';
 import { useDisasterStore, storeActions, HazardReport } from '@/lib/store';
 import { classifyText, scoreSentiment } from '@/lib/nlp';
 import { 
-  Activity, Plus, Globe, User, Wand2, Download, Search, 
-  RefreshCw, Wifi, WifiOff, FileText, Filter, AlertCircle, ArrowLeft, BarChart3 
+  Activity, Plus, Globe, User, Search, 
+  RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft, BarChart3 
 } from 'lucide-react';
 import Chart from 'chart.js/auto';
 
@@ -65,10 +65,7 @@ export default function OceanDashboard() {
   const [selectedReport, setSelectedReport] = useState<HazardReport | null>(null);
   const [isMediaOpen, setIsMediaOpen] = useState(false);
 
-  // NLP Social Text Monitor State
-  const [socialRawText, setSocialRawText] = useState('');
-  const [nlpSummaryText, setNlpSummaryText] = useState<string>('');
-  const [nlpResults, setNlpResults] = useState<Array<{ type: string; count: number }>>([]);
+
 
   // Canvas refs for Charts
   const trendCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -185,57 +182,7 @@ export default function OceanDashboard() {
   // Sorted reports for Unified Feed list
   const sortedReports = [...filteredReports].sort((a, b) => b.ts - a.ts);
 
-  // Ingest sample social posts
-  const handleLoadSampleSocial = () => {
-    const samples = 
-`High waves crashing near RK Beach, Vizag @17.73,83.32\nWaterlogging reported around Colaba, taxis stuck @18.92,72.81\nUnusual spring tide observed at Marina, Chennai @13.08,80.27\nSea wall damage after last night surge near Puri @19.79,85.82\nPotential tsunami rumor circulating – need verification`;
-    setSocialRawText(samples);
-  };
 
-  // Run NLP classifier on social posts
-  const handleRunNlp = () => {
-    if (!socialRawText.trim()) {
-      alert(t('pasteSomePosts'));
-      return;
-    }
-
-    const lines = socialRawText.split(/\n+/).map(s => s.trim()).filter(Boolean);
-    const newReports: HazardReport[] = [];
-    const counts: Record<string, number> = {};
-
-    lines.forEach((line, i) => {
-      const type = classifyText(line, 'ocean');
-      counts[type] = (counts[type] || 0) + 1;
-
-      // Extract coords
-      const m = line.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
-      const lat = m ? parseFloat(m[1]) : 10 + Math.random() * 15; // India Ocean lat
-      const lng = m ? parseFloat(m[2]) : 70 + Math.random() * 18; // India Ocean lng
-
-      const sentiment = scoreSentiment(line);
-
-      newReports.push({
-        id: `soc-${Date.now()}-${i}`,
-        lat,
-        lng,
-        type,
-        desc: line,
-        src: 'social' as const,
-        verified: false,
-        ts: Date.now() - Math.random() * 3600000,
-        media: [],
-        sentiment,
-        lang: 'en'
-      });
-    });
-
-    storeActions.addBulkReports(newReports);
-
-    // Format output summary
-    setNlpSummaryText(`${lines.length} social items ingested.`);
-    const resultsArray = Object.entries(counts).map(([type, count]) => ({ type, count }));
-    setNlpResults(resultsArray);
-  };
 
   const handleOpenMedia = (report: HazardReport) => {
     setSelectedReport(report);
@@ -745,52 +692,7 @@ export default function OceanDashboard() {
             </div>
           </div>
 
-          {/* Social Monitor NLP Card */}
-          <div className="glass-panel p-4 rounded-xl space-y-4 shrink-0">
-            <h3 className="text-sm font-bold text-sky-400 uppercase tracking-widest border-b border-slate-900 pb-2 mb-1">
-              {t('socialMonitor')}
-            </h3>
 
-            <div className="flex gap-2">
-              <button
-                onClick={handleLoadSampleSocial}
-                className="flex-grow py-2 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-750 text-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all"
-              >
-                <Download size={13} />
-                Load Posts
-              </button>
-              <button
-                onClick={handleRunNlp}
-                className="flex-grow py-2 rounded-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-450 hover:to-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer glow-btn"
-              >
-                <Wand2 size={13} />
-                {t('analyze')}
-              </button>
-            </div>
-
-            <textarea
-              value={socialRawText}
-              onChange={(e) => setSocialRawText(e.target.value)}
-              rows={4}
-              placeholder={t('pastePostsPlaceholder')}
-              className="w-full bg-slate-950 border border-slate-900 hover:border-slate-800 rounded-lg p-2.5 text-xs text-slate-350 outline-none transition-all resize-none placeholder-slate-700 font-mono text-[11px]"
-            />
-
-            {/* Ingest summary outputs */}
-            {nlpSummaryText && (
-              <div className="space-y-2 p-3 bg-slate-950/40 border border-slate-900 rounded-xl text-xs">
-                <div className="font-mono text-[10px] text-slate-500 uppercase tracking-wider">{nlpSummaryText}</div>
-                <div className="space-y-1.5 max-h-[100px] overflow-y-auto pr-1">
-                  {nlpResults.map((r, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-[11px] text-slate-300 py-1 border-b border-slate-900/40 last:border-0">
-                      <span className="font-semibold text-sky-400 uppercase">{r.type}</span>
-                      <span className="font-mono text-slate-400 font-semibold">{r.count} mentions</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
 
         </section>
 
