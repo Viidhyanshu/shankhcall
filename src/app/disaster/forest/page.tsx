@@ -10,6 +10,7 @@ import {
   Activity, Plus, Globe, User, Search, 
   RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft 
 } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 // Dynamic Import LeafletMap to avoid Next.js Hydration Compilation errors
 const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
@@ -249,6 +250,9 @@ export default function ForestDashboard() {
               <option value="hi">हिन्दी</option>
             </select>
           </div>
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* Add report button */}
           {(role === 'citizen' || role === 'official') && (

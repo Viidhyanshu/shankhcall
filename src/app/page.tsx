@@ -6,6 +6,7 @@ import { auth, db } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { Eye, EyeOff, Shield, Users, BarChart3, ArrowLeft, ArrowRight, Check, Activity, Smartphone, Mail } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 type SignUpStep = 'role' | 'details' | 'otp';
 type SelectedRole = 'citizen' | 'official' | 'analyst';
@@ -204,6 +205,11 @@ export default function LoginPage() {
         <span className="text-xl font-bold tracking-widest bg-gradient-to-r from-white via-cyan-400 to-white bg-clip-text text-transparent uppercase font-sans">
           शंखcall
         </span>
+      </div>
+
+      {/* Theme Toggle Overlay */}
+      <div className="absolute top-8 right-8 z-20">
+        <ThemeToggle />
       </div>
 
       {/* Main card panel */}

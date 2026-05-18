@@ -15,6 +15,18 @@
   --color-glass-hover-border: rgba(0, 194, 255, 0.35);
 }
 
+.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  
+  --color-glass-bg: rgba(255, 255, 255, 0.65);
+  --color-glass-border: rgba(15, 23, 42, 0.08);
+  --color-glass-hover-bg: rgba(255, 255, 255, 0.85);
+  --color-glass-hover-border: rgba(0, 194, 255, 0.3);
+  
+  --scrollbar-thumb: rgba(15, 23, 42, 0.15);
+}
+
 @theme {
   --font-sans: var(--font-sans);
   
@@ -178,10 +190,63 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 194, 255, 0.2);
+  background: var(--scrollbar-thumb, rgba(0, 194, 255, 0.2));
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 194, 255, 0.45);
+}
+
+/* Light Theme overrides */
+.light input,
+.light textarea,
+.light select {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light .text-slate-400,
+.light .text-slate-500 {
+  color: #475569 !important;
+}
+.light .text-slate-300,
+.light .text-slate-200 {
+  color: #1e293b !important;
+}
+.light .text-slate-100 {
+  color: #0f172a !important;
+}
+
+.light .glass-panel:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 194, 255, 0.4);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.08);
+}
+
+.light .leaflet-container {
+  background-color: #f1f5f9 !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+.light .leaflet-bar a {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #0284c7 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+.light .leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+.light .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-left: 1px solid rgba(15, 23, 42, 0.1) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
 }

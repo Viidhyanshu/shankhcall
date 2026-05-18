@@ -11,6 +11,7 @@ import {
   RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft, BarChart3 
 } from 'lucide-react';
 import Chart from 'chart.js/auto';
+import ThemeToggle from '@/components/ThemeToggle';
 
 // Dynamic Import LeafletMap to avoid Next.js Hydration Compilation errors
 const LeafletMap = dynamic(() => import('@/components/LeafletMap'), {
@@ -422,6 +423,9 @@ export default function OceanDashboard() {
               <option value="hi">हिन्दी</option>
             </select>
           </div>
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* Add report button */}
           {(role === 'citizen' || role === 'official') && (

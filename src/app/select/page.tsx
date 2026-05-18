@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut, Activity } from 'lucide-react';
 import { auth } from '@/lib/firebase';
+import ThemeToggle from '@/components/ThemeToggle';
 import { signOut } from 'firebase/auth';
 
 interface Particle {
@@ -137,14 +138,17 @@ export default function DisasterSelector() {
         </span>
       </header>
 
-      {/* Logout button */}
-      <button
-        onClick={handleSignOut}
-        className="absolute top-8 right-8 z-20 p-2.5 rounded-full bg-slate-950/40 border border-slate-900 hover:border-red-500/30 hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-all duration-300 flex items-center justify-center cursor-pointer"
-        title="Sign Out"
-      >
-        <LogOut size={16} />
-      </button>
+      {/* Theme and Logout Top Right Container */}
+      <div className="absolute top-8 right-8 z-20 flex items-center gap-3">
+        <ThemeToggle />
+        <button
+          onClick={handleSignOut}
+          className="p-2.5 rounded-full bg-slate-950/40 border border-slate-900 hover:border-red-500/30 hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-all duration-300 flex items-center justify-center cursor-pointer"
+          title="Sign Out"
+        >
+          <LogOut size={16} />
+        </button>
+      </div>
 
       {/* Main Section */}
       <main className="relative z-10 text-center max-w-4xl space-y-12">
