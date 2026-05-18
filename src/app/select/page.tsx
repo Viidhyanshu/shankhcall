@@ -115,7 +115,7 @@ export default function DisasterSelector() {
   return (
     <div 
       onMouseMove={handleMouseMove}
-      className="relative min-h-screen w-full bg-[#0a0e27] font-sans flex flex-col justify-center items-center overflow-hidden text-slate-100 px-4 select-none"
+      className="relative min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] font-sans flex flex-col justify-center items-center overflow-hidden px-4 select-none"
     >
       {/* Dynamic Canvas Particles Overlay */}
       <canvas 

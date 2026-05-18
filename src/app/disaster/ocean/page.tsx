@@ -357,7 +357,7 @@ export default function OceanDashboard() {
   }, [filteredReports]);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#060913] text-slate-100 flex flex-col font-sans">
+    <div className="relative min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans">
       
       {/* Header element */}
       <header className="px-6 py-4 bg-slate-950/70 backdrop-blur-md border-b border-slate-900 flex flex-col md:flex-row items-center gap-4 z-20 shrink-0">

@@ -220,7 +220,10 @@ body {
 .light .text-slate-200 {
   color: #1e293b !important;
 }
-.light .text-slate-100 {
+.light .text-slate-100,
+.light .text-slate-350,
+.light .text-white,
+.light strong {
   color: #0f172a !important;
 }
 
@@ -250,3 +253,76 @@ body {
   border-left: 1px solid rgba(15, 23, 42, 0.1) !important;
   border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
 }
+
+/* Comprehensive Color Overrides for Day mode */
+.light .min-h-screen,
+.light .bg-\[\#060913\],
+.light .bg-\[\#070a13\],
+.light .bg-\[\#0a0e27\],
+.light body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+.light header,
+.light aside,
+.light section,
+.light .bg-slate-950\/70,
+.light .bg-slate-950\/20,
+.light .bg-slate-950\/60,
+.light .bg-slate-950\/40,
+.light .bg-\[\#0c1328\] {
+  background-color: rgba(255, 255, 255, 0.65) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  color: #0f172a !important;
+}
+
+.light .border-slate-900,
+.light .border-slate-950,
+.light .border-slate-800,
+.light .border-sky-500\/10 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.light .glass-panel {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04) !important;
+  color: #0f172a !important;
+}
+
+.light button:not(.bg-gradient-to-r),
+.light select,
+.light option {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #1e293b !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+.light button:not(.bg-gradient-to-r):hover,
+.light select:hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+  color: #0f172a !important;
+}
+
+/* Gradients text overrides */
+.light .glow-text {
+  background: linear-gradient(135deg, #0284c7, #1e40af) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.light .text-emerald-400 {
+  color: #059669 !important;
+}
+
+.light .text-sky-400 {
+  color: #0284c7 !important;
+}
+
+/* Modals overlays light mode */
+.light .fixed.inset-0 .bg-slate-950\/80 {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
