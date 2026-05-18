@@ -369,18 +369,6 @@ export default function OceanDashboard() {
           </div>
         </div>
 
-        {/* Center Section: Global Search */}
-        <form onSubmit={handleSearchExecute} className="hidden md:flex flex-grow max-w-sm mx-auto items-center relative">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#111625] border border-slate-800 focus:border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 outline-none transition-all placeholder-slate-600"
-          />
-        </form>
-
         {/* Right Section: Selectors and Toggle */}
         <div className="flex items-center gap-3 shrink-0">
           
