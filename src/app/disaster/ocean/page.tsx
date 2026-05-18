@@ -7,7 +7,7 @@ import { SupportedLanguages, getTranslation } from '@/lib/i18n';
 import { useDisasterStore, storeActions, HazardReport } from '@/lib/store';
 import { classifyText, scoreSentiment } from '@/lib/nlp';
 import { 
-  Activity, Plus, Globe, User, Search, 
+  Activity, Plus, Minus, Globe, User, Search, 
   RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft, BarChart3,
   Menu, ChevronDown, Waves
 } from 'lucide-react';
@@ -445,6 +445,29 @@ export default function OceanDashboard() {
             <ChevronDown size={11} className="text-slate-500" />
           </div>
 
+          {/* Zoom Controls */}
+          <div className="flex items-center rounded-lg bg-[#111625] border border-slate-800 p-0.5 overflow-hidden">
+            <button
+              onClick={() => {
+                if (mapZoom > 2) setMapZoom(prev => prev - 1);
+              }}
+              title="Zoom Out"
+              className="p-1.5 px-2 text-slate-400 hover:text-white hover:bg-[#1c243a] rounded transition-all cursor-pointer flex items-center justify-center"
+            >
+              <Minus size={12} />
+            </button>
+            <span className="w-px h-3.5 bg-slate-800 shrink-0"></span>
+            <button
+              onClick={() => {
+                if (mapZoom < 18) setMapZoom(prev => prev + 1);
+              }}
+              title="Zoom In"
+              className="p-1.5 px-2 text-slate-400 hover:text-white hover:bg-[#1c243a] rounded transition-all cursor-pointer flex items-center justify-center"
+            >
+              <Plus size={12} />
+            </button>
+          </div>
+
           {/* Theme Toggle */}
           <ThemeToggle />
 
@@ -462,6 +485,10 @@ export default function OceanDashboard() {
             center={mapCenter}
             zoom={mapZoom}
             onReportClick={handleOpenMedia}
+            onViewportChange={(c, z) => {
+              setMapCenter(c);
+              setMapZoom(z);
+            }}
           />
         </div>
 

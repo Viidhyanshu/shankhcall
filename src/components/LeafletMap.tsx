@@ -21,6 +21,7 @@ interface LeafletMapProps {
   center?: [number, number];
   zoom?: number;
   onReportClick?: (report: HazardReport) => void;
+  onViewportChange?: (center: [number, number], zoom: number) => void;
 }
 
 const iconByType: Record<string, string> = {
@@ -59,11 +60,16 @@ const gradientByDisaster: Record<string, { bg: string; glow: string }> = {
   Other: { bg: 'linear-gradient(135deg, #64748b, #475569)', glow: 'rgba(100, 116, 139, 0.6)' }
 };
 
-export default function LeafletMap({ mode, reports, center, zoom = 5, onReportClick }: LeafletMapProps) {
+export default function LeafletMap({ mode, reports, center, zoom = 5, onReportClick, onViewportChange }: LeafletMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
   const clusterLayerInstance = useRef<any>(null);
   const heatLayerInstance = useRef<any>(null);
+
+  const onViewportChangeRef = useRef(onViewportChange);
+  useEffect(() => {
+    onViewportChangeRef.current = onViewportChange;
+  }, [onViewportChange]);
 
   // Initialize Map
   useEffect(() => {
@@ -74,9 +80,16 @@ export default function LeafletMap({ mode, reports, center, zoom = 5, onReportCl
     const initialZoom = zoom;
 
     const map = L.map(mapRef.current, {
-      zoomControl: true,
+      zoomControl: false,
       scrollWheelZoom: true,
     }).setView(initialCenter, initialZoom);
+
+    // Dynamic viewport event listener to avoid jumps
+    map.on('moveend', () => {
+      const c = map.getCenter();
+      const z = map.getZoom();
+      onViewportChangeRef.current?.([c.lat, c.lng], z);
+    });
 
     // Function to check if light theme is active
     const isLightMode = () => document.documentElement.classList.contains('light');
@@ -135,10 +148,18 @@ export default function LeafletMap({ mode, reports, center, zoom = 5, onReportCl
     };
   }, []);
 
-  // Update Map Center and Zoom
+  // Update Map Center and Zoom only if changed externally
   useEffect(() => {
     if (mapInstance.current && center) {
-      mapInstance.current.setView(center, zoom);
+      const currentCenter = mapInstance.current.getCenter();
+      const currentZoom = mapInstance.current.getZoom();
+      
+      const isDifferentCenter = Math.abs(currentCenter.lat - center[0]) > 0.0001 || Math.abs(currentCenter.lng - center[1]) > 0.0001;
+      const isDifferentZoom = currentZoom !== zoom;
+
+      if (isDifferentCenter || isDifferentZoom) {
+        mapInstance.current.setView(center, zoom);
+      }
     }
   }, [center, zoom]);
 

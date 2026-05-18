@@ -7,7 +7,7 @@ import { SupportedLanguages, getTranslation } from '@/lib/i18n';
 import { useDisasterStore, storeActions, HazardReport } from '@/lib/store';
 import { classifyText, scoreSentiment } from '@/lib/nlp';
 import { 
-  Activity, Plus, Globe, User, Search, 
+  Activity, Plus, Minus, Globe, User, Search, 
   RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft 
 } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -236,6 +236,29 @@ export default function ForestDashboard() {
             </select>
           </div>
 
+          {/* Zoom Controls */}
+          <div className="flex items-center rounded-lg bg-slate-900 border border-slate-800 p-0.5 overflow-hidden">
+            <button
+              onClick={() => {
+                if (mapZoom > 2) setMapZoom(prev => prev - 1);
+              }}
+              title="Zoom Out"
+              className="p-1.5 px-2 text-slate-400 hover:text-white hover:bg-slate-850 rounded transition-all cursor-pointer flex items-center justify-center"
+            >
+              <Minus size={12} />
+            </button>
+            <span className="w-px h-3.5 bg-slate-800 shrink-0"></span>
+            <button
+              onClick={() => {
+                if (mapZoom < 18) setMapZoom(prev => prev + 1);
+              }}
+              title="Zoom In"
+              className="p-1.5 px-2 text-slate-400 hover:text-white hover:bg-slate-850 rounded transition-all cursor-pointer flex items-center justify-center"
+            >
+              <Plus size={12} />
+            </button>
+          </div>
+
           {/* Theme Toggle */}
           <ThemeToggle />
 
@@ -403,6 +426,10 @@ export default function ForestDashboard() {
             center={mapCenter}
             zoom={mapZoom}
             onReportClick={handleOpenMedia}
+            onViewportChange={(c, z) => {
+              setMapCenter(c);
+              setMapZoom(z);
+            }}
           />
         </main>
 
@@ -458,12 +485,8 @@ export default function ForestDashboard() {
                       <div className="flex flex-wrap items-center gap-2 mt-1 border-t border-slate-900/50 pt-2 text-[10px] text-slate-500">
                         <span className="capitalize font-semibold">{r.src}</span>
                         <span>•</span>
-                        <span className={`chip ${verifiedCls} uppercase`}>
-                          {r.verified ? 'VERIFIED' : 'UNVERIFIED'}
-                        </span>
-                        <span className={`chip ${sentimentCls} uppercase`}>
-                          {r.sentiment > 0.2 ? 'POSITIVE' : r.sentiment < -0.2 ? 'NEGATIVE' : 'NEUTRAL'}
-                        </span>
+                        <span className={`chip ${verifiedCls}`}>{r.verified ? 'verified' : 'unverified'}</span>
+                        <span className={`chip ${sentimentCls}`}>sentiment {r.sentiment.toFixed(1)}</span>
                         
                         {/* Language Tag */}
                         <span className="ml-auto font-mono text-[9px] bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-400 font-semibold">{r.lang}</span>
