@@ -198,21 +198,6 @@ export default function ForestDashboard() {
           </div>
         </div>
 
-        {/* Sync / Offline Banner Indicator */}
-        <div className="md:ml-6 flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/60 border border-slate-800 text-[11px] font-medium tracking-wide">
-          {isOnline ? (
-            <>
-              <Wifi size={12} className="text-emerald-400" />
-              <span className="text-slate-400 uppercase">System Online</span>
-            </>
-          ) : (
-            <>
-              <WifiOff size={12} className="text-red-400 animate-pulse" />
-              <span className="text-red-400 uppercase">Offline Mode Queue Active</span>
-            </>
-          )}
-        </div>
-
         <div className="md:ml-auto flex flex-wrap items-center gap-3 shrink-0">
           
           {/* Back button */}
