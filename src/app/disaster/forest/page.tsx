@@ -465,9 +465,14 @@ export default function ForestDashboard() {
                         <strong className="text-xs font-bold text-slate-200 group-hover:text-emerald-400 transition-colors uppercase">
                           {t(r.type.toLowerCase() as any)}
                         </strong>
-                        <span className="text-[10px] text-slate-500 font-mono">
-                          {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-[10px] text-slate-500 font-mono">
+                            {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                          <span className="font-mono text-[8px] bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-400 font-semibold select-none">
+                            {r.lang}
+                          </span>
+                        </div>
                       </div>
                       
                       <p className="text-[11px] text-slate-400 leading-normal line-clamp-2">
@@ -495,9 +500,6 @@ export default function ForestDashboard() {
                         <span>•</span>
                         <span className={`chip ${verifiedCls}`}>{r.verified ? t('verified') : t('unverified')}</span>
                         <span className={`chip ${sentimentCls}`}>{t('sentimentChartTitle')}: {r.sentiment.toFixed(1)}</span>
-                        
-                        {/* Language Tag */}
-                        <span className="ml-auto font-mono text-[9px] bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-400 font-semibold">{t('language')}: {r.lang}</span>
                       </div>
                     </div>
                   );

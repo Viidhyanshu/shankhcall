@@ -667,9 +667,14 @@ export default function OceanDashboard() {
                                 <strong className="text-xs font-bold text-slate-100 group-hover:text-sky-400 transition-colors uppercase tracking-wide truncate">
                                   {t(r.type.toLowerCase() as any)}
                                 </strong>
-                                <span className="text-[9px] text-slate-500 font-mono shrink-0">
-                                  {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <span className="text-[9px] text-slate-500 font-mono">
+                                    {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                  <span className="font-mono text-[8px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-450 font-semibold select-none">
+                                    {r.lang}
+                                  </span>
+                                </div>
                               </div>
                               
                               <p className="text-[10px] text-slate-400 mt-0.5 font-mono truncate">
@@ -713,11 +718,6 @@ export default function OceanDashboard() {
                                     VERIFY
                                   </button>
                                 )}
-
-                                {/* Language Chip */}
-                                <span className="ml-auto font-mono text-[8px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-450 font-semibold">
-                                  {r.lang}
-                                </span>
                               </div>
                             </div>
                           </div>
