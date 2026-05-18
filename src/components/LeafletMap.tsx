@@ -81,10 +81,10 @@ export default function LeafletMap({ mode, reports, center, zoom = 5, onReportCl
     // Function to check if light theme is active
     const isLightMode = () => document.documentElement.classList.contains('light');
 
-    // Create premium high-definition vector basemaps (CartoDB Positron for soft light / Dark Matter for dark)
+    // Create premium high-definition vector basemaps (CartoDB Voyager for colorful light / Dark Matter for dark)
     const tileLayerInstance = L.tileLayer(
       isLightMode()
-        ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
         : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
       {
         maxZoom: 20,
@@ -96,7 +96,7 @@ export default function LeafletMap({ mode, reports, center, zoom = 5, onReportCl
     // Watch for live dark/light mode toggles to dynamically hot-swap HD tile layers
     const observer = new MutationObserver(() => {
       const currentUrl = isLightMode()
-        ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
         : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
       tileLayerInstance.setUrl(currentUrl);
     });
