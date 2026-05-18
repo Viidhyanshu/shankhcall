@@ -16,8 +16,25 @@ export const OCEAN_KEYWORDS = {
   tsunami: ['tsunami', 'sunami', 'suname', 'सुनामी']
 };
 
-export const SENTIMENT_NEG = ['danger', 'help', '救命', 'risk', 'alert', 'warning', 'red', 'evacuate', 'गंभीर', 'खतरा', 'panic', 'sos', 'SOS'];
-export const SENTIMENT_POS = ['safe', 'contained', 'clear', 'stabilized', 'normal', 'clear sky'];
+export const SENTIMENT_NEG = [
+  // English Alert & Danger
+  'danger', 'help', '救命', 'risk', 'alert', 'warning', 'red', 'evacuate', 'panic', 'sos', 'SOS', 'caution',
+  // Active Hazard and Incidents
+  'fire', 'smoke', 'burn', 'blaze', 'flames', 'wildfire', 'poach', 'poaching', 'hunt', 'hunting', 'kill', 'illegal',
+  'logging', 'cut', 'cutting', 'deforestation', 'smuggling', 'damage', 'break', 'erosion', 'collapse',
+  'flood', 'flooding', 'drown', 'surge', 'surges', 'swell', 'waves', 'wave', 'tsunami', 'storm', 'gale', 'spill', 'leak', 'crash',
+  'catastrophe', 'disaster', 'destruction', 'unusual',
+  // Hindi equivalents
+  'गंभीर', 'खतरा', 'आग', 'शिकार', 'अवैध', 'कटाई', 'बाढ़', 'लहर', 'तबाही', 'नुकसान', 'धुआं'
+];
+
+export const SENTIMENT_POS = [
+  // English positive / status clear
+  'safe', 'contained', 'clear', 'stabilized', 'normal', 'clear sky', 'rescued', 'saved', 
+  'survived', 'under control', 'resolved', 'fixed', 'peaceful', 'calm',
+  // Hindi equivalents
+  'सुरक्षित', 'नियंत्रण', 'शांत', 'ठीक', 'बचाया'
+];
 
 /**
  * Classifies a text post into a specific hazard category based on keyword matches

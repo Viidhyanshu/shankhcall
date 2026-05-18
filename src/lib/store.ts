@@ -58,8 +58,14 @@ export function loadStore() {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (raw) {
       const obj = JSON.parse(raw);
-      globalState.reports = obj.reports || [];
-      globalState.pending = obj.pending || [];
+      globalState.reports = (obj.reports || []).map((r: any) => ({
+        ...r,
+        sentiment: scoreSentiment(r.desc)
+      }));
+      globalState.pending = (obj.pending || []).map((r: any) => ({
+        ...r,
+        sentiment: scoreSentiment(r.desc)
+      }));
     }
   } catch (e) {
     console.warn('Loading store failed', e);

@@ -202,6 +202,18 @@ export default function OceanDashboard() {
   // Sorted reports for Unified Feed list
   const sortedReports = [...filteredReports].sort((a, b) => b.ts - a.ts);
 
+  // Real-time sentiment metrics calculation
+  let positiveCount = 0;
+  let neutralCount = 0;
+  let negativeCount = 0;
+
+  filteredReports.forEach(r => {
+    const s = r.sentiment || 0;
+    if (s > 0.2) positiveCount++;
+    else if (s < -0.2) negativeCount++;
+    else neutralCount++;
+  });
+
 
 
   const handleOpenMedia = (report: HazardReport) => {
@@ -650,6 +662,10 @@ export default function OceanDashboard() {
                                 <span className={`chip ${verifiedCls} scale-85 origin-left`}>
                                   {r.verified ? 'VERIFIED' : 'UNVERIFIED'}
                                 </span>
+                                <span>•</span>
+                                <span className={`chip ${sentimentCls} scale-85 origin-left`}>
+                                  {r.sentiment > 0.2 ? 'POSITIVE' : r.sentiment < -0.2 ? 'NEGATIVE' : 'NEUTRAL'}
+                                </span>
                                 
                                 {(!r.verified && role === 'official') && (
                                   <button
@@ -711,17 +727,26 @@ export default function OceanDashboard() {
                     <canvas ref={sentimentCanvasRef} />
                   </div>
                   <div className="w-[45%] flex flex-col gap-1.5 text-[9px] text-slate-400 font-semibold pr-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[#10b981]"></span>
-                      <span>Positive</span>
+                    <div className="flex items-center justify-between gap-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-[#10b981]"></span>
+                        <span>Positive</span>
+                      </div>
+                      <span className="text-emerald-400 font-mono font-bold">{positiveCount}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[#f59e0b]"></span>
-                      <span>Neutral</span>
+                    <div className="flex items-center justify-between gap-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-[#f59e0b]"></span>
+                        <span>Neutral</span>
+                      </div>
+                      <span className="text-amber-400 font-mono font-bold">{neutralCount}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-[#ef4444]"></span>
-                      <span>Negative</span>
+                    <div className="flex items-center justify-between gap-1.5">
+                      <div className="flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-[#ef4444]"></span>
+                        <span>Negative</span>
+                      </div>
+                      <span className="text-red-400 font-mono font-bold">{negativeCount}</span>
                     </div>
                   </div>
                 </div>
