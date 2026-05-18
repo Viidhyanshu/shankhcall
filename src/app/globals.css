@@ -222,15 +222,16 @@ body {
 }
 
 .light .text-slate-400,
+.light .text-slate-450,
 .light .text-slate-500 {
   color: #475569 !important;
 }
 .light .text-slate-300,
-.light .text-slate-200 {
+.light .text-slate-200,
+.light .text-slate-350 {
   color: #1e293b !important;
 }
 .light .text-slate-100,
-.light .text-slate-350,
 .light .text-white,
 .light strong {
   color: #0f172a !important;
@@ -238,29 +239,29 @@ body {
 
 .light .glass-panel:hover {
   background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 194, 255, 0.4);
+  border-color: rgba(2, 132, 199, 0.2);
   box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.08);
 }
 
 .light .leaflet-container {
-  background-color: #f1f5f9 !important;
+  background-color: #f8fafc !important;
   border: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 .light .leaflet-bar a {
-  background-color: rgba(255, 255, 255, 0.9) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
   color: #0284c7 !important;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 .light .leaflet-popup-content-wrapper {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
   color: #0f172a !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
 }
 .light .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-left: 1px solid rgba(15, 23, 42, 0.1) !important;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-left: 1px solid rgba(15, 23, 42, 0.08) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 
 /* Comprehensive Color Overrides for Day mode */
@@ -279,9 +280,14 @@ body {
 .light .bg-slate-950\/70,
 .light .bg-slate-950\/20,
 .light .bg-slate-950\/60,
+.light .bg-slate-950\/45,
 .light .bg-slate-950\/40,
-.light .bg-\[\#0c1328\] {
-  background-color: rgba(255, 255, 255, 0.65) !important;
+.light .bg-\[\#0d111a\]\/85,
+.light .bg-\[\#0c1328\],
+.light .bg-\[\#111625\],
+.light .bg-\[\#151c2f\],
+.light .bg-\[\#080d19\]\/95 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
   border-color: rgba(15, 23, 42, 0.08) !important;
   color: #0f172a !important;
 }
@@ -294,7 +300,7 @@ body {
 }
 
 .light .glass-panel {
-  background-color: rgba(255, 255, 255, 0.7) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
   border-color: rgba(15, 23, 42, 0.08) !important;
   box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04) !important;
   color: #0f172a !important;
@@ -323,7 +329,7 @@ body {
 }
 
 .light .text-emerald-400 {
-  color: #059669 !important;
+  color: #047857 !important;
 }
 
 .light .text-sky-400 {
@@ -331,7 +337,8 @@ body {
 }
 
 /* Modals overlays light mode */
-.light .fixed.inset-0 .bg-slate-950\/80 {
-  background-color: rgba(15, 23, 42, 0.45) !important;
+.light .fixed.inset-0 .bg-slate-950\/80,
+.light .fixed.inset-0 .bg-slate-950\/90 {
+  background-color: rgba(15, 23, 42, 0.35) !important;
 }
 

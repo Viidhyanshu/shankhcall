@@ -75,6 +75,24 @@ export default function OceanDashboard() {
   const trendChartInstance = useRef<Chart | null>(null);
   const sentimentChartInstance = useRef<Chart | null>(null);
 
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setIsLight(document.documentElement.classList.contains('light'));
+
+    const observer = new MutationObserver(() => {
+      setIsLight(document.documentElement.classList.contains('light'));
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const t = (key: any) => getTranslation(key, lang);
 
   // Check online status in browser
@@ -228,8 +246,13 @@ export default function OceanDashboard() {
 
         // Create glowing neon blue gradient fill
         const gradient = ctx.createLinearGradient(0, 0, 0, 150);
-        gradient.addColorStop(0, 'rgba(0, 194, 255, 0.45)');
-        gradient.addColorStop(1, 'rgba(0, 194, 255, 0.00)');
+        if (isLight) {
+          gradient.addColorStop(0, 'rgba(2, 132, 199, 0.25)');
+          gradient.addColorStop(1, 'rgba(2, 132, 199, 0.00)');
+        } else {
+          gradient.addColorStop(0, 'rgba(0, 194, 255, 0.45)');
+          gradient.addColorStop(1, 'rgba(0, 194, 255, 0.00)');
+        }
 
         trendChartInstance.current = new Chart(trendCanvasRef.current, {
           type: 'line',
@@ -238,10 +261,10 @@ export default function OceanDashboard() {
             datasets: [{
               label: 'Reports count',
               data: counts,
-              borderColor: '#00c2ff',
+              borderColor: isLight ? '#0284c7' : '#00c2ff',
               borderWidth: 2,
-              pointBackgroundColor: '#00c2ff',
-              pointHoverBackgroundColor: '#ffffff',
+              pointBackgroundColor: isLight ? '#0284c7' : '#00c2ff',
+              pointHoverBackgroundColor: isLight ? '#0f172a' : '#ffffff',
               pointRadius: 3.5,
               tension: 0.35,
               fill: true,
@@ -254,23 +277,23 @@ export default function OceanDashboard() {
             plugins: {
               legend: { display: false },
               tooltip: {
-                backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                borderColor: 'rgba(0, 194, 255, 0.3)',
+                backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+                borderColor: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(0, 194, 255, 0.3)',
                 borderWidth: 1,
-                titleColor: '#00c2ff',
-                bodyColor: '#f8fafc',
+                titleColor: isLight ? '#0284c7' : '#00c2ff',
+                bodyColor: isLight ? '#1e293b' : '#f8fafc',
                 bodyFont: { family: 'inherit' },
                 titleFont: { family: 'inherit', weight: 'bold' }
               }
             },
             scales: {
               x: {
-                grid: { color: 'rgba(255, 255, 255, 0.03)' },
-                ticks: { color: '#64748b', font: { size: 9 } }
+                grid: { color: isLight ? 'rgba(15, 23, 42, 0.04)' : 'rgba(255, 255, 255, 0.03)' },
+                ticks: { color: isLight ? '#475569' : '#64748b', font: { size: 9 } }
               },
               y: {
-                grid: { color: 'rgba(255, 255, 255, 0.03)' },
-                ticks: { color: '#64748b', font: { size: 9 }, stepSize: 1 },
+                grid: { color: isLight ? 'rgba(15, 23, 42, 0.04)' : 'rgba(255, 255, 255, 0.03)' },
+                ticks: { color: isLight ? '#475569' : '#64748b', font: { size: 9 }, stepSize: 1 },
                 beginAtZero: true
               }
             }
@@ -303,7 +326,9 @@ export default function OceanDashboard() {
       const dataValues = hasData ? [positive, neutral, negative] : [1, 1, 1];
       const dataColors = hasData 
         ? ['rgba(16, 185, 129, 0.85)', 'rgba(245, 158, 11, 0.85)', 'rgba(239, 68, 68, 0.85)']
-        : ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.03)'];
+        : isLight
+          ? ['rgba(15, 23, 42, 0.05)', 'rgba(15, 23, 42, 0.03)', 'rgba(15, 23, 42, 0.02)']
+          : ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.05)', 'rgba(255, 255, 255, 0.03)'];
 
       sentimentChartInstance.current = new Chart(sentimentCanvasRef.current, {
         type: 'doughnut',
@@ -312,7 +337,7 @@ export default function OceanDashboard() {
           datasets: [{
             data: dataValues,
             backgroundColor: dataColors,
-            borderColor: '#0f172a',
+            borderColor: isLight ? '#ffffff' : '#0f172a',
             borderWidth: 2,
             hoverOffset: 4
           }]
@@ -326,11 +351,11 @@ export default function OceanDashboard() {
               display: false
             },
             tooltip: {
-              backgroundColor: 'rgba(15, 23, 42, 0.9)',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
+              backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+              borderColor: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.1)',
               borderWidth: 1,
-              titleColor: '#e2e8f0',
-              bodyColor: '#f8fafc',
+              titleColor: isLight ? '#1e293b' : '#e2e8f0',
+              bodyColor: isLight ? '#475569' : '#f8fafc',
               bodyFont: { family: 'inherit' }
             }
           }
@@ -349,7 +374,7 @@ export default function OceanDashboard() {
         sentimentChartInstance.current = null;
       }
     };
-  }, [filteredReports]);
+  }, [filteredReports, isLight]);
 
   return (
     <div className="relative min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
