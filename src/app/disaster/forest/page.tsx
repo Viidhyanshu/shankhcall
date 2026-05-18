@@ -156,7 +156,8 @@ export default function ForestDashboard() {
     // Source filter
     if (appliedSource !== 'all') {
       if (appliedSource === 'verified' && !r.verified) return false;
-      if (appliedSource !== 'verified' && r.src !== appliedSource) return false;
+      if (appliedSource === 'citizen' && r.src !== 'citizen' && r.src !== 'social') return false;
+      if (appliedSource !== 'verified' && appliedSource !== 'citizen' && r.src !== appliedSource) return false;
     }
 
     // Time ranges
@@ -322,7 +323,6 @@ export default function ForestDashboard() {
                 >
                   <option value="all">{t('all')}</option>
                   <option value="citizen">{t('roleCitizen')}</option>
-                  <option value="social">{t('social')}</option>
                   <option value="verified">{t('verified')}</option>
                 </select>
               </div>
