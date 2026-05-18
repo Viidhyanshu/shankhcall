@@ -78,10 +78,33 @@ export default function LeafletMap({ mode, reports, center, zoom = 5, onReportCl
       scrollWheelZoom: true,
     }).setView(initialCenter, initialZoom);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    // Function to check if light theme is active
+    const isLightMode = () => document.documentElement.classList.contains('light');
+
+    // Create premium high-definition vector basemaps (CartoDB Voyager for light / Dark Matter for dark)
+    const tileLayerInstance = L.tileLayer(
+      isLightMode()
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+      }
+    ).addTo(map);
+
+    // Watch for live dark/light mode toggles to dynamically hot-swap HD tile layers
+    const observer = new MutationObserver(() => {
+      const currentUrl = isLightMode()
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+      tileLayerInstance.setUrl(currentUrl);
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
 
     // Initialize Layers
     const clusterLayer = L.markerClusterGroup({
@@ -102,6 +125,7 @@ export default function LeafletMap({ mode, reports, center, zoom = 5, onReportCl
 
     // Cleanup on unmount
     return () => {
+      observer.disconnect();
       if (mapInstance.current) {
         mapInstance.current.remove();
         mapInstance.current = null;

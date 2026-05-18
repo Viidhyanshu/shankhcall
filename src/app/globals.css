@@ -123,9 +123,9 @@ body {
   font-family: inherit !important;
 }
 
-/* Sci-fi Neon Dark Map tiles filter in dark mode */
+/* High-definition native Dark and Light basemaps */
 .leaflet-tile {
-  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+  filter: none !important;
 }
 
 .light .leaflet-tile {
