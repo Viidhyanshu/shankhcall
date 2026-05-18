@@ -483,10 +483,10 @@ export default function OceanDashboard() {
       </header>
 
       {/* Main Workspace: Fullscreen Map with Floating Overlays */}
-      <div className="flex-grow w-full relative overflow-hidden h-0">
+      <div className="flex-grow w-full relative overflow-y-auto lg:overflow-hidden h-0 flex flex-col lg:block">
         
         {/* Fullscreen Map Background */}
-        <div className="absolute inset-0 z-0 w-full h-full">
+        <div className="relative lg:absolute lg:inset-0 z-0 w-full h-[400px] lg:h-full shrink-0">
           <LeafletMap 
             mode="ocean" 
             reports={filteredReports} 
@@ -501,13 +501,13 @@ export default function OceanDashboard() {
         </div>
 
         {/* INTERACTIVE FLOATING OVERLAYS CONTAINER (Pointer events none so map is draggable underneath) */}
-        <div className="absolute inset-0 z-10 pointer-events-none p-4 flex flex-col justify-between">
+        <div className="relative lg:absolute lg:inset-0 z-10 lg:pointer-events-none p-4 flex flex-col lg:justify-between gap-4 lg:gap-0">
           
           {/* Top Floating Row: Filters Card (Left) and Unified Feed Card (Right) */}
-          <div className="flex justify-between items-start w-full h-full max-h-[calc(100vh-250px)]">
+          <div className="flex flex-col lg:flex-row lg:justify-between items-start w-full lg:h-full lg:max-h-[calc(100vh-250px)] gap-4 lg:gap-0">
             
             {/* LEFT FLOATING COLUMN: FILTERS & HOTSPOTS & ADD REPORT */}
-            <div className="w-[310px] flex flex-col gap-3.5 pointer-events-auto max-h-full overflow-y-auto pr-1">
+            <div className="w-full lg:w-[310px] flex flex-col gap-3.5 pointer-events-auto lg:max-h-full overflow-y-visible lg:overflow-y-auto lg:pr-1 shrink-0">
               
               {/* Filters Card */}
               <div className="glass-panel p-4 rounded-xl space-y-4">
@@ -616,7 +616,7 @@ export default function OceanDashboard() {
             </div>
 
             {/* RIGHT FLOATING COLUMN: TALL UNIFIED FEED */}
-            <div className="w-[350px] h-full pointer-events-auto flex flex-col max-h-full">
+            <div className="w-full lg:w-[350px] lg:h-full pointer-events-auto flex flex-col lg:max-h-full shrink-0">
               <div className="glass-panel p-4 rounded-2xl flex flex-col h-full overflow-hidden">
                 <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-slate-900/60 pb-2.5 mb-3 shrink-0">
                   {t('unifiedFeed')}
@@ -738,11 +738,11 @@ export default function OceanDashboard() {
           </div>
 
           {/* Bottom Floating Row: Small Side-by-Side Charts (Center) */}
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 pointer-events-auto z-10">
-            <div className="flex gap-4 select-none">
+          <div className="relative mt-4 lg:mt-0 lg:absolute lg:bottom-12 lg:left-1/2 lg:-translate-x-1/2 pointer-events-auto z-10 flex flex-col lg:flex-row justify-center w-full lg:w-auto items-center lg:items-end">
+            <div className="flex flex-col lg:flex-row gap-4 select-none w-full md:w-auto items-center">
               
               {/* Chart 1: Trend line */}
-              <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-[330px] h-[170px]">
+              <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-full md:w-[330px] h-[170px]">
                 <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900/60 pb-1 shrink-0">
                   <BarChart3 size={11} />
                   {t('trendChartTitle')}
@@ -753,7 +753,7 @@ export default function OceanDashboard() {
               </div>
 
               {/* Chart 2: Sentiment analysis doughnut */}
-              <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-[330px] h-[170px]">
+              <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-full md:w-[330px] h-[170px]">
                 <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900/60 pb-1 shrink-0">
                   <Activity size={11} />
                   {t('sentimentChartTitle')}

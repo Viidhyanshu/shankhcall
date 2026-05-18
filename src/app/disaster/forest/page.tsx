@@ -284,10 +284,10 @@ export default function ForestDashboard() {
       </header>
 
       {/* Main Grid Workspace */}
-      <div className="flex-grow flex flex-col lg:flex-row overflow-hidden relative z-10 w-full h-0">
+      <div className="flex-grow flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden relative z-10 w-full h-0">
         
         {/* LEFT SIDEBAR: FILTERS */}
-        <aside className="w-full lg:w-3/12 p-4 shrink-0 flex flex-col gap-4 overflow-y-auto lg:h-full border-r border-slate-950 bg-slate-950/20">
+        <aside className="w-full lg:w-3/12 p-4 shrink-0 flex flex-col gap-4 overflow-y-visible lg:overflow-y-auto lg:h-full border-b lg:border-b-0 lg:border-r border-slate-950 bg-slate-950/20">
           
           {/* Filters Card */}
           <div className="glass-panel p-4 rounded-xl space-y-4">
@@ -385,7 +385,7 @@ export default function ForestDashboard() {
           </div>
 
           {/* Hotspots Card */}
-          <div className="glass-panel p-4 rounded-xl space-y-3">
+          <div className="glass-panel p-4 rounded-xl space-y-3 hidden md:block">
             <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-900 pb-2 mb-1">
               <Globe size={14} />
               {t('hotspots')}
@@ -410,7 +410,7 @@ export default function ForestDashboard() {
           </div>
 
           {/* About Card */}
-          <div className="glass-panel p-4 rounded-xl space-y-2">
+          <div className="glass-panel p-4 rounded-xl space-y-2 hidden lg:block">
             <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest border-b border-slate-900 pb-2 mb-1">
               {t('about')}
             </h3>
@@ -425,7 +425,7 @@ export default function ForestDashboard() {
         </aside>
 
         {/* MIDDLE: INTERACTIVE MAP */}
-        <main className="flex-grow p-4 min-h-[300px] h-full lg:h-full relative select-none">
+        <main className="flex-grow p-4 min-h-[400px] lg:min-h-0 h-[400px] lg:h-full relative select-none shrink-0 lg:shrink">
           <LeafletMap 
             mode="forest" 
             reports={filteredReports} 
@@ -440,7 +440,7 @@ export default function ForestDashboard() {
         </main>
 
         {/* RIGHT SIDEBAR: UNIFIED FEED & NLP MONITOR */}
-        <section className="w-full lg:w-4/12 p-4 shrink-0 flex flex-col gap-4 overflow-y-auto lg:h-full border-l border-slate-950 bg-slate-950/20">
+        <section className="w-full lg:w-4/12 p-4 shrink-0 flex flex-col gap-4 overflow-y-visible lg:overflow-y-auto lg:h-full border-t lg:border-t-0 lg:border-l border-slate-950 bg-slate-950/20">
           
           {/* Unified Feed Card */}
           <div className="glass-panel p-4 rounded-xl flex-grow flex flex-col min-h-[280px]">
