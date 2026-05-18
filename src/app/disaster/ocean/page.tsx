@@ -734,15 +734,6 @@ export default function OceanDashboard() {
 
         </div>
 
-        {/* Absolute Pulsing Notification Issue Badge (Bottom Left) */}
-        <div className="absolute bottom-4 left-4 z-20 pointer-events-auto">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/90 border border-red-500/30 text-white text-[11px] font-bold shadow-lg shadow-red-500/20 select-none">
-            <span className="h-2 w-2 rounded-full bg-white animate-ping"></span>
-            <AlertCircle size={13} />
-            <span>{filteredReports.filter(r => !r.verified).length} Issue</span>
-          </div>
-        </div>
-
       </div>
 
       {/* REPORT SUBMISSION FORM MODAL */}
