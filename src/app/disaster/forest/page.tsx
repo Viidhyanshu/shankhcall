@@ -304,12 +304,12 @@ export default function ForestDashboard() {
                   className="w-full bg-slate-950 border border-slate-900 hover:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-all cursor-pointer"
                 >
                   <option value="all">{t('all')}</option>
-                  <option value="Tree">Unusual Cutting of Trees</option>
-                  <option value="Fire">Fire in Forest</option>
-                  <option value="Hunting">Hunting</option>
-                  <option value="Poaching">Poaching</option>
-                  <option value="Logging">Illegal Logging</option>
-                  <option value="Wind">Tree Blow Down</option>
+                  <option value="Tree">{t('tree')}</option>
+                  <option value="Fire">{t('fire')}</option>
+                  <option value="Hunting">{t('hunting')}</option>
+                  <option value="Poaching">{t('poaching')}</option>
+                  <option value="Logging">{t('logging')}</option>
+                  <option value="Wind">{t('wind')}</option>
                 </select>
               </div>
 
@@ -321,9 +321,9 @@ export default function ForestDashboard() {
                   className="w-full bg-slate-950 border border-slate-900 hover:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-all cursor-pointer"
                 >
                   <option value="all">{t('all')}</option>
-                  <option value="citizen">Citizen</option>
-                  <option value="social">Social</option>
-                  <option value="verified">Verified</option>
+                  <option value="citizen">{t('roleCitizen')}</option>
+                  <option value="social">{t('social')}</option>
+                  <option value="verified">{t('verified')}</option>
                 </select>
               </div>
 
@@ -463,7 +463,7 @@ export default function ForestDashboard() {
                     >
                       <div className="flex justify-between items-center gap-2">
                         <strong className="text-xs font-bold text-slate-200 group-hover:text-emerald-400 transition-colors uppercase">
-                          {r.type}
+                          {t(r.type.toLowerCase() as any)}
                         </strong>
                         <span className="text-[10px] text-slate-500 font-mono">
                           {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -479,23 +479,25 @@ export default function ForestDashboard() {
                         <div className="flex gap-1.5 mt-0.5">
                           {r.media.slice(0, 3).map((m, mIdx) => (
                             <span key={mIdx} className="text-[9px] font-semibold text-sky-400/80 bg-sky-500/5 border border-sky-500/10 px-1.5 py-0.5 rounded uppercase">
-                              {m.type}
+                              {m.type === 'image' ? 'IMAGE' : m.type === 'video' ? 'VIDEO' : m.type}
                             </span>
                           ))}
                           <span className="text-[9px] text-slate-500 flex items-center font-medium pl-1">
-                            {r.media.length} Attachment(s)
+                            {r.media.length} {t('attachment')}(s)
                           </span>
                         </div>
                       )}
 
                       <div className="flex flex-wrap items-center gap-2 mt-1 border-t border-slate-900/50 pt-2 text-[10px] text-slate-500">
-                        <span className="capitalize font-semibold">{r.src}</span>
+                        <span className="capitalize font-semibold">
+                          {t(r.src === 'citizen' ? 'roleCitizen' : r.src === 'social' ? 'social' : 'verified')}
+                        </span>
                         <span>•</span>
-                        <span className={`chip ${verifiedCls}`}>{r.verified ? 'verified' : 'unverified'}</span>
-                        <span className={`chip ${sentimentCls}`}>sentiment {r.sentiment.toFixed(1)}</span>
+                        <span className={`chip ${verifiedCls}`}>{r.verified ? t('verified') : t('unverified')}</span>
+                        <span className={`chip ${sentimentCls}`}>{t('sentimentChartTitle')}: {r.sentiment.toFixed(1)}</span>
                         
                         {/* Language Tag */}
-                        <span className="ml-auto font-mono text-[9px] bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-400 font-semibold">{r.lang}</span>
+                        <span className="ml-auto font-mono text-[9px] bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-400 font-semibold">{t('language')}: {r.lang}</span>
                       </div>
                     </div>
                   );

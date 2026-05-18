@@ -511,45 +511,45 @@ export default function OceanDashboard() {
               <div className="glass-panel p-4 rounded-xl space-y-4">
                 <h3 className="text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-900 pb-2 mb-1.5">
                   <Filter size={13} />
-                  FILTERS & HOTSPOTS
+                  {t('filters')} & {t('hotspots')}
                   <ChevronDown size={13} className="ml-auto text-slate-500" />
                 </h3>
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">EVENT TYPE</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('eventType')}</label>
                     <select
                       value={filterType}
                       onChange={(e) => setFilterType(e.target.value)}
                       className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
                     >
                       <option value="all">{t('all')}</option>
-                      <option value="tide">Unusual Tide</option>
-                      <option value="flood">Flooding</option>
-                      <option value="damage">Coastal Damage</option>
-                      <option value="tsunami">Tsunami</option>
-                      <option value="swell">Thundering Swell</option>
-                      <option value="waves">High Waves</option>
+                      <option value="tide">{t('tide')}</option>
+                      <option value="flood">{t('flood')}</option>
+                      <option value="damage">{t('damage')}</option>
+                      <option value="tsunami">{t('tsunami')}</option>
+                      <option value="swell">{t('swell')}</option>
+                      <option value="waves">{t('waves')}</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">SOURCE</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('source')}</label>
                     <select
                       value={filterSource}
                       onChange={(e) => setFilterSource(e.target.value)}
                       className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
                     >
                       <option value="all">{t('all')}</option>
-                      <option value="citizen">Citizen</option>
-                      <option value="social">Social</option>
-                      <option value="verified">Verified</option>
+                      <option value="citizen">{t('roleCitizen')}</option>
+                      <option value="social">{t('social')}</option>
+                      <option value="verified">{t('verified')}</option>
                     </select>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">FROM</label>
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('from')}</label>
                       <input
                         type="date"
                         value={fromDate}
@@ -558,7 +558,7 @@ export default function OceanDashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">TO</label>
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('to')}</label>
                       <input
                         type="date"
                         value={toDate}
@@ -569,11 +569,11 @@ export default function OceanDashboard() {
                   </div>
 
                   <div className="relative pt-1">
-                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">LOCATION</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('location')}</label>
                     <div className="relative">
                       <input
                         type="text"
-                        placeholder="e.g. Chennai, Asean, Visakhapatnam..."
+                        placeholder={t('searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full bg-[#111625] border border-slate-800 focus:border-slate-700 rounded-lg pl-3 pr-9 py-1.5 text-xs text-slate-200 outline-none transition-all placeholder-slate-700 font-semibold"
@@ -588,13 +588,13 @@ export default function OceanDashboard() {
                     onClick={handleApplyFilters}
                     className="flex-grow py-2 rounded-lg bg-sky-600/95 hover:bg-sky-500 border border-sky-600 text-white text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
                   >
-                    APPLY
+                    {t('apply')}
                   </button>
                   <button
                     onClick={handleResetFilters}
                     className="flex-grow py-2 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-300 text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
                   >
-                    RESET
+                    {t('reset')}
                   </button>
                 </div>
               </div>
@@ -608,7 +608,7 @@ export default function OceanDashboard() {
                   <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                     <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
                   </svg>
-                  ADD REPORT
+                  {t('report')}
                 </button>
               )}
 
@@ -618,7 +618,7 @@ export default function OceanDashboard() {
             <div className="w-[350px] h-full pointer-events-auto flex flex-col max-h-full">
               <div className="glass-panel p-4 rounded-2xl flex flex-col h-full overflow-hidden">
                 <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-slate-900/60 pb-2.5 mb-3 shrink-0">
-                  UNIFIED FEED
+                  {t('unifiedFeed')}
                 </h3>
 
                 {/* Scrollable list */}
@@ -665,7 +665,7 @@ export default function OceanDashboard() {
                             <div className="flex-grow min-w-0">
                               <div className="flex justify-between items-start gap-1">
                                 <strong className="text-xs font-bold text-slate-100 group-hover:text-sky-400 transition-colors uppercase tracking-wide truncate">
-                                  {r.type}
+                                  {t(r.type.toLowerCase() as any)}
                                 </strong>
                                 <span className="text-[9px] text-slate-500 font-mono shrink-0">
                                   {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -675,7 +675,7 @@ export default function OceanDashboard() {
                               <p className="text-[10px] text-slate-400 mt-0.5 font-mono truncate">
                                 Lt: {r.lat?.toFixed(3)}, {r.lng?.toFixed(3)}
                               </p>
-
+                              
                               <p className="text-[11px] text-slate-450 leading-normal line-clamp-2 mt-1">
                                 {r.desc}
                               </p>
@@ -684,20 +684,22 @@ export default function OceanDashboard() {
                               {Array.isArray(r.media) && r.media.length > 0 && (
                                 <div className="flex gap-1.5 mt-1.5">
                                   <span className="text-[8px] font-semibold text-sky-400/80 bg-sky-500/5 border border-sky-500/10 px-1.5 py-0.5 rounded uppercase">
-                                    ATTACHMENT
+                                    {t('attachment')}
                                   </span>
                                 </div>
                               )}
 
                               <div className="flex flex-wrap items-center gap-1.5 mt-2.5 border-t border-slate-900/40 pt-2 text-[9px] text-slate-500">
-                                <span className="capitalize">{r.src}</span>
+                                <span className="capitalize">
+                                  {t(r.src === 'citizen' ? 'roleCitizen' : r.src === 'social' ? 'social' : 'verified')}
+                                </span>
                                 <span>•</span>
                                 <span className={`chip ${verifiedCls}`}>
-                                  {r.verified ? 'VERIFIED' : 'UNVERIFIED'}
+                                  {r.verified ? t('verified') : t('unverified')}
                                 </span>
                                 <span>•</span>
                                 <span className={`chip ${sentimentCls}`}>
-                                  {r.sentiment > 0.2 ? 'POSITIVE' : r.sentiment < -0.2 ? 'NEGATIVE' : 'NEUTRAL'}
+                                  {r.sentiment > 0.2 ? t('positive') : r.sentiment < -0.2 ? t('negative') : t('neutral')}
                                 </span>
                                 
                                 {(!r.verified && role === 'official') && (
@@ -742,7 +744,7 @@ export default function OceanDashboard() {
               <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-[330px] h-[170px]">
                 <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900/60 pb-1 shrink-0">
                   <BarChart3 size={11} />
-                  TREND: REPORTS PER HOUR
+                  {t('trendChartTitle')}
                 </h4>
                 <div className="flex-grow w-full relative h-[115px]">
                   <canvas ref={trendCanvasRef} />
@@ -753,7 +755,7 @@ export default function OceanDashboard() {
               <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-[330px] h-[170px]">
                 <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900/60 pb-1 shrink-0">
                   <Activity size={11} />
-                  SENTIMENT BREAKDOWN
+                  {t('sentimentChartTitle')}
                 </h4>
                 <div className="flex-grow w-full relative h-[115px] flex items-center justify-between">
                   <div className="w-[50%] h-full flex items-center justify-center">
@@ -763,21 +765,21 @@ export default function OceanDashboard() {
                     <div className="flex items-center justify-between gap-1.5">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full bg-[#10b981]"></span>
-                        <span>Positive</span>
+                        <span>{t('positive')}</span>
                       </div>
                       <span className="text-emerald-400 font-mono font-bold">{positiveCount}</span>
                     </div>
                     <div className="flex items-center justify-between gap-1.5">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full bg-[#f59e0b]"></span>
-                        <span>Neutral</span>
+                        <span>{t('neutral')}</span>
                       </div>
                       <span className="text-amber-400 font-mono font-bold">{neutralCount}</span>
                     </div>
                     <div className="flex items-center justify-between gap-1.5">
                       <div className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full bg-[#ef4444]"></span>
-                        <span>Negative</span>
+                        <span>{t('negative')}</span>
                       </div>
                       <span className="text-red-400 font-mono font-bold">{negativeCount}</span>
                     </div>

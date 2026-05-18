@@ -47,6 +47,28 @@ export interface TranslationDictionary {
   successSync: string;
   trendChartTitle: string;
   sentimentChartTitle: string;
+
+  // New keys for complete translation of all filters, options, tags & statuses
+  selector: string;
+  positive: string;
+  neutral: string;
+  negative: string;
+  verified: string;
+  unverified: string;
+  attachment: string;
+  social: string;
+  tide: string;
+  flood: string;
+  damage: string;
+  tsunami: string;
+  swell: string;
+  waves: string;
+  tree: string;
+  fire: string;
+  hunting: string;
+  poaching: string;
+  logging: string;
+  wind: string;
 }
 
 export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
@@ -96,7 +118,28 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'Paste some posts first.',
     successSync: 'Pending offline reports synchronized successfully!',
     trendChartTitle: 'Trend: Reports per hour',
-    sentimentChartTitle: 'Sentiment Breakdown'
+    sentimentChartTitle: 'Sentiment Breakdown',
+
+    selector: 'Selector',
+    positive: 'Positive',
+    neutral: 'Neutral',
+    negative: 'Negative',
+    verified: 'Verified',
+    unverified: 'Unverified',
+    attachment: 'Attachment',
+    social: 'Social Media',
+    tide: 'Unusual Tide',
+    flood: 'Flooding',
+    damage: 'Coastal Damage',
+    tsunami: 'Tsunami',
+    swell: 'Thundering Swell',
+    waves: 'High Waves',
+    tree: 'Unusual Cutting of Trees',
+    fire: 'Fire in Forest',
+    hunting: 'Hunting',
+    poaching: 'Poaching',
+    logging: 'Illegal Logging',
+    wind: 'Tree Blow Down'
   },
   hi: {
     report: 'रिपोर्ट दर्ज करें',
@@ -144,7 +187,28 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'कृपया कुछ पोस्ट पेस्ट करें।',
     successSync: 'ऑफ़लाइन रिपोर्ट सफलतापूर्वक सिंक्रनाइज़ की गईं!',
     trendChartTitle: 'ट्रेंड: प्रति घंटे रिपोर्ट',
-    sentimentChartTitle: 'भावना विश्लेषण'
+    sentimentChartTitle: 'भावना विश्लेषण',
+
+    selector: 'चयनकर्ता',
+    positive: 'सकारात्मक',
+    neutral: 'तटस्थ',
+    negative: 'नकारात्मक',
+    verified: 'सत्यापित',
+    unverified: 'असत्यापित',
+    attachment: 'संलग्नक',
+    social: 'सोशल मीडिया',
+    tide: 'असामान्य ज्वार',
+    flood: 'बाढ़',
+    damage: 'तटीय क्षति',
+    tsunami: 'सुनामी',
+    swell: 'गर्जती लहरें',
+    waves: 'ऊंची लहरें',
+    tree: 'पेड़ों की असामान्य कटाई',
+    fire: 'जंगल की आग',
+    hunting: 'शिकार',
+    poaching: 'अवैध शिकार',
+    logging: 'अवैध कटाई',
+    wind: 'पेड़ों का गिरना'
   },
   bn: {
     report: 'বিপদ রিপোর্ট করুন',
@@ -192,7 +256,28 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'প্রথমে কিছু পোস্ট পেস্ট করুন।',
     successSync: 'অফলাইন রিপোর্ট সফলভাবে সুসংগত করা হয়েছে!',
     trendChartTitle: 'ট্রেন্ড: প্রতি ঘন্টায় রিপোর্ট',
-    sentimentChartTitle: 'অনুভূতি বিশ্লেষণ'
+    sentimentChartTitle: 'অনুভূতি বিশ্লেষণ',
+
+    selector: 'নির্বাচক',
+    positive: 'ইতিবাচক',
+    neutral: 'নিরপেক্ষ',
+    negative: 'নেতিবাচক',
+    verified: 'যাচাইকৃত',
+    unverified: 'অযাচাইকৃত',
+    attachment: 'সংযুক্তি',
+    social: 'সোশ্যাল',
+    tide: 'অস্বাভাবিক জোয়ার',
+    flood: 'বন্যা',
+    damage: 'উপকূলীয় ক্ষতি',
+    tsunami: 'সুনামি',
+    swell: 'উত্তাল তরঙ্গ',
+    waves: 'উচ্চ ঢেউ',
+    tree: 'অস্বাভাবিক গাছ কাটা',
+    fire: 'দাবানল',
+    hunting: 'শিকার',
+    poaching: 'বন্যপ্রাণী নিধন',
+    logging: 'অবৈধ কাঠ কাটা',
+    wind: 'ঝড়ে গাছ ভেঙে পড়া'
   },
   mr: {
     report: 'धोका अहवाल द्या',
@@ -227,7 +312,7 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     legendSpikes: 'कीवर्ड स्पाइक',
     legendVerified: 'सत्यापित घटना',
     hotspotsNote: 'हीट लेयर घनता दर्शवते; क्लस्टर स्थानिक हॉटस्पॉट दर्शवतात. नकाशा नियंत्रणांमध्ये टॉगल करा.',
-    aboutText: 'एक प्रकल्प जो नागरिक, स्वयंसेवक आणि आपत्ती व्यवस्थापकांसाठी धोके नोंदवण्यासाठी आणि रिअल-टाइममध्ये सामाजिक ट्रेंडचे परीक्षण करण्यासाठी एक एकत्रित व्यासपीठ प्रदान करतो.',
+    aboutText: 'एक प्रकल्प जो नागरिक, स्वयंसेवक आणि आपत्ती व्यवस्थापकांसाठी धोके नोंदवण्यासाठी आणि रिअल-टाइममध्ये समाज माध्यमांवरून मिळणाऱ्या प्रवृत्तींचे परीक्षण करण्यासाठी एकत्रित व्यासपीठ प्रदान करतो.',
     loadSample: 'नमुना सोशल पोस्ट लोड करा',
     analyze: 'विश्लेषण करा',
     searchPlaceholder: 'उदा. चेन्नई, आसाम, विशाखापट्टनम',
@@ -240,7 +325,28 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'कृपया आधी काही पोस्ट पेस्ट करा.',
     successSync: 'ऑफलाइन अहवाल यशस्वीरित्या सिंक्रोनाइझ केले गेले!',
     trendChartTitle: 'ट्रेंड: प्रति तास अहवाल',
-    sentimentChartTitle: 'भावना विश्लेषण'
+    sentimentChartTitle: 'भावना विश्लेषण',
+
+    selector: 'निवडकर्ता',
+    positive: 'सकारात्मक',
+    neutral: 'तटस्थ',
+    negative: 'नकारात्मक',
+    verified: 'सत्यापित',
+    unverified: 'असत्यापित',
+    attachment: 'जोडलेले फाइल',
+    social: 'सोशल',
+    tide: 'असामान्य भरती',
+    flood: 'पूर',
+    damage: 'किनारपट्टीचे नुकसान',
+    tsunami: 'सुनामी',
+    swell: 'गर्जणाऱ्या लाटा',
+    waves: 'उंच लाटा',
+    tree: 'झाडांची असामान्य तोड',
+    fire: 'वणवा',
+    hunting: 'शिकार',
+    poaching: 'अवैध शिकार',
+    logging: 'अवैध वृक्षतोड',
+    wind: 'झाडे कोसळणे'
   },
   te: {
     report: 'ప్రమాదాన్ని నివేదించండి',
@@ -275,7 +381,7 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     legendSpikes: 'కీవర్డ్ స్పైక్‌లు',
     legendVerified: 'ధృవీకరించబడిన సంఘటనలు',
     hotspotsNote: 'హీట్ లేయర్ సాంద్రతను చూపుతుంది; క్లస్టర్లు స్థానిక హాట్‌స్పాట్లను చూపుతాయి. మ్యాప్ నియంత్రణలలో టోగుల్ చేయండి.',
-    aboutText: 'పౌరులు, స్వచ్ఛంద సేవకులు మరియు విపత్తు నిర్వాహకులు ప్రమాదాలను నివేదించడానికి మరియు నిజ సమయంలో సామాజిక పోకడలను పర్యవేక్షించడానికి ఒక ఏకీకృత వేదికను అందించే ప్రాజెక్ట్.',
+    aboutText: 'పౌరులు, స్వచ్ఛంద సేవకులు మరియు విపత్తు నిర్వాహకులు ప్రమాదాలను నివేదించడానికి మరియు నిజ సమయంలో సామాజिक పోకడలను పర్యవేక్షించడానికి ఒక ఏకీకృత వేదికను అందించే ప్రాజెక్ట్.',
     loadSample: 'నమూనా సోషల్ పోస్ట్‌లను లోడ్ చేయి',
     analyze: 'విశ్లేషణ చేయి',
     searchPlaceholder: 'ఉదా. చెన్నై, అస్సాం, విశాఖపట్నం',
@@ -288,7 +394,28 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'దయచేసి ముందుగా కొన్ని పోస్ట్‌లను పేస్ట్ చేయండి.',
     successSync: 'ఆఫ్‌లైన్ నివేదికలు విజయవంతంగా సమకాలీకరించబడ్డాయి!',
     trendChartTitle: 'ట్రెండ్: గంటకు నివేదికలు',
-    sentimentChartTitle: 'సెంటిమెంట్ విశ్లేషణ'
+    sentimentChartTitle: 'సెంటిమెంట్ విశ్లేషణ',
+
+    selector: 'సెలెక్టర్',
+    positive: 'సానుకూల',
+    neutral: 'తటస్థ',
+    negative: 'ప్రతికూల',
+    verified: 'ధృవీకరించబడింది',
+    unverified: 'ధృవీకరించబడలేదు',
+    attachment: 'అటాచ్‌మెంట్',
+    social: 'సోషల్',
+    tide: 'అసాధారణ అలలు',
+    flood: 'వరదలు',
+    damage: 'తీరప్రాంత నష్టం',
+    tsunami: 'సునామీ',
+    swell: 'భీకర అలలు',
+    waves: 'ఎగసిపడే అలలు',
+    tree: 'అసాధారణంగా చెట్లు నరకడం',
+    fire: 'దావానలం',
+    hunting: 'వేట',
+    poaching: 'అక్రమ వేట',
+    logging: 'అక్రమ కలప నరికివేత',
+    wind: 'చెట్లు కూలిపోవడం'
   },
   ta: {
     report: 'அபாயத்தைப் புகாரளிக்கவும்',
@@ -336,13 +463,34 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'முதலில் சில இடுகைகளை ஒட்டவும்.',
     successSync: 'ஆஃப்லைன் அறிக்கைகள் வெற்றிகரமாக ஒத்திசைக்கப்பட்டன!',
     trendChartTitle: 'போக்கு: ஒரு மணி நேரத்திற்கு அறிக்கைகள்',
-    sentimentChartTitle: 'கருத்து பகுப்பாய்வு'
+    sentimentChartTitle: 'கருத்து பகுப்பாய்வு',
+
+    selector: 'தேர்ந்தெடுப்பான்',
+    positive: 'நேர்மறை',
+    neutral: 'நடுநிலை',
+    negative: 'எதிர்மறை',
+    verified: 'சரிபார்க்கப்பட்டது',
+    unverified: 'சரிபார்க்கப்படாதது',
+    attachment: 'இணைப்பு',
+    social: 'சமூக வலைத்தளம்',
+    tide: 'அசாதாரண அலை',
+    flood: 'வெள்ளம்',
+    damage: 'கடலோர சேதம்',
+    tsunami: 'சுனாமி',
+    swell: 'இடியுடன் கூடிய அலை',
+    waves: 'உயரமான அலைகள்',
+    tree: 'மரங்கள் அசாதாரணமாக வெட்டப்படுதல்',
+    fire: 'காட்டுத்தீ',
+    hunting: 'வேட்டை',
+    poaching: 'வனவிலங்கு கடத்தல்',
+    logging: 'சட்டவிரோத மரமறுப்பு',
+    wind: 'மரம் சாய்ந்து விழுதல்'
   },
   kn: {
     report: 'ಅಪಾಯವನ್ನು ವರದಿ ಮಾಡಿ',
     eventType: 'ಘಟನೆಯ ಪ್ರಕಾರ',
     source: 'ಮೂಲ',
-    filters: 'ಫಿಲ್ಟರ್‌ಗಳು',
+    filters: 'ಕಣ್ಸನ್ನೆಗಳು',
     from: 'ಇಂದ',
     to: 'ವರೆಗೆ',
     location: 'ಸ್ಥಳ',
@@ -384,7 +532,28 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'ದಯವಿಟ್ಟು ಮೊದಲು ಕೆಲವು ಪೋಸ್ಟ್‌ಗಳನ್ನು ಪೇಸ್ಟ್ ಮಾಡಿ.',
     successSync: 'ಆಫ್‌ಲೈನ್ ವರದಿಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಿಂಕ್ರೊನೈಸ್ ಮಾಡಲಾಗಿದೆ!',
     trendChartTitle: 'ಟ್ರೆಂಡ್: ಗಂಟೆಗೆ ವರದಿಗಳು',
-    sentimentChartTitle: 'ಭಾವನೆ ವಿಶ್ಲೇಷಣೆ'
+    sentimentChartTitle: 'ಭಾವನೆ ವಿಶ್ಲೇಷಣೆ',
+
+    selector: 'ಆಯ್ಕೆಗಾರ',
+    positive: 'ಸಕಾರಾತ್ಮಕ',
+    neutral: 'ತಟಸ್ಥ',
+    negative: 'ನಕಾರಾತ್ಮಕ',
+    verified: 'ಪರಿಶೀಲಿಸಲಾಗಿದೆ',
+    unverified: 'ಪರಿಶೀಲಿಸದ',
+    attachment: 'ಲಗತ್ತು',
+    social: 'ಸೋಷಿಯಲ್',
+    tide: 'ಅಸಹಜ ಉಬ್ಬರವಿಳಿತ',
+    flood: 'ಪ್ರವಾಹ',
+    damage: 'ಕರಾವಳಿ ಹಾನಿ',
+    tsunami: 'ಸುನಾಮಿ',
+    swell: 'ಭೋರ್ಗರೆಯುವ ಅಲೆಗಳು',
+    waves: 'ಎತ್ತರದ ಅಲೆಗಳು',
+    tree: 'ಅಸಹಜ ಮರ ಕತ್ತರಿಸುವಿಕೆ',
+    fire: 'ಕಾಡ್ಗಿಚ್ಚು',
+    hunting: 'ಬೇಟೆ',
+    poaching: 'ಅಕ್ರಮ ಬೇಟೆ',
+    logging: 'ಅಕ್ರಮ ಮರ ಕಡಿಯುವುದು',
+    wind: 'ಮರ ಉರುಳಿ ಬೀಳುವುದು'
   },
   as: {
     report: 'বিপদৰ খবৰ দিয়ক',
@@ -419,7 +588,7 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     legendSpikes: 'কীৱৰ্ড স্পাইক',
     legendVerified: 'সত্যাাপিত ঘটনা',
     hotspotsNote: 'হীট লেয়াৰে ঘনত্ব দেখুৱায়; ক্লাষ্টাৰসমূহে স্থানীয় হটস্পটসমূহ দেখুৱায়। মানচিত্ৰ নিয়ন্ত্ৰণত টগল কৰক।',
-    aboutText: 'নাগৰিক, স্বেচ্ছাসেৱক আৰু দুৰ্যোগ প্ৰৱন্ধকসকলৰ বাবে বিপদৰ খবৰ দিবলৈ আৰু বাস্তৱ সময়ত সামাজিক প্ৰৱণতা নিৰীক্ষণ কৰিবলৈ এক একত্ৰিত মঞ্চ প্ৰদান কৰা এটা প্ৰকল্প।',
+    aboutText: 'নাগৰিক, স্বেচ্ছাসেৱক আৰু দুৰ্যোগ প্ৰৱন্ধকসকলৰ বাবে বিপদৰ খবৰ দিবলৈ আৰু বাৰৱ সময়ত সামাজিক প্ৰৱণতা নিৰীক্ষণ কৰিবলৈ এক একত্ৰিত মঞ্চ প্ৰদান কৰা এটা প্ৰকল্প।',
     loadSample: 'নমুনা ছচিয়েল পোষ্ট ল’ড কৰক',
     analyze: 'বিশ্লেষণ কৰক',
     searchPlaceholder: 'উদাহৰণস্বৰূপে চেন্নাই, অসম, বিশাখাপত্তনম',
@@ -432,7 +601,28 @@ export const I18N: Record<SupportedLanguages, TranslationDictionary> = {
     pasteSomePosts: 'অনুগ্ৰহ কৰি প্ৰথমে কিছু পোষ্ট পেষ্ট কৰক।',
     successSync: 'অফলাইন ৰিপৰ্টসমূহ সফলতাৰে চিনক্ৰ’নাইজ কৰা হ’ল!',
     trendChartTitle: 'ট্ৰেণ্ড: প্ৰতি ঘণ্টাত ৰিপৰ্ট',
-    sentimentChartTitle: 'অনুভূতি বিশ্লেষণ'
+    sentimentChartTitle: 'অনুভূতি বিশ্লেষণ',
+
+    selector: 'নিৰ্বাচক',
+    positive: 'ইতিবাচক',
+    neutral: 'নিৰপেক্ষ',
+    negative: 'নেতিবাচক',
+    verified: 'সত্যাপিত',
+    unverified: 'অসত্যাপিত',
+    attachment: 'সংলগ্নক',
+    social: 'ছচিয়েল',
+    tide: 'অস্বাভাৱিক জোৱাৰ',
+    flood: 'বানপানী',
+    damage: 'উপকূলীয় ক্ষতি',
+    tsunami: 'চুনামি',
+    swell: 'গৰ্জনকাৰী তৰংग',
+    waves: 'উচ্চ ঢৌ',
+    tree: 'গছৰ অস্বাভাৱিক কটা',
+    fire: 'দাবানল',
+    hunting: 'চিকাৰ',
+    poaching: 'অৱৈধ চিকাৰ',
+    logging: 'অৱৈধ কাঠ কটা',
+    wind: 'ধুমুহাত গছ উঘলি পৰা'
   }
 };
 
