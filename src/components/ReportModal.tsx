@@ -272,6 +272,12 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                   >
                     <option value="en" className="bg-slate-950 text-slate-200">English</option>
                     <option value="hi" className="bg-slate-950 text-slate-200">हिन्दी</option>
+                    <option value="bn" className="bg-slate-950 text-slate-200">বাংলা</option>
+                    <option value="mr" className="bg-slate-950 text-slate-200">मराठी</option>
+                    <option value="te" className="bg-slate-950 text-slate-200">తెలుగు</option>
+                    <option value="ta" className="bg-slate-950 text-slate-200">தமிழ்</option>
+                    <option value="kn" className="bg-slate-950 text-slate-200">ಕನ್ನಡ</option>
+                    <option value="as" className="bg-slate-950 text-slate-200">অসমীয়া</option>
                   </select>
                 </div>
               </div>

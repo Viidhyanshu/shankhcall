@@ -439,8 +439,14 @@ export default function OceanDashboard() {
               onChange={(e) => setLang(e.target.value as SupportedLanguages)}
               className="appearance-none bg-transparent border-none outline-none text-slate-200 cursor-pointer font-semibold pr-1"
             >
-              <option value="en">Language</option>
-              <option value="hi">Language (HI)</option>
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="bn">বাংলা</option>
+              <option value="mr">मराठी</option>
+              <option value="te">తెలుగు</option>
+              <option value="ta">தமிழ்</option>
+              <option value="kn">ಕನ್ನಡ</option>
+              <option value="as">অসমীয়া</option>
             </select>
             <ChevronDown size={11} className="text-slate-500" />
           </div>
