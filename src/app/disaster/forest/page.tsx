@@ -188,7 +188,7 @@ export default function ForestDashboard() {
     <div className="relative h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
       
       {/* Header element */}
-      <header className="px-6 py-4 bg-transparent flex flex-col md:flex-row items-center gap-4 z-20 shrink-0">
+      <header className="px-4 md:px-6 py-4 bg-transparent flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 z-20 shrink-0">
         <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/15 border border-emerald-400/20">
             <Activity className="h-5 w-5 text-white" />
@@ -199,7 +199,7 @@ export default function ForestDashboard() {
           </div>
         </div>
 
-        <div className="md:ml-auto flex flex-wrap items-center gap-3 shrink-0">
+        <div className="md:ml-auto flex flex-wrap justify-center md:justify-end items-center gap-2 md:gap-3 shrink-0 w-full md:w-auto mt-2 md:mt-0">
           
           {/* Back button */}
           <button

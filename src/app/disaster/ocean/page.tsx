@@ -393,7 +393,7 @@ export default function OceanDashboard() {
     <div className="relative h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
       
       {/* Header element */}
-      <header className="px-6 py-3 bg-transparent flex items-center justify-between gap-4 z-20 shrink-0 select-none">
+      <header className="px-4 md:px-6 py-3 bg-transparent flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 z-20 shrink-0 select-none">
         
         {/* Left Section: Logo */}
         <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
@@ -409,7 +409,7 @@ export default function OceanDashboard() {
         </div>
 
         {/* Right Section: Selectors and Toggle */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-3 shrink-0 w-full md:w-auto">
           
           {/* Back to Selector button */}
           <button
