@@ -8,7 +8,8 @@ import { useDisasterStore, storeActions, HazardReport } from '@/lib/store';
 import { classifyText, scoreSentiment } from '@/lib/nlp';
 import { 
   Activity, Plus, Globe, User, Search, 
-  RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft, BarChart3 
+  RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft, BarChart3,
+  Menu, ChevronDown, Waves
 } from 'lucide-react';
 import Chart from 'chart.js/auto';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -357,333 +358,390 @@ export default function OceanDashboard() {
   }, [filteredReports]);
 
   return (
-    <div className="relative min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans">
+    <div className="relative min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
       
       {/* Header element */}
-      <header className="px-6 py-4 bg-slate-950/70 backdrop-blur-md border-b border-slate-900 flex flex-col md:flex-row items-center gap-4 z-20 shrink-0">
-        <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/15 border border-cyan-400/20">
-            <Activity className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-wider font-sans uppercase glow-text">शंखcall</h1>
-            <p className="text-[10px] text-slate-500 font-light tracking-wide uppercase">{t('tagline')}</p>
+      <header className="px-6 py-3 bg-[#0d111a]/85 backdrop-blur-md border-b border-slate-900/60 flex items-center justify-between gap-4 z-20 shrink-0 select-none">
+        
+        {/* Left Section: Logo + Burger */}
+        <div className="flex items-center gap-3 shrink-0">
+          <button className="text-slate-400 hover:text-slate-200 transition-colors p-1 cursor-pointer shrink-0">
+            <Menu size={18} />
+          </button>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/select')}>
+            <div>
+              <h1 className="text-lg font-bold tracking-wider font-sans uppercase text-slate-100 flex items-center gap-1.5">
+                <span>शंखCALL</span>
+              </h1>
+              <p className="text-[9px] text-slate-500 font-light tracking-wide uppercase">Optimized for Disaster Monitoring & Social Intelligence</p>
+            </div>
           </div>
         </div>
 
-        <div className="md:ml-auto flex flex-wrap items-center gap-3 shrink-0">
+        {/* Center Section: Global Search */}
+        <form onSubmit={handleSearchExecute} className="hidden md:flex flex-grow max-w-sm mx-auto items-center relative">
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-[#111625] border border-slate-800 focus:border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 outline-none transition-all placeholder-slate-600"
+          />
+        </form>
+
+        {/* Right Section: Selectors and Toggle */}
+        <div className="flex items-center gap-3 shrink-0">
           
-          {/* Back button */}
+          {/* Back to Selector button */}
           <button
             onClick={() => router.push('/select')}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-xs font-semibold text-slate-300 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111625] hover:bg-[#151c2f] border border-slate-800 hover:border-slate-700 text-xs font-semibold text-slate-300 transition-all cursor-pointer"
           >
-            <ArrowLeft size={14} />
+            <ArrowLeft size={13} />
             Selector
           </button>
 
           {/* Role selector Dropdown */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
-            <User size={14} className="text-cyan-400" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111625] border border-slate-800 text-xs font-semibold text-slate-350">
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as any)}
-              className="bg-transparent border-none outline-none text-slate-200 cursor-pointer font-medium"
+              className="bg-transparent border-none outline-none text-slate-200 cursor-pointer font-semibold pr-1"
             >
               <option value="citizen">{t('roleCitizen')}</option>
               <option value="official">{t('roleOfficial')}</option>
               <option value="analyst">{t('roleAnalyst')}</option>
             </select>
+            <ChevronDown size={11} className="text-slate-500" />
           </div>
 
           {/* Language selector Dropdown */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
-            <Globe size={14} className="text-cyan-400" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111625] border border-slate-800 text-xs font-semibold text-slate-350">
             <select
               value={lang}
               onChange={(e) => setLang(e.target.value as SupportedLanguages)}
-              className="bg-transparent border-none outline-none text-slate-200 cursor-pointer font-medium"
+              className="bg-transparent border-none outline-none text-slate-200 cursor-pointer font-semibold pr-1"
             >
-              <option value="en">English</option>
-              <option value="hi">हिन्दी</option>
+              <option value="en">Language</option>
+              <option value="hi">Language (HI)</option>
             </select>
+            <ChevronDown size={11} className="text-slate-500" />
           </div>
 
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* Add report button */}
-          {(role === 'citizen' || role === 'official') && (
-            <button
-              onClick={() => setIsReportOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-450 hover:to-indigo-500 text-white text-xs font-semibold tracking-wider uppercase transition-all shadow-lg shadow-sky-500/15 cursor-pointer glow-btn"
-            >
-              <Plus size={14} />
-              {t('report')}
-            </button>
-          )}
-
         </div>
       </header>
 
-      {/* Main Grid Workspace */}
-      <div className="flex-grow flex flex-col lg:flex-row overflow-hidden relative z-10 w-full h-[calc(100vh-76px)]">
+      {/* Main Workspace: Fullscreen Map with Floating Overlays */}
+      <div className="flex-grow w-full h-[calc(100vh-62px)] relative overflow-hidden">
         
-        {/* LEFT SIDEBAR: FILTERS */}
-        <aside className="w-full lg:w-3/12 p-4 shrink-0 flex flex-col gap-4 overflow-y-auto lg:h-full border-r border-slate-950 bg-slate-950/20">
+        {/* Fullscreen Map Background */}
+        <div className="absolute inset-0 z-0 w-full h-full">
+          <LeafletMap 
+            mode="ocean" 
+            reports={filteredReports} 
+            center={mapCenter}
+            zoom={mapZoom}
+            onReportClick={handleOpenMedia}
+          />
+        </div>
+
+        {/* INTERACTIVE FLOATING OVERLAYS CONTAINER (Pointer events none so map is draggable underneath) */}
+        <div className="absolute inset-0 z-10 pointer-events-none p-4 flex flex-col justify-between">
           
-          {/* Filters Card */}
-          <div className="glass-panel p-4 rounded-xl space-y-4">
-            <h3 className="text-sm font-bold text-sky-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-900 pb-2 mb-1">
-              <Filter size={14} />
-              {t('filters')}
-            </h3>
+          {/* Top Floating Row: Filters Card (Left) and Unified Feed Card (Right) */}
+          <div className="flex justify-between items-start w-full h-full max-h-[calc(100vh-250px)]">
+            
+            {/* LEFT FLOATING COLUMN: FILTERS & HOTSPOTS & ADD REPORT */}
+            <div className="w-[310px] flex flex-col gap-3.5 pointer-events-auto max-h-full overflow-y-auto pr-1">
+              
+              {/* Filters Card */}
+              <div className="glass-panel p-4 rounded-xl space-y-4">
+                <h3 className="text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-900 pb-2 mb-1.5">
+                  <Filter size={13} />
+                  FILTERS & HOTSPOTS
+                  <ChevronDown size={13} className="ml-auto text-slate-500" />
+                </h3>
 
-            <div className="space-y-3">
-              <div>
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('eventType')}</label>
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-900 hover:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-all cursor-pointer"
-                >
-                  <option value="all">{t('all')}</option>
-                  <option value="tide">Unusual Tide</option>
-                  <option value="flood">Flooding</option>
-                  <option value="damage">Coastal Damage</option>
-                  <option value="tsunami">Tsunami</option>
-                  <option value="swell">Thundering Swell</option>
-                  <option value="waves">High Waves</option>
-                </select>
-              </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">EVENT TYPE</label>
+                    <select
+                      value={filterType}
+                      onChange={(e) => setFilterType(e.target.value)}
+                      className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
+                    >
+                      <option value="all">{t('all')}</option>
+                      <option value="tide">Unusual Tide</option>
+                      <option value="flood">Flooding</option>
+                      <option value="damage">Coastal Damage</option>
+                      <option value="tsunami">Tsunami</option>
+                      <option value="swell">Thundering Swell</option>
+                      <option value="waves">High Waves</option>
+                    </select>
+                  </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('source')}</label>
-                <select
-                  value={filterSource}
-                  onChange={(e) => setFilterSource(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-900 hover:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-all cursor-pointer"
-                >
-                  <option value="all">{t('all')}</option>
-                  <option value="citizen">Citizen</option>
-                  <option value="social">Social</option>
-                  <option value="verified">Verified</option>
-                </select>
-              </div>
+                  <div>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">SOURCE</label>
+                    <select
+                      value={filterSource}
+                      onChange={(e) => setFilterSource(e.target.value)}
+                      className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
+                    >
+                      <option value="all">{t('all')}</option>
+                      <option value="citizen">Citizen</option>
+                      <option value="social">Social</option>
+                      <option value="verified">Verified</option>
+                    </select>
+                  </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('from')}</label>
-                  <input
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => setFromDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-900 hover:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-all"
-                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">FROM</label>
+                      <input
+                        type="date"
+                        value={fromDate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                        className="w-full bg-[#111625] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all font-semibold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">TO</label>
+                      <input
+                        type="date"
+                        value={toDate}
+                        onChange={(e) => setToDate(e.target.value)}
+                        className="w-full bg-[#111625] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all font-semibold"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="relative pt-1">
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">LOCATION</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="e.g. Chennai, Asean, Visakhapatnam..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full bg-[#111625] border border-slate-800 focus:border-slate-700 rounded-lg pl-3 pr-9 py-1.5 text-xs text-slate-200 outline-none transition-all placeholder-slate-700 font-semibold"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleApplyFilters}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
+                      >
+                        <Search size={13} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('to')}</label>
-                  <input
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-900 hover:border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none transition-all"
-                  />
-                </div>
-              </div>
 
-              <form onSubmit={handleSearchExecute} className="relative pt-1">
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('location')}</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder={t('searchPlaceholder')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-900 focus:border-slate-800 rounded-lg pl-3 pr-9 py-2 text-xs text-slate-300 outline-none transition-all placeholder-slate-700"
-                  />
+                <div className="flex gap-2.5 pt-2">
                   <button
-                    type="submit"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
+                    onClick={handleApplyFilters}
+                    className="flex-grow py-2 rounded-lg bg-sky-600/95 hover:bg-sky-500 border border-sky-600 text-white text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
                   >
-                    <Search size={14} />
+                    APPLY
+                  </button>
+                  <button
+                    onClick={handleResetFilters}
+                    className="flex-grow py-2 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-300 text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
+                  >
+                    RESET
                   </button>
                 </div>
-              </form>
-            </div>
-
-            <div className="flex gap-2 pt-2">
-              <button
-                onClick={handleApplyFilters}
-                className="flex-grow py-2 rounded-lg bg-slate-900 hover:bg-sky-500/10 border border-slate-800 hover:border-sky-500/30 text-sky-400 hover:text-sky-300 text-xs font-semibold tracking-wider uppercase transition-all cursor-pointer"
-              >
-                {t('apply')}
-              </button>
-              <button
-                onClick={handleResetFilters}
-                className="flex-grow py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-300 text-xs font-semibold tracking-wider uppercase transition-all cursor-pointer"
-              >
-                {t('reset')}
-              </button>
-            </div>
-          </div>
-
-          {/* Hotspots Card */}
-          <div className="glass-panel p-4 rounded-xl space-y-3">
-            <h3 className="text-sm font-bold text-sky-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-900 pb-2 mb-1">
-              <Globe size={14} />
-              {t('hotspots')}
-            </h3>
-            <div className="flex flex-col gap-2.5 text-xs text-slate-300">
-              <div className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></span>
-                <span>{t('legendDensity')}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400/50"></span>
-                <span>{t('legendSpikes')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-red-400 shadow-sm shadow-red-400/50"></span>
-                <span>{t('legendVerified')}</span>
-              </div>
-            </div>
-            <p className="text-[10px] leading-relaxed text-slate-500 pt-2 border-t border-slate-900">
-              {t('hotspotsNote')}
-            </p>
-          </div>
 
-          {/* About Card */}
-          <div className="glass-panel p-4 rounded-xl space-y-2">
-            <h3 className="text-xs font-bold text-sky-400 uppercase tracking-widest border-b border-slate-900 pb-2 mb-1">
-              {t('about')}
-            </h3>
-            <p className="text-[10px] leading-relaxed text-slate-400">
-              {t('aboutText')}
-            </p>
-            <div className="text-[9px] font-bold text-slate-600 pt-1">
-              Built with ♡ Team CodeXPreadtors (Wisdom Weave)
-            </div>
-          </div>
-
-        </aside>
-
-        {/* MIDDLE: INTERACTIVE MAP + ANALYTICAL CHARTS */}
-        <main className="flex-grow p-4 min-h-[300px] h-full lg:h-full flex flex-col gap-4 overflow-y-auto select-none">
-          
-          {/* Leaflet map pane */}
-          <div className="flex-grow min-h-[380px] w-full relative">
-            <LeafletMap 
-              mode="ocean" 
-              reports={filteredReports} 
-              center={mapCenter}
-              zoom={mapZoom}
-              onReportClick={handleOpenMedia}
-            />
-          </div>
-
-          {/* ANALYTICAL CHARTS SUB-PANEL */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
-            
-            {/* Chart 1: Trend line */}
-            <div className="glass-panel p-4 rounded-xl flex flex-col gap-2 min-h-[220px]">
-              <h4 className="text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900 pb-1.5 shrink-0">
-                <BarChart3 size={13} />
-                {t('trendChartTitle')}
-              </h4>
-              <div className="flex-grow w-full relative h-[150px]">
-                <canvas ref={trendCanvasRef} />
-              </div>
-            </div>
-
-            {/* Chart 2: Sentiment analysis doughnut */}
-            <div className="glass-panel p-4 rounded-xl flex flex-col gap-2 min-h-[220px]">
-              <h4 className="text-xs font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900 pb-1.5 shrink-0">
-                <Activity size={13} />
-                {t('sentimentChartTitle')}
-              </h4>
-              <div className="flex-grow w-full relative h-[150px] flex items-center justify-center">
-                <canvas ref={sentimentCanvasRef} />
-              </div>
-            </div>
-
-          </section>
-
-        </main>
-
-        {/* RIGHT SIDEBAR: UNIFIED FEED & NLP MONITOR */}
-        <section className="w-full lg:w-4/12 p-4 shrink-0 flex flex-col gap-4 overflow-y-auto lg:h-full border-l border-slate-950 bg-slate-950/20">
-          
-          {/* Unified Feed Card */}
-          <div className="glass-panel p-4 rounded-xl flex-grow flex flex-col min-h-[280px]">
-            <h3 className="text-sm font-bold text-sky-400 uppercase tracking-widest border-b border-slate-900 pb-2 mb-3 shrink-0">
-              {t('unifiedFeed')}
-            </h3>
-
-            {/* List */}
-            <div className="flex-grow overflow-y-auto max-h-[320px] lg:max-h-none space-y-3 pr-1">
-              {sortedReports.length > 0 ? (
-                sortedReports.map(r => {
-                  const verifiedCls = r.verified ? 'ok' : 'warn';
-                  const sentimentCls = r.sentiment > 0.2 ? 'ok' : r.sentiment < -0.2 ? 'danger' : 'warn';
-
-                  return (
-                    <div 
-                      key={r.id} 
-                      onClick={() => handleOpenMedia(r)}
-                      className="p-3 bg-slate-950/40 hover:bg-slate-950/70 border border-slate-900/60 hover:border-slate-800 rounded-xl cursor-pointer transition-all flex flex-col gap-2 group"
-                    >
-                      <div className="flex justify-between items-center gap-2">
-                        <strong className="text-xs font-bold text-slate-200 group-hover:text-sky-400 transition-colors uppercase">
-                          {r.type}
-                        </strong>
-                        <span className="text-[10px] text-slate-500 font-mono">
-                          {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      
-                      <p className="text-[11px] text-slate-400 leading-normal line-clamp-2">
-                        {r.desc}
-                      </p>
-
-                      {/* Display media tag indicator */}
-                      {Array.isArray(r.media) && r.media.length > 0 && (
-                        <div className="flex gap-1.5 mt-0.5">
-                          {r.media.slice(0, 3).map((m, mIdx) => (
-                            <span key={mIdx} className="text-[9px] font-semibold text-sky-400/80 bg-sky-500/5 border border-sky-500/10 px-1.5 py-0.5 rounded uppercase">
-                              {m.type}
-                            </span>
-                          ))}
-                          <span className="text-[9px] text-slate-500 flex items-center font-medium pl-1">
-                            {r.media.length} Attachment(s)
-                          </span>
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap items-center gap-2 mt-1 border-t border-slate-900/50 pt-2 text-[10px] text-slate-500">
-                        <span className="capitalize font-semibold">{r.src}</span>
-                        <span>•</span>
-                        <span className={`chip ${verifiedCls} scale-90`}>{r.verified ? 'verified' : 'unverified'}</span>
-                        <span className={`chip ${sentimentCls} scale-90`}>sentiment {r.sentiment.toFixed(1)}</span>
-                        
-                        {/* Language Tag */}
-                        <span className="ml-auto font-mono text-[9px] bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-400 font-semibold">{r.lang}</span>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-center py-12 flex flex-col justify-center items-center text-slate-500 gap-2 shrink-0">
-                  <AlertCircle size={24} className="text-slate-600" />
-                  <div className="text-xs">{t('noItems')}</div>
-                </div>
+              {/* Large ADD REPORT Floating Button */}
+              {(role === 'citizen' || role === 'official') && (
+                <button
+                  onClick={() => setIsReportOpen(true)}
+                  className="w-full flex items-center justify-center gap-3 py-3 rounded-2xl bg-gradient-to-r from-sky-400 via-sky-500 to-blue-500 hover:from-sky-450 hover:to-blue-600 text-white font-bold tracking-widest text-sm shadow-xl shadow-sky-500/25 transition-all cursor-pointer border border-sky-400/20 uppercase"
+                >
+                  <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                  </svg>
+                  ADD REPORT
+                </button>
               )}
+
+            </div>
+
+            {/* RIGHT FLOATING COLUMN: TALL UNIFIED FEED */}
+            <div className="w-[350px] h-full pointer-events-auto flex flex-col max-h-full">
+              <div className="glass-panel p-4 rounded-2xl flex flex-col h-full overflow-hidden">
+                <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-slate-900/60 pb-2.5 mb-3 shrink-0">
+                  UNIFIED FEED
+                </h3>
+
+                {/* Scrollable list */}
+                <div className="flex-grow overflow-y-auto space-y-3 pr-1">
+                  {sortedReports.length > 0 ? (
+                    sortedReports.map(r => {
+                      const verifiedCls = r.verified ? 'ok' : 'warn';
+                      
+                      // Sentiment Styling
+                      const sentimentCls = r.sentiment > 0.2 ? 'ok' : r.sentiment < -0.2 ? 'danger' : 'warn';
+
+                      // Icon determination
+                      const getDisasterIcon = (type: string) => {
+                        const lower = type.toLowerCase();
+                        if (lower.includes('tsunami')) {
+                          return (
+                            <div className="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
+                              <Waves size={18} />
+                            </div>
+                          );
+                        }
+                        if (lower.includes('waves') || lower.includes('swell')) {
+                          return (
+                            <div className="h-9 w-9 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+                              <Waves size={18} />
+                            </div>
+                          );
+                        }
+                        return (
+                          <div className="h-9 w-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                            <Waves size={18} />
+                          </div>
+                        );
+                      };
+
+                      return (
+                        <div 
+                          key={r.id} 
+                          onClick={() => handleOpenMedia(r)}
+                          className="p-3 bg-slate-950/45 hover:bg-slate-950/70 border border-slate-900/50 hover:border-slate-800 rounded-xl cursor-pointer transition-all flex flex-col gap-2 group"
+                        >
+                          <div className="flex gap-3">
+                            {getDisasterIcon(r.type)}
+                            <div className="flex-grow min-w-0">
+                              <div className="flex justify-between items-start gap-1">
+                                <strong className="text-xs font-bold text-slate-100 group-hover:text-sky-400 transition-colors uppercase tracking-wide truncate">
+                                  {r.type}
+                                </strong>
+                                <span className="text-[9px] text-slate-500 font-mono shrink-0">
+                                  {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                              
+                              <p className="text-[10px] text-slate-400 mt-0.5 font-mono truncate">
+                                Lt: {r.lat?.toFixed(3)}, {r.lng?.toFixed(3)}
+                              </p>
+
+                              <p className="text-[11px] text-slate-450 leading-normal line-clamp-2 mt-1">
+                                {r.desc}
+                              </p>
+
+                              {/* Media tag indicator */}
+                              {Array.isArray(r.media) && r.media.length > 0 && (
+                                <div className="flex gap-1.5 mt-1.5">
+                                  <span className="text-[8px] font-semibold text-sky-400/80 bg-sky-500/5 border border-sky-500/10 px-1.5 py-0.5 rounded uppercase">
+                                    ATTACHMENT
+                                  </span>
+                                </div>
+                              )}
+
+                              <div className="flex flex-wrap items-center gap-1.5 mt-2.5 border-t border-slate-900/40 pt-2 text-[9px] text-slate-500">
+                                <span className="capitalize">{r.src}</span>
+                                <span>•</span>
+                                <span className={`chip ${verifiedCls} scale-85 origin-left`}>
+                                  {r.verified ? 'VERIFIED' : 'UNVERIFIED'}
+                                </span>
+                                
+                                {(!r.verified && role === 'official') && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      storeActions.verifyReport(r.id);
+                                    }}
+                                    className="px-1.5 py-0.5 rounded bg-sky-500/15 text-sky-400 border border-sky-500/25 text-[8px] font-bold tracking-wider hover:bg-sky-500 hover:text-white cursor-pointer uppercase transition-all ml-1 shrink-0"
+                                  >
+                                    VERIFY
+                                  </button>
+                                )}
+
+                                {/* Language Chip */}
+                                <span className="ml-auto font-mono text-[8px] bg-slate-900 px-1.5 py-0.2 rounded border border-slate-850 uppercase text-slate-450 font-semibold">
+                                  {r.lang}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-12 flex flex-col justify-center items-center text-slate-600 gap-2 shrink-0">
+                      <AlertCircle size={20} className="text-slate-700" />
+                      <div className="text-[11px] uppercase tracking-wider">{t('noItems')}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom Floating Row: Small Side-by-Side Charts (Center) */}
+          <div className="w-full flex justify-center pointer-events-auto">
+            <div className="flex gap-4 max-w-[calc(100vw-680px)] select-none">
+              
+              {/* Chart 1: Trend line */}
+              <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-[330px] h-[170px]">
+                <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900/60 pb-1 shrink-0">
+                  <BarChart3 size={11} />
+                  TREND: REPORTS PER HOUR
+                </h4>
+                <div className="flex-grow w-full relative h-[115px]">
+                  <canvas ref={trendCanvasRef} />
+                </div>
+              </div>
+
+              {/* Chart 2: Sentiment analysis doughnut */}
+              <div className="glass-panel p-3 rounded-2xl flex flex-col gap-1.5 w-[330px] h-[170px]">
+                <h4 className="text-[10px] font-bold text-sky-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900/60 pb-1 shrink-0">
+                  <Activity size={11} />
+                  SENTIMENT BREAKDOWN
+                </h4>
+                <div className="flex-grow w-full relative h-[115px] flex items-center justify-between">
+                  <div className="w-[50%] h-full flex items-center justify-center">
+                    <canvas ref={sentimentCanvasRef} />
+                  </div>
+                  <div className="w-[45%] flex flex-col gap-1.5 text-[9px] text-slate-400 font-semibold pr-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981]"></span>
+                      <span>Positive</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-[#f59e0b]"></span>
+                      <span>Neutral</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-[#ef4444]"></span>
+                      <span>Negative</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
+        </div>
 
-
-        </section>
+        {/* Absolute Pulsing Notification Issue Badge (Bottom Left) */}
+        <div className="absolute bottom-4 left-4 z-20 pointer-events-auto">
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/90 border border-red-500/30 text-white text-[11px] font-bold shadow-lg shadow-red-500/20 select-none">
+            <span className="h-2 w-2 rounded-full bg-white animate-ping"></span>
+            <AlertCircle size={13} />
+            <span>{filteredReports.filter(r => !r.verified).length} Issue</span>
+          </div>
+        </div>
 
       </div>
 
@@ -706,3 +764,4 @@ export default function OceanDashboard() {
     </div>
   );
 }
+
