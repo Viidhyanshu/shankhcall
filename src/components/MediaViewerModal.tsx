@@ -3,7 +3,7 @@
 import React from 'react';
 import { SupportedLanguages, getTranslation } from '@/lib/i18n';
 import { HazardReport } from '@/lib/store';
-import { X, Calendar, Globe, User, MessageSquare, ShieldAlert, Cpu, Radio, Activity, ShieldCheck, Compass, Eye, Terminal } from 'lucide-react';
+import { X, Calendar, Globe, User, MessageSquare, ShieldAlert, Cpu, Radio, ShieldCheck, Compass, Eye, Terminal } from 'lucide-react';
 
 interface MediaViewerModalProps {
   isOpen: boolean;
@@ -18,13 +18,7 @@ export default function MediaViewerModal({ isOpen, onClose, report, lang }: Medi
   const t = (key: any) => getTranslation(key, lang);
   const dateStr = new Date(report.ts).toLocaleString();
 
-  // Sentiment metrics
-  const sentimentVal = report.sentiment || 0;
-  const sentimentCls = sentimentVal > 0.2 ? 'text-emerald-400 bg-emerald-950/20 border-emerald-500/30' : sentimentVal < -0.2 ? 'text-red-400 bg-red-950/20 border-red-500/30' : 'text-amber-400 bg-amber-950/20 border-amber-500/30';
-  const sentimentText = sentimentVal > 0.2 ? 'Positive' : sentimentVal < -0.2 ? 'Negative' : 'Neutral';
 
-  // Sentiment bar width mapper (-1.0 to 1.0 -> 0% to 100%)
-  const sentimentPercent = Math.max(0, Math.min(100, ((sentimentVal + 1) / 2) * 100));
 
   const hasMedia = Array.isArray(report.media) && report.media.length > 0;
 
@@ -154,34 +148,31 @@ export default function MediaViewerModal({ isOpen, onClose, report, lang }: Medi
               </div>
             </div>
 
-            {/* NLP Sentiment diagnostics card */}
+            {/* Tactical Comms Waveform Widget */}
             <div className="p-4 bg-[#0a1226]/80 rounded-xl border border-slate-800/80 space-y-2.5">
               <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-900 pb-1.5">
-                <Activity size={11} className="text-cyan-400" />
-                NLP SENTIMENT ANALYSIS
+                <Radio size={11} className="text-cyan-400 animate-pulse" />
+                TACTICAL SIGNAL MONITOR
               </h3>
 
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-slate-400 font-medium">Signal Tone:</span>
-                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${sentimentCls}`}>
-                  {sentimentText} ({sentimentVal.toFixed(2)})
-                </span>
+              <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                <span>FREQUENCY: <span className="text-cyan-400 font-bold">868.5 MHz</span></span>
+                <span className="text-emerald-400 font-bold animate-pulse">● SECURE LOCK</span>
               </div>
 
-              {/* Progress visual bar */}
-              <div className="space-y-1">
-                <div className="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden flex border border-slate-900">
-                  <div 
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      sentimentVal > 0.2 ? 'bg-emerald-500' : sentimentVal < -0.2 ? 'bg-red-500' : 'bg-amber-500'
-                    }`}
-                    style={{ width: `${sentimentPercent}%` }}
-                  />
-                </div>
-                <div className="flex justify-between text-[8px] font-mono text-slate-600 font-bold">
-                  <span>NEGATIVE (-1.0)</span>
-                  <span>NEUTRAL (0.0)</span>
-                  <span>POSITIVE (1.0)</span>
+              {/* High-tech pulsing wave animation */}
+              <div className="h-10 w-full bg-slate-950 rounded border border-slate-900/60 flex items-center justify-center overflow-hidden relative">
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,194,255,0.02)_1px,transparent_1px)] bg-[size:100%_4px]"></div>
+                <div className="flex items-center gap-1.5 px-3 z-10 w-full justify-between select-none">
+                  <div className="h-4 w-1 bg-cyan-500/70 rounded animate-[pulse_1s_infinite_100ms]"></div>
+                  <div className="h-6 w-1 bg-cyan-400/80 rounded animate-[pulse_1.2s_infinite_300ms]"></div>
+                  <div className="h-8 w-1 bg-cyan-400 rounded animate-[pulse_0.8s_infinite_0ms]"></div>
+                  <div className="h-5 w-1 bg-cyan-500 rounded animate-[pulse_1.1s_infinite_400ms]"></div>
+                  <div className="h-7 w-1 bg-cyan-400 rounded animate-[pulse_0.9s_infinite_200ms]"></div>
+                  <div className="h-4 w-1 bg-cyan-500/70 rounded animate-[pulse_1.4s_infinite_500ms]"></div>
+                  <div className="h-6 w-1 bg-cyan-400/80 rounded animate-[pulse_1s_infinite_150ms]"></div>
+                  <div className="h-8 w-1 bg-cyan-400 rounded animate-[pulse_0.7s_infinite_50ms]"></div>
+                  <div className="h-5 w-1 bg-cyan-500 rounded animate-[pulse_1.3s_infinite_350ms]"></div>
                 </div>
               </div>
             </div>
