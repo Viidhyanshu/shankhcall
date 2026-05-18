@@ -351,3 +351,16 @@ body {
   background-color: rgba(15, 23, 42, 0.35) !important;
 }
 
+/* Completely hide Next.js developer portal and Turbopack issues pill in dev mode */
+nextjs-portal,
+#nextjs-issues-button,
+#nextjs-issues-portal,
+.nextjs-issues-button-container,
+[id^="nextjs-issues"],
+[class*="nextjs-issues"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+

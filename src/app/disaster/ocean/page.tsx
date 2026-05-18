@@ -659,11 +659,11 @@ export default function OceanDashboard() {
                               <div className="flex flex-wrap items-center gap-1.5 mt-2.5 border-t border-slate-900/40 pt-2 text-[9px] text-slate-500">
                                 <span className="capitalize">{r.src}</span>
                                 <span>•</span>
-                                <span className={`chip ${verifiedCls} scale-85 origin-left`}>
+                                <span className={`chip ${verifiedCls}`}>
                                   {r.verified ? 'VERIFIED' : 'UNVERIFIED'}
                                 </span>
                                 <span>•</span>
-                                <span className={`chip ${sentimentCls} scale-85 origin-left`}>
+                                <span className={`chip ${sentimentCls}`}>
                                   {r.sentiment > 0.2 ? 'POSITIVE' : r.sentiment < -0.2 ? 'NEGATIVE' : 'NEUTRAL'}
                                 </span>
                                 
@@ -680,7 +680,7 @@ export default function OceanDashboard() {
                                 )}
 
                                 {/* Language Chip */}
-                                <span className="ml-auto font-mono text-[8px] bg-slate-900 px-1.5 py-0.2 rounded border border-slate-850 uppercase text-slate-450 font-semibold">
+                                <span className="ml-auto font-mono text-[8px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-450 font-semibold">
                                   {r.lang}
                                 </span>
                               </div>
