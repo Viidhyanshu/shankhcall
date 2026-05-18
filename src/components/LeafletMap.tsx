@@ -41,6 +41,24 @@ const iconByType: Record<string, string> = {
   Other: 'fa-circle'
 };
 
+const gradientByDisaster: Record<string, { bg: string; glow: string }> = {
+  // Forest
+  Tree: { bg: 'linear-gradient(135deg, #10b981, #047857)', glow: 'rgba(16, 185, 129, 0.6)' },
+  Fire: { bg: 'linear-gradient(135deg, #ef4444, #f97316)', glow: 'rgba(239, 68, 68, 0.6)' },
+  Hunting: { bg: 'linear-gradient(135deg, #f59e0b, #d97706)', glow: 'rgba(245, 158, 11, 0.6)' },
+  Poaching: { bg: 'linear-gradient(135deg, #ec4899, #be185d)', glow: 'rgba(236, 72, 153, 0.6)' },
+  Logging: { bg: 'linear-gradient(135deg, #b45309, #78350f)', glow: 'rgba(180, 83, 9, 0.6)' },
+  Wind: { bg: 'linear-gradient(135deg, #06b6d4, #0891b2)', glow: 'rgba(6, 182, 212, 0.6)' },
+  // Ocean
+  tide: { bg: 'linear-gradient(135deg, #3b82f6, #06b6d4)', glow: 'rgba(59, 130, 246, 0.6)' },
+  flood: { bg: 'linear-gradient(135deg, #1d4ed8, #1e3a8a)', glow: 'rgba(29, 78, 216, 0.6)' },
+  damage: { bg: 'linear-gradient(135deg, #eab308, #ca8a04)', glow: 'rgba(234, 179, 8, 0.6)' },
+  tsunami: { bg: 'linear-gradient(135deg, #dc2626, #991b1b)', glow: 'rgba(220, 38, 38, 0.6)' },
+  swell: { bg: 'linear-gradient(135deg, #14b8a6, #0f766e)', glow: 'rgba(20, 184, 166, 0.6)' },
+  waves: { bg: 'linear-gradient(135deg, #0ea5e9, #2563eb)', glow: 'rgba(14, 165, 233, 0.6)' },
+  Other: { bg: 'linear-gradient(135deg, #64748b, #475569)', glow: 'rgba(100, 116, 139, 0.6)' }
+};
+
 export default function LeafletMap({ mode, reports, center, zoom = 5, onReportClick }: LeafletMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
@@ -113,11 +131,10 @@ export default function LeafletMap({ mode, reports, center, zoom = 5, onReportCl
 
     reports.forEach(r => {
       const typeIcon = iconByType[r.type] || iconByType['Other'];
-      const isForest = ['Tree', 'Fire', 'Hunting', 'Poaching', 'Logging', 'Wind'].includes(r.type);
-      const iconColor = isForest ? '#10b981' : '#0ea5e9'; // Green for Forest, Blue for Ocean
+      const themeGrad = gradientByDisaster[r.type] || gradientByDisaster['Other'];
 
-      // Create Custom Circle DivIcon
-      const iconHtml = `<div style="display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:${iconColor};border:2px solid #0f172a;color:white;box-shadow:0 0 10px ${iconColor}88"><i class="fa-solid ${typeIcon}"></i></div>`;
+      // Create Custom Circle DivIcon with Gradient Background and Custom Glowing Drop Shadow
+      const iconHtml = `<div style="display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:${themeGrad.bg};border:2px solid #0f172a;color:white;box-shadow:0 0 12px ${themeGrad.glow}"><i class="fa-solid ${typeIcon}"></i></div>`;
       
       const icon = L.divIcon({
         html: iconHtml,
