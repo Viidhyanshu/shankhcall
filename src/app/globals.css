@@ -244,22 +244,22 @@ body {
 }
 
 .light .leaflet-container {
-  background-color: #f8fafc !important;
+  background-color: #e4e8ec !important;
   border: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 .light .leaflet-bar a {
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: rgba(241, 245, 249, 0.95) !important;
   color: #0284c7 !important;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
 .light .leaflet-popup-content-wrapper {
-  background: rgba(255, 255, 255, 0.98) !important;
+  background: rgba(241, 245, 249, 0.98) !important;
   border: 1px solid rgba(15, 23, 42, 0.08) !important;
   color: #0f172a !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
 }
 .light .leaflet-popup-tip {
-  background: rgba(255, 255, 255, 0.98) !important;
+  background: rgba(241, 245, 249, 0.98) !important;
   border-left: 1px solid rgba(15, 23, 42, 0.08) !important;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
 }
@@ -270,7 +270,7 @@ body {
 .light .bg-\[\#070a13\],
 .light .bg-\[\#0a0e27\],
 .light body {
-  background-color: #f8fafc !important;
+  background-color: #eef2f6 !important;
   color: #0f172a !important;
 }
 
@@ -280,16 +280,25 @@ body {
 .light .bg-slate-950\/70,
 .light .bg-slate-950\/20,
 .light .bg-slate-950\/60,
-.light .bg-slate-950\/45,
 .light .bg-slate-950\/40,
 .light .bg-\[\#0d111a\]\/85,
 .light .bg-\[\#0c1328\],
 .light .bg-\[\#111625\],
 .light .bg-\[\#151c2f\],
 .light .bg-\[\#080d19\]\/95 {
-  background-color: rgba(255, 255, 255, 0.85) !important;
+  background-color: rgba(235, 240, 245, 0.88) !important;
   border-color: rgba(15, 23, 42, 0.08) !important;
   color: #0f172a !important;
+}
+
+.light .bg-slate-955\/45,
+.light .bg-slate-950\/45 {
+  background-color: rgba(220, 228, 238, 0.7) !important;
+  border-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+.light .hover\:bg-slate-950\/70:hover {
+  background-color: rgba(220, 228, 238, 0.9) !important;
 }
 
 .light .border-slate-900,
@@ -300,7 +309,7 @@ body {
 }
 
 .light .glass-panel {
-  background-color: rgba(255, 255, 255, 0.8) !important;
+  background-color: rgba(235, 240, 245, 0.82) !important;
   border-color: rgba(15, 23, 42, 0.08) !important;
   box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.04) !important;
   color: #0f172a !important;
@@ -309,14 +318,14 @@ body {
 .light button:not(.bg-gradient-to-r),
 .light select,
 .light option {
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: rgba(220, 228, 238, 0.95) !important;
   color: #1e293b !important;
-  border-color: rgba(15, 23, 42, 0.1) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
 }
 
 .light button:not(.bg-gradient-to-r):hover,
 .light select:hover {
-  background-color: rgba(15, 23, 42, 0.05) !important;
+  background-color: rgba(15, 23, 42, 0.06) !important;
   color: #0f172a !important;
 }
 
