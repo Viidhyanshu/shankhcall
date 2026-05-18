@@ -458,8 +458,12 @@ export default function ForestDashboard() {
                       <div className="flex flex-wrap items-center gap-2 mt-1 border-t border-slate-900/50 pt-2 text-[10px] text-slate-500">
                         <span className="capitalize font-semibold">{r.src}</span>
                         <span>•</span>
-                        <span className={`chip ${verifiedCls}`}>{r.verified ? 'verified' : 'unverified'}</span>
-                        <span className={`chip ${sentimentCls}`}>sentiment {r.sentiment.toFixed(1)}</span>
+                        <span className={`chip ${verifiedCls} uppercase`}>
+                          {r.verified ? 'VERIFIED' : 'UNVERIFIED'}
+                        </span>
+                        <span className={`chip ${sentimentCls} uppercase`}>
+                          {r.sentiment > 0.2 ? 'POSITIVE' : r.sentiment < -0.2 ? 'NEGATIVE' : 'NEUTRAL'}
+                        </span>
                         
                         {/* Language Tag */}
                         <span className="ml-auto font-mono text-[9px] bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-400 font-semibold">{r.lang}</span>
