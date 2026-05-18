@@ -661,7 +661,7 @@ export default function OceanDashboard() {
           </div>
 
           {/* Bottom Floating Row: Small Side-by-Side Charts (Center) */}
-          <div className="w-full flex justify-center pointer-events-auto">
+          <div className="w-full flex justify-center pointer-events-auto mb-8">
             <div className="flex gap-4 max-w-[calc(100vw-680px)] select-none">
               
               {/* Chart 1: Trend line */}
