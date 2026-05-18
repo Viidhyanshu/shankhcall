@@ -184,7 +184,7 @@ export default function ForestDashboard() {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans">
+    <div className="relative h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
       
       {/* Header element */}
       <header className="px-6 py-4 bg-slate-950/70 backdrop-blur-md border-b border-slate-900 flex flex-col md:flex-row items-center gap-4 z-20 shrink-0">
@@ -277,7 +277,7 @@ export default function ForestDashboard() {
       </header>
 
       {/* Main Grid Workspace */}
-      <div className="flex-grow flex flex-col lg:flex-row overflow-hidden relative z-10 w-full h-[calc(100vh-76px)]">
+      <div className="flex-grow flex flex-col lg:flex-row overflow-hidden relative z-10 w-full h-0">
         
         {/* LEFT SIDEBAR: FILTERS */}
         <aside className="w-full lg:w-3/12 p-4 shrink-0 flex flex-col gap-4 overflow-y-auto lg:h-full border-r border-slate-950 bg-slate-950/20">

@@ -389,7 +389,7 @@ export default function OceanDashboard() {
   }, [filteredReports, isLight]);
 
   return (
-    <div className="relative min-h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
+    <div className="relative h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
       
       {/* Header element */}
       <header className="px-6 py-3 bg-[#0d111a]/85 backdrop-blur-md border-b border-slate-900/60 flex items-center justify-between gap-4 z-20 shrink-0 select-none">
@@ -475,7 +475,7 @@ export default function OceanDashboard() {
       </header>
 
       {/* Main Workspace: Fullscreen Map with Floating Overlays */}
-      <div className="flex-grow w-full h-[calc(100vh-62px)] relative overflow-hidden">
+      <div className="flex-grow w-full relative overflow-hidden h-0">
         
         {/* Fullscreen Map Background */}
         <div className="absolute inset-0 z-0 w-full h-full">
