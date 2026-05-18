@@ -323,13 +323,7 @@ export default function OceanDashboard() {
           cutout: '72%',
           plugins: {
             legend: {
-              position: 'right',
-              labels: {
-                color: '#94a3b8',
-                font: { size: 10, family: 'inherit' },
-                padding: 10,
-                boxWidth: 10
-              }
+              display: false
             },
             tooltip: {
               backgroundColor: 'rgba(15, 23, 42, 0.9)',

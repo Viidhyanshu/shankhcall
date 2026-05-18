@@ -123,6 +123,15 @@ body {
   font-family: inherit !important;
 }
 
+/* Sci-fi Neon Dark Map tiles filter in dark mode */
+.leaflet-tile {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.light .leaflet-tile {
+  filter: none !important;
+}
+
 .leaflet-bar a {
   background-color: rgba(15, 23, 42, 0.8) !important;
   color: #00c2ff !important;
