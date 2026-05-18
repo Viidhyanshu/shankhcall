@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+:root {
+  --background: #060913;
+  --foreground: #f8fafc;
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  
+  /* Harmonious Dark Palette */
+  --primary-glow: radial-gradient(circle, rgba(0, 194, 255, 0.15) 0%, transparent 60%);
+  --secondary-glow: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 60%);
+  
+  --color-glass-bg: rgba(15, 23, 42, 0.55);
+  --color-glass-border: rgba(0, 194, 255, 0.15);
+  --color-glass-hover-bg: rgba(0, 194, 255, 0.08);
+  --color-glass-hover-border: rgba(0, 194, 255, 0.35);
+}
+
+@theme {
+  --font-sans: var(--font-sans);
+  
+  /* Custom Animations and Keyframes */
+  --animate-grid-move: gridMove 20s linear infinite;
+  --animate-orb-float: orbFloat 15s ease-in-out infinite;
+  --animate-glow-pulse: glowPulse 3s ease-in-out infinite;
+  --animate-border-rotate: borderRotate 4s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(60px, -50px) scale(1.1); }
+  66% { transform: translate(-50px, 60px) scale(0.95); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 194, 255, 0.4)); }
+  50% { filter: drop-shadow(0 0 40px rgba(0, 194, 255, 0.8)); }
+}
+
+@keyframes borderRotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: var(--color-glass-hover-border);
+  box-shadow: 0 12px 40px 0 rgba(0, 194, 255, 0.15);
+}
+
+/* Neon Glow Elements */
+.glow-text {
+  background: linear-gradient(135deg, #00c2ff, #0066ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.glow-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.glow-btn:hover::before {
+  left: 100%;
+}
+
+/* Leaflet Dark Custom Styles */
+.leaflet-container {
+  background-color: #0d1222 !important;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 194, 255, 0.15) !important;
+  font-family: inherit !important;
+}
+
+.leaflet-bar a {
+  background-color: rgba(15, 23, 42, 0.8) !important;
+  color: #00c2ff !important;
+  border-bottom: 1px solid rgba(0, 194, 255, 0.15) !important;
+}
+
+.leaflet-bar a:hover {
+  background-color: rgba(0, 194, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.9) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 194, 255, 0.25) !important;
+  color: #f8fafc !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 20px rgba(0, 194, 255, 0.2) !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border-left: 1px solid rgba(0, 194, 255, 0.25) !important;
+  border-bottom: 1px solid rgba(0, 194, 255, 0.25) !important;
+}
+
+/* Custom chips inside popups/lists */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.chip.ok {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.chip.warn {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.chip.danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Smooth Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 194, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 194, 255, 0.45);
+}
