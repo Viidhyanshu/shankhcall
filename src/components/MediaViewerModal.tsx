@@ -13,6 +13,8 @@ interface MediaViewerModalProps {
 }
 
 export default function MediaViewerModal({ isOpen, onClose, report, lang }: MediaViewerModalProps) {
+  const [lightboxImg, setLightboxImg] = React.useState<string | null>(null);
+
   if (!isOpen || !report) return null;
 
   const t = (key: any) => getTranslation(key, lang);
@@ -225,7 +227,7 @@ export default function MediaViewerModal({ isOpen, onClose, report, lang }: Medi
                             src={m.data} 
                             alt={m.name} 
                             className="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-300"
-                            onClick={() => window.open(m.data, '_blank')}
+                            onClick={() => setLightboxImg(m.data)}
                           />
                         ) : (
                           <video 
@@ -296,6 +298,33 @@ export default function MediaViewerModal({ isOpen, onClose, report, lang }: Medi
         </div>
 
       </div>
+
+      {/* Lightbox full-screen overlay popup inside the same tab */}
+      {lightboxImg && (
+        <div 
+          onClick={() => setLightboxImg(null)}
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 bg-slate-950/95 backdrop-blur-md cursor-zoom-out animate-fade-in select-none"
+        >
+          <button 
+            onClick={() => setLightboxImg(null)}
+            className="absolute top-6 right-6 p-2 rounded-full bg-slate-900/80 border border-slate-800 text-slate-400 hover:text-slate-100 transition-all z-20 cursor-pointer"
+          >
+            <X size={18} />
+          </button>
+          
+          <div className="relative max-w-5xl max-h-[85vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+            <span className="absolute top-2 left-2 px-3 py-1 rounded bg-slate-950/80 border border-cyan-500/20 text-[9px] font-mono text-cyan-400 font-bold uppercase tracking-wider">
+              FULL INTEL RESOLUTION LOCK
+            </span>
+            <img 
+              src={lightboxImg} 
+              alt="High-resolution intelligence capture" 
+              className="max-w-full max-h-[85vh] object-contain rounded-lg border border-cyan-500/25 shadow-2xl"
+            />
+          </div>
+          <span className="text-[10px] text-slate-500 font-mono mt-4">CLICK ANYWHERE TO DISMISS DETAILED OVERLAY</span>
+        </div>
+      )}
     </div>
   );
 }
