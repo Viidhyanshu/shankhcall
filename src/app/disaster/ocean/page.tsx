@@ -55,6 +55,7 @@ export default function OceanDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mapCenter, setMapCenter] = useState<[number, number]>([15.9129, 79.74]);
   const [mapZoom, setMapZoom] = useState(5);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Applied Filters State
   const [appliedType, setAppliedType] = useState('all');
@@ -395,21 +396,31 @@ export default function OceanDashboard() {
       {/* Header element */}
       <header className="px-4 md:px-6 py-3 bg-transparent flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 z-20 shrink-0 select-none">
         
-        {/* Left Section: Logo */}
-        <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/15 border border-cyan-400/20 shrink-0">
-            <Waves className="h-5 w-5 text-white" />
+        <div className="w-full md:w-auto flex items-center justify-between">
+          {/* Left Section: Logo */}
+          <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/15 border border-cyan-400/20 shrink-0">
+              <Waves className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold tracking-wider font-sans uppercase text-slate-100 flex items-center gap-1.5">
+                <span>शंखCALL</span>
+              </h1>
+              <p className="text-[9px] text-slate-500 font-light tracking-wide uppercase">Optimized for Disaster Monitoring & Social Intelligence</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-wider font-sans uppercase text-slate-100 flex items-center gap-1.5">
-              <span>शंखCALL</span>
-            </h1>
-            <p className="text-[9px] text-slate-500 font-light tracking-wide uppercase">Optimized for Disaster Monitoring & Social Intelligence</p>
-          </div>
+          
+          {/* Mobile Hamburger Toggle */}
+          <button 
+            className="md:hidden p-2 text-slate-300 hover:text-white transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <Menu size={24} />
+          </button>
         </div>
 
         {/* Right Section: Selectors and Toggle */}
-        <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-3 shrink-0 w-full md:w-auto">
+        <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-3 shrink-0 w-full md:w-auto`}>
           
           {/* Back to Selector button */}
           <button
@@ -486,18 +497,20 @@ export default function OceanDashboard() {
       <div className="flex-grow w-full relative overflow-y-auto lg:overflow-hidden h-0 flex flex-col lg:block">
         
         {/* Fullscreen Map Background */}
-        <div className="relative lg:absolute lg:inset-0 z-0 w-full h-[400px] lg:h-full shrink-0">
-          <LeafletMap 
-            mode="ocean" 
-            reports={filteredReports} 
-            center={mapCenter}
-            zoom={mapZoom}
-            onReportClick={handleOpenMedia}
-            onViewportChange={(c, z) => {
-              setMapCenter(c);
-              setMapZoom(z);
-            }}
-          />
+        <div className="relative lg:absolute lg:inset-0 z-0 w-full h-[400px] lg:h-full shrink-0 px-4 md:px-6 py-2 lg:p-0">
+          <div className="w-full h-full rounded-2xl lg:rounded-none overflow-hidden shadow-lg lg:shadow-none border border-slate-800/50 lg:border-none">
+            <LeafletMap 
+              mode="ocean" 
+              reports={filteredReports} 
+              center={mapCenter}
+              zoom={mapZoom}
+              onReportClick={handleOpenMedia}
+              onViewportChange={(c, z) => {
+                setMapCenter(c);
+                setMapZoom(z);
+              }}
+            />
+          </div>
         </div>
 
         {/* INTERACTIVE FLOATING OVERLAYS CONTAINER (Pointer events none so map is draggable underneath) */}

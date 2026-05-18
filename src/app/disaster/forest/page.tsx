@@ -8,7 +8,7 @@ import { useDisasterStore, storeActions, HazardReport } from '@/lib/store';
 import { classifyText, scoreSentiment } from '@/lib/nlp';
 import { 
   Activity, Plus, Minus, Globe, User, Search, 
-  RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft 
+  RefreshCw, Wifi, WifiOff, Filter, AlertCircle, ArrowLeft, Menu
 } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -53,6 +53,7 @@ export default function ForestDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mapCenter, setMapCenter] = useState<[number, number]>([15.9129, 79.74]);
   const [mapZoom, setMapZoom] = useState(5);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Applied Filters State
   const [appliedType, setAppliedType] = useState('all');
@@ -189,17 +190,28 @@ export default function ForestDashboard() {
       
       {/* Header element */}
       <header className="px-4 md:px-6 py-4 bg-transparent flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 z-20 shrink-0">
-        <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/15 border border-emerald-400/20">
-            <Activity className="h-5 w-5 text-white" />
+        
+        <div className="w-full md:w-auto flex items-center justify-between">
+          <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/15 border border-emerald-400/20">
+              <Activity className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold tracking-wider font-sans uppercase glow-text">शंखcall</h1>
+              <p className="text-[10px] text-slate-500 font-light tracking-wide uppercase">{t('tagline')}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold tracking-wider font-sans uppercase glow-text">शंखcall</h1>
-            <p className="text-[10px] text-slate-500 font-light tracking-wide uppercase">{t('tagline')}</p>
-          </div>
+          
+          {/* Mobile Hamburger Toggle */}
+          <button 
+            className="md:hidden p-2 text-slate-300 hover:text-white transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <Menu size={24} />
+          </button>
         </div>
 
-        <div className="md:ml-auto flex flex-wrap justify-center md:justify-end items-center gap-2 md:gap-3 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+        <div className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex md:ml-auto flex-wrap justify-center md:justify-end items-center gap-2 md:gap-3 shrink-0 w-full md:w-auto mt-2 md:mt-0`}>
           
           {/* Back button */}
           <button
