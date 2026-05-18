@@ -396,14 +396,15 @@ export default function OceanDashboard() {
       <header className="px-6 py-3 bg-transparent flex items-center justify-between gap-4 z-20 shrink-0 select-none">
         
         {/* Left Section: Logo */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/select')}>
-            <div>
-              <h1 className="text-lg font-bold tracking-wider font-sans uppercase text-slate-100 flex items-center gap-1.5">
-                <span>शंखCALL</span>
-              </h1>
-              <p className="text-[9px] text-slate-500 font-light tracking-wide uppercase">Optimized for Disaster Monitoring & Social Intelligence</p>
-            </div>
+        <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/15 border border-cyan-400/20 shrink-0">
+            <Waves className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold tracking-wider font-sans uppercase text-slate-100 flex items-center gap-1.5">
+              <span>शंखCALL</span>
+            </h1>
+            <p className="text-[9px] text-slate-500 font-light tracking-wide uppercase">Optimized for Disaster Monitoring & Social Intelligence</p>
           </div>
         </div>
 
