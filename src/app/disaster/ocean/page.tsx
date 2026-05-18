@@ -423,7 +423,7 @@ export default function OceanDashboard() {
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as any)}
-              className="bg-transparent border-none outline-none text-slate-200 cursor-pointer font-semibold pr-1"
+              className="appearance-none bg-transparent border-none outline-none text-slate-200 cursor-pointer font-semibold pr-1"
             >
               <option value="citizen">{t('roleCitizen')}</option>
               <option value="official">{t('roleOfficial')}</option>
@@ -437,7 +437,7 @@ export default function OceanDashboard() {
             <select
               value={lang}
               onChange={(e) => setLang(e.target.value as SupportedLanguages)}
-              className="bg-transparent border-none outline-none text-slate-200 cursor-pointer font-semibold pr-1"
+              className="appearance-none bg-transparent border-none outline-none text-slate-200 cursor-pointer font-semibold pr-1"
             >
               <option value="en">Language</option>
               <option value="hi">Language (HI)</option>
