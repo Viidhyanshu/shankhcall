@@ -357,11 +357,8 @@ export default function OceanDashboard() {
       {/* Header element */}
       <header className="px-6 py-3 bg-[#0d111a]/85 backdrop-blur-md border-b border-slate-900/60 flex items-center justify-between gap-4 z-20 shrink-0 select-none">
         
-        {/* Left Section: Logo + Burger */}
+        {/* Left Section: Logo */}
         <div className="flex items-center gap-3 shrink-0">
-          <button className="text-slate-400 hover:text-slate-200 transition-colors p-1 cursor-pointer shrink-0">
-            <Menu size={18} />
-          </button>
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/select')}>
             <div>
               <h1 className="text-lg font-bold tracking-wider font-sans uppercase text-slate-100 flex items-center gap-1.5">
@@ -523,13 +520,7 @@ export default function OceanDashboard() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full bg-[#111625] border border-slate-800 focus:border-slate-700 rounded-lg pl-3 pr-9 py-1.5 text-xs text-slate-200 outline-none transition-all placeholder-slate-700 font-semibold"
                       />
-                      <button
-                        type="button"
-                        onClick={handleApplyFilters}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350 cursor-pointer"
-                      >
-                        <Search size={13} />
-                      </button>
+                      <Search size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
                     </div>
                   </div>
                 </div>
