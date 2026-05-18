@@ -213,9 +213,9 @@ export default function MediaViewerModal({ isOpen, onClose, report, lang }: Medi
 
               <div className="flex-grow w-full flex items-center justify-center relative">
                 {hasMedia ? (
-                  <div className="grid grid-cols-2 gap-3 w-full">
+                  <div className={`grid gap-3 w-full ${report.media.length === 1 ? 'grid-cols-1 max-w-lg mx-auto' : 'grid-cols-2'}`}>
                     {report.media.map((m, idx) => (
-                      <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border border-slate-850 bg-[#090e18] flex items-center justify-center group">
+                      <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border border-slate-850 bg-[#090e18] flex items-center justify-center group w-full">
                         
                         {/* Custom brackets around image */}
                         {cornerBrackets}
@@ -224,14 +224,14 @@ export default function MediaViewerModal({ isOpen, onClose, report, lang }: Medi
                           <img 
                             src={m.data} 
                             alt={m.name} 
-                            className="w-full h-full object-contain cursor-pointer hover:scale-[1.03] transition-transform duration-300"
+                            className="w-full h-full object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-300"
                             onClick={() => window.open(m.data, '_blank')}
                           />
                         ) : (
                           <video 
                             src={m.data} 
                             controls 
-                            className="w-full h-full object-contain rounded-lg"
+                            className="w-full h-full object-cover rounded-lg"
                           />
                         )}
                       </div>
