@@ -178,24 +178,32 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-2xl max-h-[90vh] rounded-2xl glass-panel border border-slate-800 bg-[#0c1222]/95 text-slate-100 flex flex-col p-6 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-fade-in">
+      <div className="w-full max-w-2xl max-h-[90vh] rounded-2xl glass-panel border border-cyan-500/20 bg-[#080d19]/95 text-slate-100 flex flex-col p-6 shadow-[0_0_50px_-12px_rgba(6,182,212,0.15)] relative">
         
+        {/* Decorative corner light overlay */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,rgba(0,194,255,0.05),transparent)] pointer-events-none"></div>
+
         {/* Header */}
-        <div className="flex justify-between items-center pb-4 border-b border-slate-800/80 mb-5 select-none">
-          <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-cyan-500"></span>
-            {t('newReport')}
-          </h2>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors cursor-pointer">
-            <X size={18} />
+        <div className="flex justify-between items-center pb-4 border-b border-slate-800/60 mb-6 select-none">
+          <div className="flex items-center gap-2.5">
+            <div className="h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_10px_#06b6d4] animate-pulse"></div>
+            <h2 className="text-sm font-extrabold tracking-[0.08em] text-slate-200 uppercase">
+              {t('newReport')}
+            </h2>
+          </div>
+          <button 
+            onClick={onClose} 
+            className="p-1.5 rounded-full hover:bg-slate-800/80 text-slate-400 hover:text-slate-100 border border-transparent hover:border-slate-800 transition-all cursor-pointer"
+          >
+            <X size={15} />
           </button>
         </div>
 
         {/* Form Container */}
         <form onSubmit={handleSubmit} className="space-y-5 pt-1 flex-grow overflow-y-auto pr-1">
           {error && (
-            <div className="p-3 bg-red-950/20 border border-red-500/20 text-red-400 rounded-xl text-xs font-sans">
+            <div className="p-3 bg-red-950/20 border border-red-500/25 text-red-400 rounded-xl text-xs font-mono">
               Error: {error}
             </div>
           )}
@@ -207,13 +215,13 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
               
               {/* Event Type */}
               <div>
-                <label className="block text-xs font-semibold text-slate-450 mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
                   {t('eventType')}
                 </label>
                 <select
                   value={eventType}
                   onChange={(e) => setEventType(e.target.value)}
-                  className="w-full bg-slate-950/60 border border-slate-850 hover:border-slate-700 focus:border-cyan-500 rounded-xl p-2.5 text-slate-200 outline-none transition-colors text-sm cursor-pointer"
+                  className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs cursor-pointer shadow-inner"
                   required
                 >
                   {categories.map((opt) => (
@@ -226,7 +234,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-semibold text-slate-450 mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
                   {t('description')}
                 </label>
                 <textarea
@@ -234,7 +242,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
                   placeholder={t('descPlaceholder')}
-                  className="w-full bg-slate-950/60 border border-slate-850 hover:border-slate-700 focus:border-cyan-500 rounded-xl p-2.5 text-slate-200 outline-none transition-colors resize-none placeholder-slate-650 text-sm leading-relaxed"
+                  className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all resize-none placeholder-slate-600 text-xs leading-relaxed"
                   required
                 />
               </div>
@@ -242,25 +250,25 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
               {/* When & Language */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-450 mb-2 select-none">
+                  <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-2 select-none">
                     {t('when')}
                   </label>
                   <input
                     type="datetime-local"
                     value={timestamp}
                     onChange={(e) => setTimestamp(e.target.value)}
-                    className="w-full bg-slate-950/60 border border-slate-850 hover:border-slate-700 focus:border-cyan-500 rounded-xl p-2.5 text-slate-200 outline-none transition-colors text-sm"
+                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-2.5 text-slate-200 outline-none transition-all text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-450 mb-2 select-none">
+                  <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-2 select-none">
                     {t('language')}
                   </label>
                   <select
                     value={reportLang}
                     onChange={(e) => setReportLang(e.target.value as SupportedLanguages)}
-                    className="w-full bg-slate-950/60 border border-slate-850 hover:border-slate-700 focus:border-cyan-500 rounded-xl p-2.5 text-slate-200 outline-none transition-colors text-sm cursor-pointer"
+                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs cursor-pointer"
                   >
                     <option value="en" className="bg-slate-950 text-slate-200">English</option>
                     <option value="hi" className="bg-slate-950 text-slate-200">हिन्दी</option>
@@ -275,7 +283,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
               
               {/* Location */}
               <div>
-                <label className="block text-xs font-semibold text-slate-450 mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
                   {t('locationLabel')}
                 </label>
                 <div className="flex gap-2">
@@ -284,7 +292,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                     value={lat}
                     onChange={(e) => setLat(e.target.value)}
                     placeholder="Latitude"
-                    className="w-full bg-slate-950/60 border border-slate-855 hover:border-slate-700 focus:border-cyan-500 rounded-xl p-2.5 text-slate-200 outline-none transition-colors text-sm"
+                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs"
                     required
                   />
                   <input
@@ -292,34 +300,34 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                     value={lng}
                     onChange={(e) => setLng(e.target.value)}
                     placeholder="Longitude"
-                    className="w-full bg-slate-950/60 border border-slate-855 hover:border-slate-700 focus:border-cyan-500 rounded-xl p-2.5 text-slate-200 outline-none transition-colors text-sm"
+                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs"
                     required
                   />
                   <button
                     type="button"
                     onClick={handleGetLocation}
                     disabled={isLocating}
-                    className="p-2.5 bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 rounded-xl text-cyan-500 hover:text-cyan-400 disabled:opacity-50 transition-all flex items-center justify-center aspect-square cursor-pointer shrink-0"
+                    className="p-3 bg-slate-950/80 hover:bg-cyan-500/10 border border-slate-800/80 hover:border-cyan-500/30 rounded-xl text-cyan-450 hover:text-cyan-300 disabled:opacity-50 transition-all flex items-center justify-center aspect-square cursor-pointer shrink-0"
                     title="Get Current Location"
                   >
-                    <Locate size={16} className={isLocating ? 'animate-spin' : ''} />
+                    <Locate size={15} className={isLocating ? 'animate-spin' : ''} />
                   </button>
                 </div>
               </div>
 
               {/* Media Upload */}
               <div>
-                <label className="block text-xs font-semibold text-slate-450 mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
                   {t('media')}
                 </label>
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950/40 rounded-xl p-4.5 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5 group select-none"
+                  className="border border-dashed border-slate-800 hover:border-cyan-500/20 bg-slate-950/25 hover:bg-slate-950/40 rounded-xl p-4.5 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5 group select-none animate-fade-in"
                 >
-                  <div className="h-8 w-8 rounded-full bg-slate-900 border border-slate-850 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-500/30 transition-all">
+                  <div className="h-8.5 w-8.5 rounded-full bg-slate-900/60 border border-slate-800/80 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-500/20 group-hover:scale-105 transition-all">
                     <ImageIcon size={15} />
                   </div>
-                  <div className="text-xs text-slate-400 font-medium">Click to select files (Max 4, limit 3.5MB each)</div>
+                  <div className="text-xs text-slate-400 font-medium tracking-wide">Click to select files (Max 4, limit 3.5MB each)</div>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -332,9 +340,9 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
 
                 {/* Previews */}
                 {mediaFiles.length > 0 && (
-                  <div className="grid grid-cols-4 gap-2 mt-3">
+                  <div className="grid grid-cols-4 gap-2 mt-3 animate-fade-in">
                     {mediaFiles.map((m, idx) => (
-                      <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border border-slate-800 bg-[#090e18] flex items-center justify-center group">
+                      <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border border-slate-800/80 bg-[#090e18] flex items-center justify-center group shadow-md">
                         {m.type === 'image' ? (
                           <img src={m.data} alt={m.name} className="w-full h-full object-cover" />
                         ) : (
@@ -357,10 +365,10 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
 
               {/* Consent Card */}
               <div>
-                <label className="block text-xs font-semibold text-slate-450 mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
                   {t('consent')}
                 </label>
-                <div className="p-3 bg-slate-950/60 border border-slate-850 rounded-xl text-[11px] leading-relaxed text-slate-400 font-sans">
+                <div className="p-3 bg-cyan-955/5 border-l-2 border-cyan-500/30 rounded-r-xl rounded-l-md text-[11px] leading-relaxed text-slate-400 font-sans shadow-inner">
                   By submitting, you confirm media is yours or permitted and does not include personal data without consent.
                 </div>
               </div>
@@ -370,19 +378,19 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
           </div>
 
           {/* Footer Controls */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-800/80 mt-6 select-none">
+          <div className="flex justify-end gap-3 pt-4 border-t border-slate-800/60 mt-6 select-none">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-slate-200 text-xs font-semibold transition-colors cursor-pointer"
+              className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 text-xs font-bold transition-all cursor-pointer"
             >
-              {t('cancel')}
+              {t('cancel').toUpperCase()}
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold transition-all shadow-md shadow-cyan-500/10 cursor-pointer"
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold transition-all shadow-[0_0_15px_rgba(6,182,212,0.25)] hover:shadow-[0_0_20px_rgba(6,182,212,0.35)] cursor-pointer"
             >
-              {t('submit')}
+              {t('submit').toUpperCase()}
             </button>
           </div>
         </form>
