@@ -393,7 +393,7 @@ export default function OceanDashboard() {
     <div className="relative h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
       
       {/* Header element */}
-      <header className="px-6 py-3 bg-[#0d111a]/85 backdrop-blur-md border-b border-slate-900/60 flex items-center justify-between gap-4 z-20 shrink-0 select-none">
+      <header className="px-6 py-3 bg-[#0d111a]/30 backdrop-blur-md border-b border-slate-900/40 flex items-center justify-between gap-4 z-20 shrink-0 select-none">
         
         {/* Left Section: Logo */}
         <div className="flex items-center gap-3 shrink-0">
