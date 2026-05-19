@@ -59,6 +59,11 @@
   100% { background-position: 0% 50%; }
 }
 
+@keyframes wave {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(-15px) translateY(-8px); }
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
