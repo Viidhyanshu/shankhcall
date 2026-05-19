@@ -112,6 +112,46 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
     });
   };
 
+  // Helper to compress uploaded images to stay well within Firestore's 1MB document size limit
+  const compressImage = (base64Str: string, maxWidth = 800, maxHeight = 800, quality = 0.6): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressedBase64);
+        } else {
+          resolve(base64Str);
+        }
+      };
+      img.onerror = () => {
+        resolve(base64Str);
+      };
+    });
+  };
+
   // Handle Media Upload
   const handleMediaChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -121,14 +161,21 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
     const validMedia: MediaFile[] = [...mediaFiles];
 
     for (const file of files) {
-      if (file.size > 3.5 * 1024 * 1024) {
-        setError(`File ${file.name} exceeds size limit of 3.5MB.`);
+      // Allow raw selection up to 10MB since we compress it anyway
+      if (file.size > 10 * 1024 * 1024) {
+        setError(`File ${file.name} exceeds limit of 10MB.`);
         continue;
       }
 
       try {
-        const data = await fileToDataURL(file);
+        let data = await fileToDataURL(file);
         const type = file.type.startsWith('image') ? ('image' as const) : ('video' as const);
+        
+        if (type === 'image') {
+          // Compress the base64 string instantly to ~50-100KB!
+          data = await compressImage(data);
+        }
+        
         validMedia.push({ type, data, name: file.name });
       } catch (err) {
         console.error('File read error', err);
