@@ -364,3 +364,83 @@ nextjs-portal,
   pointer-events: none !important;
 }
 
+/* Scoped Forest Theme Overrides */
+.forest-theme {
+  --primary-glow: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+  --secondary-glow: radial-gradient(circle, rgba(4, 120, 87, 0.15) 0%, transparent 60%);
+  --color-glass-border: rgba(16, 185, 129, 0.15);
+  --color-glass-hover-bg: rgba(16, 185, 129, 0.08);
+  --color-glass-hover-border: rgba(16, 185, 129, 0.35);
+}
+
+.forest-theme .glass-panel {
+  border-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.forest-theme .glass-panel:hover {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.15) !important;
+}
+
+/* Override leaflet container border/glow under forest-theme */
+.forest-theme .leaflet-container {
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  box-shadow: 0 0 20px 0 rgba(16, 185, 129, 0.1) !important;
+}
+
+.forest-theme .leaflet-bar a {
+  color: #10b981 !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.2) !important;
+}
+
+.forest-theme .leaflet-bar a:hover {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.forest-theme .leaflet-popup-content-wrapper {
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2) !important;
+}
+
+.forest-theme .leaflet-popup-tip {
+  border-left: 1px solid rgba(16, 185, 129, 0.3) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+/* Scrollbar under forest theme */
+.forest-theme ::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.2) !important;
+}
+
+.forest-theme ::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.45) !important;
+}
+
+.forest-theme .glow-text {
+  background: linear-gradient(135deg, #10b981, #047857) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.light .forest-theme .glow-text,
+.light.forest-theme .glow-text {
+  background: linear-gradient(135deg, #059669, #064e3b) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+.light .forest-theme .glass-panel:hover,
+.light.forest-theme .glass-panel:hover {
+  border-color: rgba(5, 150, 105, 0.35) !important;
+  box-shadow: 0 12px 40px 0 rgba(5, 150, 105, 0.1) !important;
+}
+
+.light .forest-theme .leaflet-container,
+.light.forest-theme .leaflet-container {
+  border: 1px solid rgba(5, 150, 105, 0.2) !important;
+}
+
+

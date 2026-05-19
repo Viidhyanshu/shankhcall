@@ -387,7 +387,7 @@ export default function ForestDashboard() {
   }, [filteredReports, isLight]);
 
   return (
-    <div className="relative h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
+    <div className="forest-theme relative h-screen w-full bg-[var(--background)] text-[var(--foreground)] flex flex-col font-sans overflow-hidden">
       
       {/* Header element */}
       <header className="px-4 md:px-6 py-3 bg-transparent flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 z-20 shrink-0 select-none">
