@@ -124,13 +124,13 @@ export default function DisasterSelector() {
       />
 
       {/* Linear gradient background — forest green (left) to ocean blue (right) */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0d2e20] via-[#111d2e] to-[#0c2440]">
+      <div className="absolute inset-0 z-0 main-bg-gradient">
         {/* Glowing Green Orb (left) */}
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-radial from-emerald-500/25 to-transparent blur-[80px] opacity-80 animate-orb-float" />
-        <div className="absolute bottom-[20%] left-[15%] w-[400px] h-[400px] rounded-full bg-radial from-emerald-400/15 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:6s]" />
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full glow-orb-green-1 blur-[80px] opacity-80 animate-orb-float" />
+        <div className="absolute bottom-[20%] left-[15%] w-[400px] h-[400px] rounded-full glow-orb-green-2 blur-[60px] opacity-70 animate-orb-float [animation-delay:6s]" />
         {/* Glowing Ocean Blue Orb (right) */}
-        <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-radial from-sky-500/25 to-transparent blur-[80px] opacity-80 animate-orb-float [animation-delay:3s]" />
-        <div className="absolute top-[15%] right-[15%] w-[400px] h-[400px] rounded-full bg-radial from-blue-400/15 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:8s]" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full glow-orb-blue-1 blur-[80px] opacity-80 animate-orb-float [animation-delay:3s]" />
+        <div className="absolute top-[15%] right-[15%] w-[400px] h-[400px] rounded-full glow-orb-blue-2 blur-[60px] opacity-70 animate-orb-float [animation-delay:8s]" />
       </div>
 
       {/* Floating Leaves — scattered across entire background */}
@@ -208,7 +208,7 @@ export default function DisasterSelector() {
         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 border border-cyan-400/20">
           <i className="fa-solid fa-cloud-showers-water text-white text-base"></i>
         </div>
-        <span className="text-xl font-bold tracking-widest bg-gradient-to-r from-white via-cyan-400 to-white bg-clip-text text-transparent uppercase font-sans">
+        <span className="text-xl font-bold tracking-widest brand-text-gradient uppercase font-sans">
           शंखcall
         </span>
       </header>
@@ -218,7 +218,7 @@ export default function DisasterSelector() {
         <ThemeToggle />
         <button
           onClick={handleSignOut}
-          className="p-2.5 rounded-full bg-slate-950/40 border border-slate-900 hover:border-red-500/30 hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-all duration-300 flex items-center justify-center cursor-pointer"
+          className="p-2.5 rounded-full bg-[var(--color-glass-bg)] border border-[var(--input-border)] hover:border-red-500/30 hover:bg-red-500/10 text-[var(--body-text)] hover:text-red-400 transition-all duration-300 flex items-center justify-center cursor-pointer"
           title="Sign Out"
         >
           <LogOut size={16} />
@@ -228,10 +228,10 @@ export default function DisasterSelector() {
       {/* Main Section */}
       <main className="relative z-10 text-center max-w-4xl space-y-12">
         <div className="space-y-4">
-          <h1 className="text-4xl md:text-6xl font-light tracking-[0.25em] text-white uppercase text-center bg-gradient-to-r from-white via-cyan-400 to-white bg-clip-text text-transparent animate-pulse font-sans">
+          <h1 className="text-4xl md:text-6xl font-light tracking-[0.25em] heading-text-gradient uppercase text-center animate-pulse font-sans">
             SELECT DISASTER
           </h1>
-          <p className="text-slate-400 text-xs md:text-sm tracking-wider uppercase font-light max-w-md mx-auto leading-relaxed">
+          <p className="text-[var(--body-text)] text-xs md:text-sm tracking-wider uppercase font-light max-w-md mx-auto leading-relaxed">
             Choose environmental monitoring board to observe real-time logs and social metrics.
           </p>
         </div>
@@ -247,20 +247,20 @@ export default function DisasterSelector() {
             className={`w-[260px] h-[260px] rounded-2xl glass-panel relative flex flex-col justify-center items-center gap-5 cursor-pointer select-none transition-all duration-500 overflow-hidden border ${
               activeCard === 'forest' 
                 ? 'border-emerald-400 bg-emerald-500/10 shadow-lg shadow-emerald-500/30 -translate-y-4 scale-105' 
-                : 'border-slate-800/80 bg-slate-950/40'
+                : 'border-[var(--card-inactive-border)] bg-[var(--card-inactive-bg)]'
             }`}
           >
             <div className={`h-20 w-20 rounded-full border flex items-center justify-center transition-all duration-500 ${
               activeCard === 'forest'
                 ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 rotate-y-180 scale-110 shadow-lg shadow-emerald-500/30'
-                : 'border-slate-900 bg-slate-950/80 text-emerald-400'
+                : 'border-[var(--input-border)] bg-[var(--color-glass-bg)] text-emerald-400'
             }`}>
               <svg className="h-10 w-10 stroke-current stroke-[1.5]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L8 8H10L7 14H9L6 22H18L15 14H17L14 8H16L12 2Z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <span className={`text-base tracking-[0.2em] font-semibold uppercase font-sans transition-all ${
-              activeCard === 'forest' ? 'text-emerald-400' : 'text-slate-300'
+              activeCard === 'forest' ? 'text-emerald-400' : 'text-[var(--body-text)]'
             }`}>
               Forest
             </span>
@@ -274,13 +274,13 @@ export default function DisasterSelector() {
             className={`w-[260px] h-[260px] rounded-2xl glass-panel relative flex flex-col justify-center items-center gap-5 cursor-pointer select-none transition-all duration-500 overflow-hidden border ${
               activeCard === 'ocean' 
                 ? 'border-cyan-400 bg-cyan-500/10 shadow-lg shadow-cyan-500/30 -translate-y-4 scale-105' 
-                : 'border-slate-800/80 bg-slate-950/40'
+                : 'border-[var(--card-inactive-border)] bg-[var(--card-inactive-bg)]'
             }`}
           >
             <div className={`h-20 w-20 rounded-full border flex items-center justify-center transition-all duration-500 ${
               activeCard === 'ocean'
                 ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 rotate-y-180 scale-110 shadow-lg shadow-cyan-500/30'
-                : 'border-slate-900 bg-slate-950/80 text-cyan-400'
+                : 'border-[var(--input-border)] bg-[var(--color-glass-bg)] text-cyan-400'
             }`}>
               <svg className="h-10 w-10 stroke-current stroke-[1.5]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M2 12C2 12 4 9 8 9C12 9 10 12 14 12C18 12 20 9 20 9" strokeLinecap="round" strokeLinejoin="round"/>
@@ -289,7 +289,7 @@ export default function DisasterSelector() {
               </svg>
             </div>
             <span className={`text-base tracking-[0.2em] font-semibold uppercase font-sans transition-all ${
-              activeCard === 'ocean' ? 'text-cyan-400' : 'text-slate-300'
+              activeCard === 'ocean' ? 'text-cyan-400' : 'text-[var(--body-text)]'
             }`}>
               Ocean
             </span>

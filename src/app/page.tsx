@@ -213,13 +213,13 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[var(--background)] text-[var(--foreground)] font-sans px-4">
       {/* Linear gradient background — forest green (left) to ocean blue (right) */}
-      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0d2e20] via-[#111d2e] to-[#0c2440]">
+      <div className="absolute inset-0 z-0 main-bg-gradient">
         {/* Glowing Green Orb (left) */}
-        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-radial from-emerald-500/25 to-transparent blur-[80px] opacity-80 animate-orb-float" />
-        <div className="absolute bottom-[20%] left-[15%] w-[400px] h-[400px] rounded-full bg-radial from-emerald-400/15 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:6s]" />
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full glow-orb-green-1 blur-[80px] opacity-80 animate-orb-float" />
+        <div className="absolute bottom-[20%] left-[15%] w-[400px] h-[400px] rounded-full glow-orb-green-2 blur-[60px] opacity-70 animate-orb-float [animation-delay:6s]" />
         {/* Glowing Ocean Blue Orb (right) */}
-        <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-radial from-sky-500/25 to-transparent blur-[80px] opacity-80 animate-orb-float [animation-delay:3s]" />
-        <div className="absolute top-[15%] right-[15%] w-[400px] h-[400px] rounded-full bg-radial from-blue-400/15 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:8s]" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full glow-orb-blue-1 blur-[80px] opacity-80 animate-orb-float [animation-delay:3s]" />
+        <div className="absolute top-[15%] right-[15%] w-[400px] h-[400px] rounded-full glow-orb-blue-2 blur-[60px] opacity-70 animate-orb-float [animation-delay:8s]" />
       </div>
 
       {/* Floating Leaves — scattered across entire background */}
@@ -297,7 +297,7 @@ export default function LoginPage() {
         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 border border-cyan-400/20">
           <i className="fa-solid fa-cloud-showers-water text-white text-base"></i>
         </div>
-        <span className="text-xl font-bold tracking-widest bg-gradient-to-r from-white via-cyan-400 to-white bg-clip-text text-transparent uppercase font-sans">
+        <span className="text-xl font-bold tracking-widest brand-text-gradient uppercase font-sans">
           शंखcall
         </span>
       </div>
@@ -308,17 +308,17 @@ export default function LoginPage() {
       </div>
 
       {/* Main card panel */}
-      <div className="relative z-10 w-full max-w-[900px] min-h-[550px] md:h-[600px] rounded-3xl glass-panel bg-slate-950/60 border border-sky-500/10 flex flex-col md:flex-row overflow-hidden shadow-2xl p-2">
+      <div className="relative z-10 w-full max-w-[900px] min-h-[550px] md:h-[600px] rounded-3xl glass-panel bg-[var(--login-card-bg)] border border-[var(--login-card-border)] flex flex-col md:flex-row overflow-hidden shadow-2xl p-2">
         
         {/* Toggle Panel Left/Right Banner */}
-        <div className={`w-full md:w-5/12 bg-gradient-to-br from-[#0c1328] to-[#060913] p-8 flex flex-col justify-center items-center text-center relative border border-slate-900 rounded-2xl login-toggle-panel ${isSignUp ? 'login-toggle-panel-active' : ''}`}>
+        <div className={`w-full md:w-5/12 bg-[var(--login-banner-bg)] p-8 flex flex-col justify-center items-center text-center relative border border-[var(--login-banner-border)] rounded-2xl login-toggle-panel ${isSignUp ? 'login-toggle-panel-active' : ''}`}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.06)_0%,transparent_70%)] rounded-2xl" />
           
           <div className="relative z-10 flex flex-col items-center">
-            <h2 className="text-3xl font-extrabold tracking-wider text-slate-100 font-sans mb-4 uppercase">
+            <h2 className="text-3xl font-extrabold tracking-wider text-[var(--login-banner-title)] font-sans mb-4 uppercase">
               शंखcall
             </h2>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-[280px] mb-8 font-light">
+            <p className="text-[var(--login-banner-text)] text-sm leading-relaxed max-w-[280px] mb-8 font-light">
               {isSignUp
                 ? 'Register with your personal details to access real-time citizen disaster reporting boards.'
                 : 'Enter your credentials to manage active hazards and monitor unified social feeds.'}
@@ -326,7 +326,7 @@ export default function LoginPage() {
 
             <button
               onClick={() => handleToggleMode(!isSignUp)}
-              className="px-6 py-2.5 rounded-full border border-sky-400/30 hover:border-sky-400 hover:bg-sky-400/10 text-sky-400 hover:text-sky-300 font-medium text-xs tracking-wider uppercase transition-all shadow-lg glow-btn cursor-pointer"
+              className="px-6 py-2.5 rounded-full border login-toggle-btn font-medium text-xs tracking-wider uppercase transition-all shadow-lg glow-btn cursor-pointer"
             >
               {isSignUp ? 'Sign In' : 'Sign Up'}
             </button>
@@ -346,8 +346,8 @@ export default function LoginPage() {
           {!isSignUp && (
             <form onSubmit={handleLoginSubmit} className="space-y-5">
               <div className="space-y-1">
-                <h1 className="text-2xl font-bold text-slate-100 font-sans">Sign In</h1>
-                <p className="text-slate-500 text-xs">Enter your email and password to log in.</p>
+                <h1 className="text-2xl font-bold text-[var(--title-text)] font-sans">Sign In</h1>
+                <p className="text-[var(--sub-text)] text-xs">Enter your email and password to log in.</p>
               </div>
 
               <div className="space-y-4 pt-2">
@@ -356,7 +356,7 @@ export default function LoginPage() {
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-950/50 border border-slate-900 focus:border-sky-400 rounded-xl p-3.5 text-slate-200 outline-none transition-all placeholder-slate-600 text-sm"
+                  className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] focus:border-sky-400 rounded-xl p-3.5 text-[var(--input-text)] outline-none transition-all placeholder-[var(--input-placeholder)] text-sm"
                   required
                 />
                 
@@ -366,13 +366,13 @@ export default function LoginPage() {
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-slate-950/50 border border-slate-900 focus:border-sky-400 rounded-xl p-3.5 pr-11 text-slate-200 outline-none transition-all placeholder-slate-600 text-sm"
+                    className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] focus:border-sky-400 rounded-xl p-3.5 pr-11 text-[var(--input-text)] outline-none transition-all placeholder-[var(--input-placeholder)] text-sm"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -380,7 +380,7 @@ export default function LoginPage() {
               </div>
 
               <div className="flex items-center justify-between text-xs pt-1">
-                <a href="#" className="text-sky-400 hover:text-sky-350 transition-colors font-medium">
+                <a href="#" className="forget-password-link transition-colors font-medium">
                   Forget Your Password?
                 </a>
               </div>
@@ -404,8 +404,8 @@ export default function LoginPage() {
               {signUpStep === 'role' && (
                 <div className="space-y-4 animate-fade-in">
                   <div className="space-y-1">
-                    <h1 className="text-2xl font-bold text-slate-100 font-sans">Select Your Role</h1>
-                    <p className="text-slate-500 text-xs">Choose the capacity in which you will utilize the platform.</p>
+                    <h1 className="text-2xl font-bold text-[var(--title-text)] font-sans">Select Your Role</h1>
+                    <p className="text-[var(--sub-text)] text-xs">Choose the capacity in which you will utilize the platform.</p>
                   </div>
 
                   <div className="grid grid-cols-1 gap-3 pt-2">
@@ -413,28 +413,28 @@ export default function LoginPage() {
                     {/* Citizen Card */}
                     <div 
                       onClick={() => handleRoleSelect('citizen')}
-                      className="glass-panel p-4 border border-slate-900 hover:border-emerald-500/30 bg-slate-950/20 rounded-xl cursor-pointer flex items-center gap-4 group transition-all"
+                      className="glass-panel p-4 border border-[var(--input-border)] hover:border-emerald-500/30 bg-[var(--card-inactive-bg)] rounded-xl cursor-pointer flex items-center gap-4 group transition-all"
                     >
                       <div className="h-10 w-10 rounded-lg bg-emerald-500/5 group-hover:bg-emerald-500/10 border border-emerald-500/10 flex items-center justify-center text-emerald-400">
                         <Users size={20} />
                       </div>
                       <div className="text-left">
-                        <div className="font-semibold text-sm text-slate-200 group-hover:text-emerald-400 transition-colors">Citizen</div>
-                        <p className="text-[11px] text-slate-500 leading-normal mt-0.5">Submit disaster reports and view regional hazard maps.</p>
+                        <div className="font-semibold text-sm text-[var(--title-text)] group-hover:text-emerald-400 transition-colors">Citizen</div>
+                        <p className="text-[11px] text-[var(--sub-text)] leading-normal mt-0.5">Submit disaster reports and view regional hazard maps.</p>
                       </div>
                     </div>
 
                     {/* Official Card */}
                     <div 
                       onClick={() => handleRoleSelect('official')}
-                      className="glass-panel p-4 border border-slate-900 hover:border-cyan-500/30 bg-slate-950/20 rounded-xl cursor-pointer flex items-center gap-4 group transition-all"
+                      className="glass-panel p-4 border border-[var(--input-border)] hover:border-cyan-500/30 bg-[var(--card-inactive-bg)] rounded-xl cursor-pointer flex items-center gap-4 group transition-all"
                     >
                       <div className="h-10 w-10 rounded-lg bg-cyan-500/5 group-hover:bg-cyan-500/10 border border-cyan-500/10 flex items-center justify-center text-cyan-400">
                         <Shield size={18} />
                       </div>
                       <div className="text-left">
-                        <div className="font-semibold text-sm text-slate-200 group-hover:text-cyan-400 transition-colors">Official</div>
-                        <p className="text-[11px] text-slate-500 leading-normal mt-0.5">Validate reports, assign verification chips, and dispatch warnings.</p>
+                        <div className="font-semibold text-sm text-[var(--title-text)] group-hover:text-cyan-400 transition-colors">Official</div>
+                        <p className="text-[11px] text-[var(--sub-text)] leading-normal mt-0.5">Validate reports, assign verification chips, and dispatch warnings.</p>
                       </div>
                     </div>
                   </div>
@@ -448,13 +448,13 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setSignUpStep('role')}
-                      className="p-1 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+                      className="p-1 rounded-full bg-[var(--color-glass-bg)] hover:bg-[var(--color-glass-hover-bg)] text-[var(--body-text)] hover:text-[var(--title-text)] border border-[var(--input-border)] transition-colors"
                     >
                       <ArrowLeft size={16} />
                     </button>
                     <div className="space-y-0.5">
-                      <h1 className="text-xl font-bold text-slate-100 font-sans">Account Details</h1>
-                      <p className="text-[10px] text-slate-500">Selected Role: <span className="text-sky-400 uppercase font-semibold">{selectedRole}</span></p>
+                      <h1 className="text-xl font-bold text-[var(--title-text)] font-sans">Account Details</h1>
+                      <p className="text-[10px] text-[var(--sub-text)]">Selected Role: <span className="text-sky-400 uppercase font-semibold">{selectedRole}</span></p>
                     </div>
                   </div>
 
@@ -464,7 +464,7 @@ export default function LoginPage() {
                       placeholder="Full Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-slate-950/50 border border-slate-900 focus:border-sky-400 rounded-xl p-3 text-slate-200 outline-none transition-all placeholder-slate-600 text-sm"
+                      className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] focus:border-sky-400 rounded-xl p-3 text-[var(--input-text)] outline-none transition-all placeholder-[var(--input-placeholder)] text-sm"
                       required
                     />
 
@@ -473,7 +473,7 @@ export default function LoginPage() {
                       placeholder="Email Address"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-950/50 border border-slate-900 focus:border-sky-400 rounded-xl p-3 text-slate-200 outline-none transition-all placeholder-slate-600 text-sm"
+                      className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] focus:border-sky-400 rounded-xl p-3 text-[var(--input-text)] outline-none transition-all placeholder-[var(--input-placeholder)] text-sm"
                       required
                     />
 
@@ -482,7 +482,7 @@ export default function LoginPage() {
                       placeholder="Phone Number (Optional)"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full bg-slate-950/50 border border-slate-900 focus:border-sky-400 rounded-xl p-3 text-slate-200 outline-none transition-all placeholder-slate-600 text-sm"
+                      className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] focus:border-sky-400 rounded-xl p-3 text-[var(--input-text)] outline-none transition-all placeholder-[var(--input-placeholder)] text-sm"
                     />
 
                     <div className="relative">
@@ -491,13 +491,13 @@ export default function LoginPage() {
                         placeholder="Password (Min. 6 chars)"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-slate-950/50 border border-slate-900 focus:border-sky-400 rounded-xl p-3 pr-11 text-slate-200 outline-none transition-all placeholder-slate-600 text-sm"
+                        className="w-full bg-[var(--input-bg)] border border-[var(--input-border)] focus:border-sky-400 rounded-xl p-3 pr-11 text-[var(--input-text)] outline-none transition-all placeholder-[var(--input-placeholder)] text-sm"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-350"
                       >
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
@@ -505,19 +505,19 @@ export default function LoginPage() {
                   </div>
 
                   {/* Robot verification widget */}
-                  <div className="flex items-center gap-3 p-3 bg-slate-950/40 border border-slate-900 rounded-xl">
+                  <div className="flex items-center gap-3 p-3 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-xl">
                     <button
                       type="button"
                       onClick={() => setRobotChecked(!robotChecked)}
                       className={`h-5 w-5 rounded border flex items-center justify-center transition-all ${
                         robotChecked 
                           ? 'bg-emerald-500 border-emerald-400 text-white' 
-                          : 'border-slate-800 bg-slate-950 hover:border-sky-500/40'
+                          : 'border-[var(--input-border)] bg-[var(--input-bg)] hover:border-sky-500/40'
                       }`}
                     >
                       {robotChecked && <Check size={14} />}
                     </button>
-                    <span className="text-xs text-slate-400">Confirm you are not a robot (Mock Captcha)</span>
+                    <span className="text-xs text-[var(--body-text)]">Confirm you are not a robot (Mock Captcha)</span>
                   </div>
 
                   <button
@@ -537,13 +537,13 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setSignUpStep('details')}
-                      className="p-1 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
+                      className="p-1 rounded-full bg-[var(--color-glass-bg)] hover:bg-[var(--color-glass-hover-bg)] text-[var(--body-text)] hover:text-[var(--title-text)] border border-[var(--input-border)] transition-colors"
                     >
                       <ArrowLeft size={16} />
                     </button>
                     <div className="space-y-0.5 text-left">
-                      <h1 className="text-xl font-bold text-slate-100 font-sans">Verify Your Email</h1>
-                      <p className="text-[10px] text-slate-500 font-sans">A verification link is required to activate your profile.</p>
+                      <h1 className="text-xl font-bold text-[var(--title-text)] font-sans">Verify Your Email</h1>
+                      <p className="text-[10px] text-[var(--sub-text)] font-sans">A verification link is required to activate your profile.</p>
                     </div>
                   </div>
 
@@ -553,13 +553,13 @@ export default function LoginPage() {
                       <Mail size={32} />
                     </div>
                     <div className="space-y-2 max-w-sm">
-                      <p className="text-sm text-slate-200 font-medium font-sans">
+                      <p className="text-sm text-[var(--title-text)] font-medium font-sans">
                         Verification link sent to:
                       </p>
-                      <p className="text-sm font-mono text-cyan-300 font-bold bg-cyan-950/20 px-3 py-1.5 rounded-lg border border-cyan-500/10 select-all">
+                      <p className="text-sm font-mono otp-email-box font-bold px-3 py-1.5 rounded-lg border select-all">
                         {email}
                       </p>
-                      <p className="text-xs text-slate-400 leading-relaxed font-sans pt-1">
+                      <p className="text-xs text-[var(--body-text)] leading-relaxed font-sans pt-1">
                         Please open your Gmail, look for the verification email sent by Firebase, and click the link inside it.
                       </p>
                     </div>
@@ -572,7 +572,7 @@ export default function LoginPage() {
                       href="https://mail.google.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-cyan-500/30 text-slate-200 font-semibold text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 rounded-xl bg-[var(--color-glass-bg)] hover:bg-[var(--color-glass-hover-bg)] border border-[var(--input-border)] hover:border-cyan-500/30 text-[var(--input-text)] font-semibold text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                       Open Gmail
                       <ArrowRight size={16} className="text-cyan-400" />
@@ -594,7 +594,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={handleResendVerification}
                       disabled={loading}
-                      className="text-xs text-slate-500 hover:text-cyan-400 font-semibold transition-colors pt-1 cursor-pointer"
+                      className="text-xs text-[var(--sub-text)] hover:text-cyan-400 font-semibold transition-colors pt-1 cursor-pointer"
                     >
                       Didn't get the email? Resend verification link
                     </button>

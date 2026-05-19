@@ -13,6 +13,27 @@
   --color-glass-border: rgba(0, 194, 255, 0.15);
   --color-glass-hover-bg: rgba(0, 194, 255, 0.08);
   --color-glass-hover-border: rgba(0, 194, 255, 0.35);
+
+  /* Login & Select Page Theme Variables - Dark Mode defaults */
+  --login-card-bg: rgba(15, 23, 42, 0.6);
+  --login-card-border: rgba(0, 194, 255, 0.1);
+  --login-banner-bg: linear-gradient(to bottom right, #0c1328, #060913);
+  --login-banner-border: #0f172a;
+  --login-banner-title: #f1f5f9;
+  --login-banner-text: #94a3b8;
+  
+  --input-bg: rgba(2, 6, 23, 0.5);
+  --input-border: #0f172a;
+  --input-text: #e2e8f0;
+  --input-placeholder: #475569;
+  
+  --title-text: #f1f5f9;
+  --body-text: #94a3b8;
+  --sub-text: #64748b;
+  
+  /* Selection Cards (Select Page) */
+  --card-inactive-bg: rgba(2, 6, 23, 0.4);
+  --card-inactive-border: rgba(30, 41, 59, 0.8);
 }
 
 .light {
@@ -25,6 +46,27 @@
   --color-glass-hover-border: rgba(0, 194, 255, 0.3);
   
   --scrollbar-thumb: rgba(15, 23, 42, 0.15);
+
+  /* Login & Select Page Theme Variables - Light Mode overrides */
+  --login-card-bg: rgba(255, 255, 255, 0.7);
+  --login-card-border: rgba(15, 23, 42, 0.08);
+  --login-banner-bg: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+  --login-banner-border: #cbd5e1;
+  --login-banner-title: #0f172a;
+  --login-banner-text: #475569;
+  
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --input-border: #cbd5e1;
+  --input-text: #0f172a;
+  --input-placeholder: #94a3b8;
+  
+  --title-text: #0f172a;
+  --body-text: #334155;
+  --sub-text: #64748b;
+  
+  /* Selection Cards (Select Page) */
+  --card-inactive-bg: rgba(255, 255, 255, 0.6);
+  --card-inactive-border: rgba(226, 232, 240, 0.8);
 }
 
 @theme {
@@ -70,6 +112,106 @@ body {
   overflow-x: hidden;
 }
 
+/* Page Background Gradients */
+.main-bg-gradient {
+  background: linear-gradient(to right, #0d2e20, #111d2e, #0c2440);
+}
+.light .main-bg-gradient {
+  background: linear-gradient(to right, #eaf6ee, #f0f4f8, #e5f1fa);
+}
+
+/* Watermark Brand Title Text Gradient */
+.brand-text-gradient {
+  background: linear-gradient(to right, #ffffff, #22d3ee, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.light .brand-text-gradient {
+  background: linear-gradient(to right, #0f172a, #0891b2, #0f172a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Heading Select Title Text Gradient */
+.heading-text-gradient {
+  background: linear-gradient(to right, #ffffff, #22d3ee, #ffffff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.light .heading-text-gradient {
+  background: linear-gradient(to right, #0f172a, #0284c7, #0f172a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-toggle-btn {
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+.light .login-toggle-btn {
+  border-color: rgba(2, 132, 199, 0.4);
+  color: #0284c7;
+}
+.light .login-toggle-btn:hover {
+  background-color: rgba(2, 132, 199, 0.08);
+  color: #0369a1;
+  border-color: #0369a1;
+}
+
+.forget-password-link {
+  color: #38bdf8;
+}
+.light .forget-password-link {
+  color: #0284c7;
+}
+.light .forget-password-link:hover {
+  color: #0369a1;
+}
+
+.otp-email-box {
+  color: #67e8f9;
+  background-color: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.2);
+}
+.light .otp-email-box {
+  color: #0891b2;
+  background-color: rgba(8, 145, 178, 0.08);
+  border-color: rgba(8, 145, 178, 0.2);
+}
+
+/* Glow Orbs styled with CSS to automatically switch colors and opacity */
+.glow-orb-green-1 {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, transparent 80%);
+}
+.light .glow-orb-green-1 {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 80%);
+}
+
+.glow-orb-green-2 {
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.14) 0%, transparent 80%);
+}
+.light .glow-orb-green-2 {
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.06) 0%, transparent 80%);
+}
+
+.glow-orb-blue-1 {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.22) 0%, transparent 80%);
+}
+.light .glow-orb-blue-1 {
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 80%);
+}
+
+.glow-orb-blue-2 {
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.14) 0%, transparent 80%);
+}
+.light .glow-orb-blue-2 {
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.06) 0%, transparent 80%);
+}
+
 /* Glassmorphism Utilities */
 .glass-panel {
   background: var(--color-glass-bg);
@@ -81,7 +223,7 @@ body {
 }
 
 .glass-panel:hover {
-  background: rgba(15, 23, 42, 0.65);
+  background: var(--color-glass-hover-bg);
   border-color: var(--color-glass-hover-border);
   box-shadow: 0 12px 40px 0 rgba(0, 194, 255, 0.15);
 }
