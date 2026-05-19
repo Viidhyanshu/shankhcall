@@ -44,7 +44,7 @@ export default function OceanDashboard() {
 
   // Local UI States
   const [lang, setLang] = useState<SupportedLanguages>('en');
-  const [role, setRole] = useState<'citizen' | 'official' | 'analyst'>('citizen');
+  const [role, setRole] = useState<'citizen' | 'official'>('citizen');
   const [isOnline, setIsOnline] = useState(true);
 
   // Filters State
@@ -440,7 +440,6 @@ export default function OceanDashboard() {
             >
               <option value="citizen">{t('roleCitizen')}</option>
               <option value="official">{t('roleOfficial')}</option>
-              <option value="analyst">{t('roleAnalyst')}</option>
             </select>
             <ChevronDown size={11} className="text-slate-500" />
           </div>

@@ -9,7 +9,7 @@ import { Eye, EyeOff, Shield, Users, BarChart3, ArrowLeft, ArrowRight, Check, Ac
 import ThemeToggle from '@/components/ThemeToggle';
 
 type SignUpStep = 'role' | 'details' | 'otp';
-type SelectedRole = 'citizen' | 'official' | 'analyst';
+type SelectedRole = 'citizen' | 'official';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -362,21 +362,6 @@ export default function LoginPage() {
                         <p className="text-[11px] text-slate-500 leading-normal mt-0.5">Validate reports, assign verification chips, and dispatch warnings.</p>
                       </div>
                     </div>
-
-                    {/* Analyst Card */}
-                    <div 
-                      onClick={() => handleRoleSelect('analyst')}
-                      className="glass-panel p-4 border border-slate-900 hover:border-indigo-500/30 bg-slate-950/20 rounded-xl cursor-pointer flex items-center gap-4 group transition-all"
-                    >
-                      <div className="h-10 w-10 rounded-lg bg-indigo-500/5 group-hover:bg-indigo-500/10 border border-indigo-500/10 flex items-center justify-center text-indigo-400">
-                        <BarChart3 size={18} />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-semibold text-sm text-slate-200 group-hover:text-indigo-400 transition-colors">Analyst</div>
-                        <p className="text-[11px] text-slate-500 leading-normal mt-0.5">Access raw social NLP monitors and detailed analytical statistics.</p>
-                      </div>
-                    </div>
-
                   </div>
                 </div>
               )}
