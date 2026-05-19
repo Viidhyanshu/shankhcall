@@ -28,7 +28,7 @@ export interface StoreState {
   pending: HazardReport[];
 }
 
-const OFFLINE_STORAGE_KEY = 'oceanwatch_store_pending';
+const LOCAL_STORAGE_KEY = 'oceanwatch_store_v3';
 
 // Private in-memory state
 let globalState: StoreState = {
@@ -43,34 +43,41 @@ function notify() {
   listeners.forEach(l => l({ ...globalState }));
 }
 
-// Save pending state to LocalStorage (offline fallback queue)
+// Save complete state locally for instant offline/error resilience
 export function saveStore() {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify({ pending: globalState.pending }));
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
+      reports: globalState.reports,
+      pending: globalState.pending
+    }));
   } catch (e) {
-    console.warn('Saving offline store failed', e);
+    console.warn('Saving local store failed', e);
   }
 }
 
-// Load pending state from LocalStorage
+// Load state from local storage at startup
 export function loadStore() {
   if (typeof window === 'undefined') return;
   try {
-    const raw = localStorage.getItem(OFFLINE_STORAGE_KEY);
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (raw) {
       const obj = JSON.parse(raw);
+      globalState.reports = (obj.reports || []).map((r: any) => ({
+        ...r,
+        sentiment: scoreSentiment(r.desc)
+      }));
       globalState.pending = (obj.pending || []).map((r: any) => ({
         ...r,
         sentiment: scoreSentiment(r.desc)
       }));
     }
   } catch (e) {
-    console.warn('Loading offline store failed', e);
+    console.warn('Loading local store failed', e);
   }
 }
 
-// Seed mock data to Firestore if empty
+// Seed mock data to Firestore (and locally)
 export async function seedMockData() {
   const now = Date.now();
   const forestSamples = [
@@ -92,44 +99,78 @@ export async function seedMockData() {
   ];
 
   let idx = 0;
+  
+  // Update local state first so we have immediate data
+  const seededReports: HazardReport[] = [];
+
   for (const s of forestSamples) {
     const id = `seed-f-${idx++}`;
-    try {
-      await setDoc(doc(db, "reports", id), {
-        ...s,
-        ts: now - 1000 * 60 * 60 * (1.5 * idx),
-        media: []
-      });
-    } catch (e) {
-      console.warn("Failed seeding document:", id, e);
-    }
+    const rep: HazardReport = {
+      id,
+      ...s,
+      ts: now - 1000 * 60 * 60 * (1.5 * idx),
+      media: [],
+      sentiment: scoreSentiment(s.desc)
+    };
+    seededReports.push(rep);
+    
+    // Write to Firestore in background
+    setDoc(doc(db, "reports", id), {
+      lat: s.lat,
+      lng: s.lng,
+      type: s.type,
+      desc: s.desc,
+      src: s.src,
+      verified: s.verified,
+      ts: rep.ts,
+      lang: s.lang,
+      media: []
+    }).catch(e => console.warn("Failed seeding document to Firestore:", id, e));
   }
 
   for (const s of oceanSamples) {
     const id = `seed-o-${idx++}`;
-    try {
-      await setDoc(doc(db, "reports", id), {
-        ...s,
-        ts: now - 1000 * 60 * 60 * (1.2 * idx),
-        media: []
-      });
-    } catch (e) {
-      console.warn("Failed seeding document:", id, e);
-    }
+    const rep: HazardReport = {
+      id,
+      ...s,
+      ts: now - 1000 * 60 * 60 * (1.2 * idx),
+      media: [],
+      sentiment: scoreSentiment(s.desc)
+    };
+    seededReports.push(rep);
+
+    // Write to Firestore in background
+    setDoc(doc(db, "reports", id), {
+      lat: s.lat,
+      lng: s.lng,
+      type: s.type,
+      desc: s.desc,
+      src: s.src,
+      verified: s.verified,
+      ts: rep.ts,
+      lang: s.lang,
+      media: []
+    }).catch(e => console.warn("Failed seeding document to Firestore:", id, e));
   }
+
+  globalState.reports = seededReports.sort((a, b) => b.ts - a.ts);
+  saveStore();
+  notify();
 }
 
-// Setup real-time listener for reports collection from Firestore
+// Initial Local Storage Load
 if (typeof window !== 'undefined') {
-  // Load local pending items at startup
   loadStore();
+  if (globalState.reports.length === 0) {
+    // Seed locally first if we have nothing in Local Storage
+    seedMockData();
+  }
 
+  // Subscribe to Firestore for live external updates
   const reportsQuery = query(collection(db, "reports"), orderBy("ts", "desc"));
   onSnapshot(reportsQuery, async (snapshot) => {
     if (snapshot.empty) {
-      // Seed data if completely empty in Firestore
-      console.log("Firestore reports collection is empty. Seeding mock data...");
-      await seedMockData();
+      console.log("Firestore collection is empty, local seed remains in place.");
       return;
     }
 
@@ -151,8 +192,16 @@ if (typeof window !== 'undefined') {
       });
     });
 
-    globalState.reports = fetchedReports;
+    // Merge: Keep local unsynced reports on top, then place Firestore reports
+    const localOnly = globalState.reports.filter(
+      local => !fetchedReports.some(remote => remote.id === local.id)
+    );
+
+    globalState.reports = [...localOnly, ...fetchedReports].sort((a, b) => b.ts - a.ts);
+    saveStore();
     notify();
+  }, (error) => {
+    console.error("Firestore real-time subscription blocked or failed:", error);
   });
 }
 
@@ -179,8 +228,20 @@ export function useDisasterStore() {
 // Core Operations
 export const storeActions = {
   addReport: async (report: Omit<HazardReport, 'sentiment'>) => {
-    const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+    const reportWithSentiment: HazardReport = {
+      ...report,
+      sentiment: scoreSentiment(report.desc)
+    };
 
+    // 1. Instant local visual update & Local Storage save
+    if (!globalState.reports.some(r => r.id === report.id)) {
+      globalState.reports.unshift(reportWithSentiment);
+      saveStore();
+      notify();
+    }
+
+    // 2. Perform background write to Firestore
+    const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
     if (isOnline) {
       try {
         await setDoc(doc(db, "reports", report.id), {
@@ -194,52 +255,57 @@ export const storeActions = {
           lang: report.lang,
           media: report.media
         });
+        console.log("Successfully synchronized new report to Firestore!");
       } catch (e) {
-        console.error("Error saving report to Firestore, queueing offline:", e);
-        const reportWithSentiment: HazardReport = {
-          ...report,
-          sentiment: scoreSentiment(report.desc)
-        };
-        globalState.pending.push(reportWithSentiment);
-        saveStore();
-        notify();
+        console.warn("Failed background upload to Firestore. Saving to offline sync queue.", e);
+        if (!globalState.pending.some(p => p.id === report.id)) {
+          globalState.pending.push(reportWithSentiment);
+          saveStore();
+        }
       }
     } else {
-      const reportWithSentiment: HazardReport = {
-        ...report,
-        sentiment: scoreSentiment(report.desc)
-      };
-      globalState.pending.push(reportWithSentiment);
-      saveStore();
-      notify();
+      if (!globalState.pending.some(p => p.id === report.id)) {
+        globalState.pending.push(reportWithSentiment);
+        saveStore();
+      }
     }
   },
 
   verifyReport: async (id: string) => {
+    // 1. Instant local verification state update
+    const report = globalState.reports.find(r => r.id === id);
+    if (report) {
+      report.verified = true;
+      saveStore();
+      notify();
+    }
+
+    // 2. Sync state update to Firestore in background
     try {
       await updateDoc(doc(db, "reports", id), {
         verified: true
       });
     } catch (e) {
-      console.error("Error verifying report in Firestore:", e);
-      // Fallback
-      const report = globalState.reports.find(r => r.id === id);
-      if (report) {
-        report.verified = true;
-        notify();
-      }
+      console.warn("Could not sync verification to Firestore:", e);
     }
   },
 
   verifyLatest: async () => {
     if (globalState.reports.length > 0) {
-      const latest = globalState.reports[0]; // descending by ts, so index 0 is latest
+      const latest = globalState.reports[0];
+      
+      // Update local state first
+      latest.verified = true;
+      saveStore();
+      notify();
+
+      // Sync Firestore
       try {
         await updateDoc(doc(db, "reports", latest.id), {
           verified: true
         });
       } catch (e) {
-        console.error("Error verifying latest report in Firestore:", e);
+        console.warn("Could not sync latest verification to Firestore:", e);
       }
     }
   },
@@ -265,16 +331,22 @@ export const storeActions = {
         notify();
         return true;
       } catch (e) {
-        console.error("Error syncing pending reports:", e);
+        console.warn("Failed syncing offline queue:", e);
       }
     }
     return false;
   },
 
   addBulkReports: async (reports: HazardReport[]) => {
+    // Save locally
+    globalState.reports.push(...reports);
+    saveStore();
+    notify();
+
+    // Push to Firestore in background
     try {
       for (const report of reports) {
-        await setDoc(doc(db, "reports", report.id), {
+        setDoc(doc(db, "reports", report.id), {
           lat: report.lat,
           lng: report.lng,
           type: report.type,
@@ -284,10 +356,10 @@ export const storeActions = {
           ts: report.ts,
           lang: report.lang,
           media: report.media
-        });
+        }).catch(e => console.warn("Failed background bulk item save:", report.id, e));
       }
     } catch (e) {
-      console.error("Error adding bulk reports to Firestore:", e);
+      console.warn("Failed bulk Firestore save:", e);
     }
   }
 };
