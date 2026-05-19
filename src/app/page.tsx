@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { Eye, EyeOff, Shield, Users, BarChart3, ArrowLeft, ArrowRight, Check, Activity, Smartphone, Mail } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -71,81 +71,40 @@ export default function LoginPage() {
     setSignUpStep('details');
   };
 
-  // Details Submission -> Trigger OTP Simulation
-  const handleDetailsSubmit = (e: React.FormEvent) => {
+  // Details Submission -> Create Firebase Auth user & Send Real Verification Email
+  const handleDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     if (!selectedRole) {
       setError('Please select a role.');
+      setLoading(false);
       return;
     }
     if (password.length < 6) {
       setError('Password must be at least 6 characters long.');
+      setLoading(false);
       return;
     }
     if (!robotChecked) {
       setError('Please confirm you are not a robot.');
+      setLoading(false);
       return;
     }
 
-    // Trigger Mock OTP Alerts
-    const mockEmailOtp = Math.floor(1000 + Math.random() * 9000).toString();
-    setGeneratedEmailOtp(mockEmailOtp);
-
-    if (phone.trim() !== '') {
-      const mockPhoneOtp = Math.floor(1000 + Math.random() * 9000).toString();
-      setGeneratedPhoneOtp(mockPhoneOtp);
-    } else {
-      setGeneratedPhoneOtp(null);
-    }
-
-    setSignUpStep('otp');
-  };
-
-  // Verify Simulated OTPs
-  const handleVerifyEmail = () => {
-    if (emailOtp === generatedEmailOtp) {
-      setIsEmailVerified(true);
-      setError('');
-    } else {
-      setError('Incorrect Email OTP.');
-    }
-  };
-
-  const handleVerifyPhone = () => {
-    if (phoneOtp === generatedPhoneOtp) {
-      setIsPhoneVerified(true);
-      setError('');
-    } else {
-      setError('Incorrect Phone OTP.');
-    }
-  };
-
-  // Final Signup Execution
-  const handleSignUpExecute = async () => {
-    setError('');
-    setLoading(true);
-
     try {
-      // Create account
+      // Create user in Firebase Auth immediately
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save User fields inside Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        name: name,
-        email: email,
-        phone: phone || '',
-        role: selectedRole,
-        createdAt: new Date()
-      });
+      // Send real verification link to their Gmail
+      await sendEmailVerification(user);
 
-      alert('Account created successfully! Please sign in.');
-      handleToggleMode(false); // Switch back to Sign In
+      // Advance to check email step
+      setSignUpStep('otp');
     } catch (err: any) {
-      console.error('Error creating account', err);
+      console.error('Error during registration start:', err);
       if (err.code === 'auth/email-already-in-use') {
         setError('This email address is already in use.');
       } else if (err.code === 'auth/weak-password') {
@@ -153,6 +112,69 @@ export default function LoginPage() {
       } else {
         setError('An error occurred during account creation. Please try again.');
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Resend the verification email link
+  const handleResendVerification = async () => {
+    setError('');
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        await sendEmailVerification(user);
+        alert('Verification email resent successfully!');
+      } catch (err: any) {
+        console.error('Error resending verification email:', err);
+        setError('Could not resend verification email. Please try again shortly.');
+      }
+    } else {
+      setError('No active signup session found. Please fill out details again.');
+    }
+  };
+
+  // Final completion: checks if the user verified the email, then saves to Firestore
+  const handleSignUpExecute = async () => {
+    setError('');
+    setLoading(true);
+
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        setError('No active session found. Please try signing up again.');
+        setLoading(false);
+        return;
+      }
+
+      // Reload profile to refresh emailVerified state
+      await user.reload();
+
+      if (!user.emailVerified) {
+        setError('Your email is not verified yet. Please open your Gmail, click the verification link, and then click "I have verified".');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Save User fields inside Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          name: name,
+          email: email,
+          phone: phone || '',
+          role: selectedRole,
+          createdAt: new Date()
+        });
+      } catch (dbErr) {
+        console.error('Error saving user data to Firestore:', dbErr);
+      }
+
+      alert('Account verified and created successfully! Please sign in.');
+      handleToggleMode(false); // Switch back to Sign In
+    } catch (err: any) {
+      console.error('Error completing account verification:', err);
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -448,10 +470,10 @@ export default function LoginPage() {
                 </form>
               )}
 
-              {/* Step 3: Simulated OTP Verification */}
+              {/* Step 3: Real Email Link Verification */}
               {signUpStep === 'otp' && (
-                <div className="space-y-5 animate-fade-in">
-                  <div className="flex items-center gap-3">
+                <div className="space-y-5 animate-fade-in text-center flex flex-col items-center">
+                  <div className="w-full flex items-center gap-3">
                     <button
                       type="button"
                       onClick={() => setSignUpStep('details')}
@@ -459,108 +481,64 @@ export default function LoginPage() {
                     >
                       <ArrowLeft size={16} />
                     </button>
-                    <div className="space-y-0.5">
-                      <h1 className="text-xl font-bold text-slate-100 font-sans">Verify Account</h1>
-                      <p className="text-[10px] text-slate-500">Security verification is simulated for prototype purposes.</p>
+                    <div className="space-y-0.5 text-left">
+                      <h1 className="text-xl font-bold text-slate-100 font-sans">Verify Your Email</h1>
+                      <p className="text-[10px] text-slate-500 font-sans">A verification link is required to activate your profile.</p>
                     </div>
                   </div>
 
-                  {/* Simulated Codes Glowing Banner */}
-                  <div className="p-3 bg-cyan-950/20 border border-cyan-500/25 rounded-xl text-xs space-y-1.5 shadow-lg shadow-cyan-500/5">
-                    <div className="font-semibold text-cyan-400 flex items-center gap-1.5 font-sans">
-                      <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping text-xs"></span>
-                      Sandbox Secure Simulator Mode
+                  {/* Mail icon and Info */}
+                  <div className="py-6 flex flex-col items-center justify-center gap-4">
+                    <div className="h-16 w-16 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 animate-pulse">
+                      <Mail size={32} />
                     </div>
-                    <p className="text-slate-400 text-[11px] leading-relaxed">
-                      We have simulated sending security verification codes to your accounts. Enter the codes below:
-                    </p>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1 font-mono text-[11px]">
-                      <span className="text-slate-350">
-                        Email OTP: <strong className="text-cyan-300 font-bold tracking-widest">{generatedEmailOtp}</strong>
-                      </span>
-                      {generatedPhoneOtp && (
-                        <span className="text-slate-350">
-                          Phone OTP: <strong className="text-cyan-300 font-bold tracking-widest">{generatedPhoneOtp}</strong>
-                        </span>
-                      )}
+                    <div className="space-y-2 max-w-sm">
+                      <p className="text-sm text-slate-200 font-medium font-sans">
+                        Verification link sent to:
+                      </p>
+                      <p className="text-sm font-mono text-cyan-300 font-bold bg-cyan-950/20 px-3 py-1.5 rounded-lg border border-cyan-500/10 select-all">
+                        {email}
+                      </p>
+                      <p className="text-xs text-slate-400 leading-relaxed font-sans pt-1">
+                        Please open your Gmail, look for the verification email sent by Firebase, and click the link inside it.
+                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-1">
-                    
-                    {/* Email Verification Box */}
-                    <div className="p-3 bg-slate-950/40 border border-slate-900 rounded-xl flex flex-col gap-3">
-                      <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                        <Mail size={14} className="text-sky-400" />
-                        <span>Email Verification Code</span>
-                        {isEmailVerified && <span className="ml-auto text-emerald-400 font-semibold flex items-center gap-1"><Check size={12}/> Verified</span>}
-                      </div>
+                  {/* CTA Buttons */}
+                  <div className="w-full space-y-3 pt-2">
+                    {/* Open Gmail Button */}
+                    <a
+                      href="https://mail.google.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-cyan-500/30 text-slate-200 font-semibold text-sm transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      Open Gmail
+                      <ArrowRight size={16} className="text-cyan-400" />
+                    </a>
 
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          placeholder="Enter Email OTP"
-                          value={emailOtp}
-                          disabled={isEmailVerified}
-                          onChange={(e) => setEmailOtp(e.target.value)}
-                          className="w-full bg-slate-950 border border-slate-900 focus:border-sky-400 disabled:opacity-50 rounded-lg px-3 py-2 text-slate-200 outline-none transition-all placeholder-slate-700 text-xs"
-                        />
-                        {!isEmailVerified && (
-                          <button
-                            type="button"
-                            onClick={handleVerifyEmail}
-                            className="px-4 py-2 bg-slate-900 hover:bg-sky-500/10 border border-slate-800 hover:border-sky-500/30 rounded-lg text-sky-400 hover:text-sky-300 font-semibold text-xs transition-all cursor-pointer"
-                          >
-                            Verify
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    {/* Verify Completion Button */}
+                    <button
+                      type="button"
+                      onClick={handleSignUpExecute}
+                      disabled={loading}
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-450 hover:to-teal-500 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-500/15 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      {loading ? 'Verifying status...' : 'I have verified my email'}
+                      {!loading && <Check size={16} />}
+                    </button>
 
-                    {/* Phone Verification Box (Only shown if phone was provided) */}
-                    {generatedPhoneOtp && (
-                      <div className="p-3 bg-slate-950/40 border border-slate-900 rounded-xl flex flex-col gap-3">
-                        <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                          <Smartphone size={14} className="text-sky-400" />
-                          <span>Phone Verification Code</span>
-                          {isPhoneVerified && <span className="ml-auto text-emerald-400 font-semibold flex items-center gap-1"><Check size={12}/> Verified</span>}
-                        </div>
-
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            placeholder="Enter Phone OTP"
-                            value={phoneOtp}
-                            disabled={isPhoneVerified}
-                            onChange={(e) => setPhoneOtp(e.target.value)}
-                            className="w-full bg-slate-950 border border-slate-900 focus:border-sky-400 disabled:opacity-50 rounded-lg px-3 py-2 text-slate-200 outline-none transition-all placeholder-slate-700 text-xs"
-                          />
-                          {!isPhoneVerified && (
-                            <button
-                              type="button"
-                              onClick={handleVerifyPhone}
-                              className="px-4 py-2 bg-slate-900 hover:bg-sky-500/10 border border-slate-800 hover:border-sky-500/30 rounded-lg text-sky-400 hover:text-sky-300 font-semibold text-xs transition-all cursor-pointer"
-                            >
-                              Verify
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
+                    {/* Resend Button */}
+                    <button
+                      type="button"
+                      onClick={handleResendVerification}
+                      disabled={loading}
+                      className="text-xs text-slate-500 hover:text-cyan-400 font-semibold transition-colors pt-1 cursor-pointer"
+                    >
+                      Didn't get the email? Resend verification link
+                    </button>
                   </div>
-
-                  {/* Submit buttons */}
-                  {/* Create account is active only when all requirements are verified */}
-                  <button
-                    type="button"
-                    onClick={handleSignUpExecute}
-                    disabled={loading || !isEmailVerified || (generatedPhoneOtp !== null && !isPhoneVerified)}
-                    className="w-full py-3 mt-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-450 hover:to-teal-500 text-white font-semibold text-sm transition-all shadow-lg shadow-emerald-500/15 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    {loading ? 'Creating Account...' : 'Create Account'}
-                    {!loading && <Check size={16} />}
-                  </button>
                 </div>
               )}
 
