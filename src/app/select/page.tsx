@@ -123,23 +123,14 @@ export default function DisasterSelector() {
         className="absolute inset-0 pointer-events-none z-10"
       />
 
-      {/* Split background layout — no dividing line */}
-      <div className="absolute inset-0 z-0 flex flex-col md:flex-row">
-        {/* Left Side: Forest (Emerald Theme) */}
-        <div className="relative w-full md:w-1/2 h-1/2 md:h-full overflow-hidden bg-gradient-to-br from-[#0a3d2a]/60 via-[#0c1a2e] to-[#0e1525]">
-
-          {/* Glowing Green Orb */}
-          <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-radial from-emerald-500/20 to-transparent blur-[80px] opacity-80 animate-orb-float" />
-          <div className="absolute bottom-[20%] right-[-5%] w-[400px] h-[400px] rounded-full bg-radial from-emerald-400/10 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:6s]" />
-        </div>
-
-        {/* Right Side: Ocean (Blue Theme) */}
-        <div className="relative w-full md:w-1/2 h-1/2 md:h-full overflow-hidden bg-gradient-to-bl from-[#0a2d4a]/60 via-[#0c1a2e] to-[#0e1525]">
-
-          {/* Glowing Ocean Blue Orb */}
-          <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-radial from-sky-500/20 to-transparent blur-[80px] opacity-80 animate-orb-float [animation-delay:3s]" />
-          <div className="absolute top-[15%] left-[-5%] w-[400px] h-[400px] rounded-full bg-radial from-blue-400/10 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:8s]" />
-        </div>
+      {/* Linear gradient background — forest green (left) to ocean blue (right) */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0d2e20] via-[#111d2e] to-[#0c2440]">
+        {/* Glowing Green Orb (left) */}
+        <div className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-radial from-emerald-500/25 to-transparent blur-[80px] opacity-80 animate-orb-float" />
+        <div className="absolute bottom-[20%] left-[15%] w-[400px] h-[400px] rounded-full bg-radial from-emerald-400/15 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:6s]" />
+        {/* Glowing Ocean Blue Orb (right) */}
+        <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-radial from-sky-500/25 to-transparent blur-[80px] opacity-80 animate-orb-float [animation-delay:3s]" />
+        <div className="absolute top-[15%] right-[15%] w-[400px] h-[400px] rounded-full bg-radial from-blue-400/15 to-transparent blur-[60px] opacity-70 animate-orb-float [animation-delay:8s]" />
       </div>
 
       {/* Floating Leaves — scattered across entire background */}
