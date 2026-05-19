@@ -396,7 +396,7 @@ export default function ForestDashboard() {
           {/* Left Section: Logo */}
           <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={() => router.push('/select')}>
             <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-650 flex items-center justify-center shadow-lg shadow-emerald-500/15 border border-emerald-400/20 shrink-0">
-              <TreePine className="h-5 w-5 text-white" />
+              <i className="fa-solid fa-cloud-showers-water text-white text-base"></i>
             </div>
             <div>
               <h1 className="text-lg font-bold tracking-wider font-sans uppercase text-slate-100 flex items-center gap-1.5">
