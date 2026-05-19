@@ -161,16 +161,23 @@ export async function seedMockData() {
 // Initial Local Storage Load
 if (typeof window !== 'undefined') {
   loadStore();
-  if (globalState.reports.length === 0) {
+  
+  const hasSeeded = localStorage.getItem('oceanwatch_seeded');
+  if (!hasSeeded && globalState.reports.length === 0) {
     // Seed locally first if we have nothing in Local Storage
     seedMockData();
+    localStorage.setItem('oceanwatch_seeded', 'true');
   }
 
   // Subscribe to Firestore for live external updates
   const reportsQuery = query(collection(db, "reports"), orderBy("ts", "desc"));
   onSnapshot(reportsQuery, async (snapshot) => {
     if (snapshot.empty) {
-      console.log("Firestore collection is empty, local seed remains in place.");
+      console.log("Firestore collection is empty.");
+      // If Firestore is empty, show only offline pending reports
+      globalState.reports = [...globalState.pending];
+      saveStore();
+      notify();
       return;
     }
 
@@ -192,12 +199,12 @@ if (typeof window !== 'undefined') {
       });
     });
 
-    // Merge: Keep local unsynced reports on top, then place Firestore reports
-    const localOnly = globalState.reports.filter(
-      local => !fetchedReports.some(remote => remote.id === local.id)
+    // Merge: Keep local reports ONLY if they are in the offline "pending" upload queue
+    const localPending = globalState.reports.filter(
+      local => globalState.pending.some(p => p.id === local.id)
     );
 
-    globalState.reports = [...localOnly, ...fetchedReports].sort((a, b) => b.ts - a.ts);
+    globalState.reports = [...localPending, ...fetchedReports].sort((a, b) => b.ts - a.ts);
     saveStore();
     notify();
   }, (error) => {
