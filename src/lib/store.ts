@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { scoreSentiment } from './nlp';
+import { db } from './firebase';
+import { collection, doc, setDoc, updateDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 export interface HazardMedia {
   type: 'image' | 'video';
@@ -26,7 +28,7 @@ export interface StoreState {
   pending: HazardReport[];
 }
 
-const LOCAL_STORAGE_KEY = 'oceanwatch_store';
+const OFFLINE_STORAGE_KEY = 'oceanwatch_store_pending';
 
 // Private in-memory state
 let globalState: StoreState = {
@@ -41,41 +43,35 @@ function notify() {
   listeners.forEach(l => l({ ...globalState }));
 }
 
-// Save state to LocalStorage
+// Save pending state to LocalStorage (offline fallback queue)
 export function saveStore() {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(globalState));
+    localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify({ pending: globalState.pending }));
   } catch (e) {
-    console.warn('Saving store failed', e);
+    console.warn('Saving offline store failed', e);
   }
 }
 
-// Load state from LocalStorage
+// Load pending state from LocalStorage
 export function loadStore() {
   if (typeof window === 'undefined') return;
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const raw = localStorage.getItem(OFFLINE_STORAGE_KEY);
     if (raw) {
       const obj = JSON.parse(raw);
-      globalState.reports = (obj.reports || []).map((r: any) => ({
-        ...r,
-        sentiment: scoreSentiment(r.desc)
-      }));
       globalState.pending = (obj.pending || []).map((r: any) => ({
         ...r,
         sentiment: scoreSentiment(r.desc)
       }));
     }
   } catch (e) {
-    console.warn('Loading store failed', e);
+    console.warn('Loading offline store failed', e);
   }
 }
 
-// Seed mock data if empty
-export function seedMockData() {
-  if (globalState.reports.length > 0) return;
-  
+// Seed mock data to Firestore if empty
+export async function seedMockData() {
   const now = Date.now();
   const forestSamples = [
     { lat: 29.53, lng: 78.7747, type: 'Tree', desc: 'Unusual tree cutting reported near reserve area', src: 'citizen' as const, verified: false, lang: 'en' },
@@ -95,29 +91,69 @@ export function seedMockData() {
     { lat: 21.1458, lng: 79.0882, type: 'damage', desc: 'Sea wall damage spotted after storm surge', src: 'citizen' as const, verified: false, lang: 'en' }
   ];
 
-  // Merge seed items with timestamps
   let idx = 0;
-  forestSamples.forEach(s => {
-    globalState.reports.push({
-      id: `seed-f-${idx++}`,
-      ...s,
-      ts: now - 1000 * 60 * 60 * (1.5 * idx),
-      media: [],
-      sentiment: scoreSentiment(s.desc)
-    });
-  });
+  for (const s of forestSamples) {
+    const id = `seed-f-${idx++}`;
+    try {
+      await setDoc(doc(db, "reports", id), {
+        ...s,
+        ts: now - 1000 * 60 * 60 * (1.5 * idx),
+        media: []
+      });
+    } catch (e) {
+      console.warn("Failed seeding document:", id, e);
+    }
+  }
 
-  oceanSamples.forEach(s => {
-    globalState.reports.push({
-      id: `seed-o-${idx++}`,
-      ...s,
-      ts: now - 1000 * 60 * 60 * (1.2 * idx),
-      media: [],
-      sentiment: scoreSentiment(s.desc)
-    });
-  });
+  for (const s of oceanSamples) {
+    const id = `seed-o-${idx++}`;
+    try {
+      await setDoc(doc(db, "reports", id), {
+        ...s,
+        ts: now - 1000 * 60 * 60 * (1.2 * idx),
+        media: []
+      });
+    } catch (e) {
+      console.warn("Failed seeding document:", id, e);
+    }
+  }
+}
 
-  saveStore();
+// Setup real-time listener for reports collection from Firestore
+if (typeof window !== 'undefined') {
+  // Load local pending items at startup
+  loadStore();
+
+  const reportsQuery = query(collection(db, "reports"), orderBy("ts", "desc"));
+  onSnapshot(reportsQuery, async (snapshot) => {
+    if (snapshot.empty) {
+      // Seed data if completely empty in Firestore
+      console.log("Firestore reports collection is empty. Seeding mock data...");
+      await seedMockData();
+      return;
+    }
+
+    const fetchedReports: HazardReport[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      fetchedReports.push({
+        id: doc.id,
+        lat: Number(data.lat),
+        lng: Number(data.lng),
+        type: String(data.type),
+        desc: String(data.desc),
+        src: data.src,
+        verified: Boolean(data.verified),
+        ts: Number(data.ts),
+        lang: String(data.lang || 'en'),
+        sentiment: scoreSentiment(String(data.desc)),
+        media: data.media || []
+      });
+    });
+
+    globalState.reports = fetchedReports;
+    notify();
+  });
 }
 
 // React custom hook to subscribe to store updates
@@ -125,12 +161,6 @@ export function useDisasterStore() {
   const [state, setState] = useState<StoreState>({ reports: [], pending: [] });
 
   useEffect(() => {
-    // Initial load
-    if (globalState.reports.length === 0) {
-      loadStore();
-      seedMockData();
-    }
-
     setState({ ...globalState });
 
     const listener = (updated: StoreState) => {
@@ -148,67 +178,128 @@ export function useDisasterStore() {
 
 // Core Operations
 export const storeActions = {
-  addReport: (report: Omit<HazardReport, 'sentiment'>) => {
-    const reportWithSentiment: HazardReport = {
-      ...report,
-      sentiment: scoreSentiment(report.desc)
-    };
-
+  addReport: async (report: Omit<HazardReport, 'sentiment'>) => {
     const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
 
     if (isOnline) {
-      globalState.reports.push(reportWithSentiment);
+      try {
+        await setDoc(doc(db, "reports", report.id), {
+          lat: report.lat,
+          lng: report.lng,
+          type: report.type,
+          desc: report.desc,
+          src: report.src,
+          verified: report.verified,
+          ts: report.ts,
+          lang: report.lang,
+          media: report.media
+        });
+      } catch (e) {
+        console.error("Error saving report to Firestore, queueing offline:", e);
+        const reportWithSentiment: HazardReport = {
+          ...report,
+          sentiment: scoreSentiment(report.desc)
+        };
+        globalState.pending.push(reportWithSentiment);
+        saveStore();
+        notify();
+      }
     } else {
+      const reportWithSentiment: HazardReport = {
+        ...report,
+        sentiment: scoreSentiment(report.desc)
+      };
       globalState.pending.push(reportWithSentiment);
-    }
-
-    saveStore();
-    notify();
-  },
-
-  verifyReport: (id: string) => {
-    const report = globalState.reports.find(r => r.id === id);
-    if (report) {
-      report.verified = true;
       saveStore();
       notify();
     }
   },
 
-  verifyLatest: () => {
+  verifyReport: async (id: string) => {
+    try {
+      await updateDoc(doc(db, "reports", id), {
+        verified: true
+      });
+    } catch (e) {
+      console.error("Error verifying report in Firestore:", e);
+      // Fallback
+      const report = globalState.reports.find(r => r.id === id);
+      if (report) {
+        report.verified = true;
+        notify();
+      }
+    }
+  },
+
+  verifyLatest: async () => {
     if (globalState.reports.length > 0) {
-      globalState.reports[globalState.reports.length - 1].verified = true;
-      saveStore();
-      notify();
+      const latest = globalState.reports[0]; // descending by ts, so index 0 is latest
+      try {
+        await updateDoc(doc(db, "reports", latest.id), {
+          verified: true
+        });
+      } catch (e) {
+        console.error("Error verifying latest report in Firestore:", e);
+      }
     }
   },
 
-  syncPending: () => {
+  syncPending: async () => {
     if (globalState.pending.length > 0) {
-      globalState.reports.push(...globalState.pending);
-      globalState.pending = [];
-      saveStore();
-      notify();
-      return true;
+      try {
+        for (const report of globalState.pending) {
+          await setDoc(doc(db, "reports", report.id), {
+            lat: report.lat,
+            lng: report.lng,
+            type: report.type,
+            desc: report.desc,
+            src: report.src,
+            verified: report.verified,
+            ts: report.ts,
+            lang: report.lang,
+            media: report.media
+          });
+        }
+        globalState.pending = [];
+        saveStore();
+        notify();
+        return true;
+      } catch (e) {
+        console.error("Error syncing pending reports:", e);
+      }
     }
     return false;
   },
 
-  addBulkReports: (reports: HazardReport[]) => {
-    globalState.reports.push(...reports);
-    saveStore();
-    notify();
+  addBulkReports: async (reports: HazardReport[]) => {
+    try {
+      for (const report of reports) {
+        await setDoc(doc(db, "reports", report.id), {
+          lat: report.lat,
+          lng: report.lng,
+          type: report.type,
+          desc: report.desc,
+          src: report.src,
+          verified: report.verified,
+          ts: report.ts,
+          lang: report.lang,
+          media: report.media
+        });
+      }
+    } catch (e) {
+      console.error("Error adding bulk reports to Firestore:", e);
+    }
   }
 };
 
 // Wire online listener in browser environment
 if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
-    const synced = storeActions.syncPending();
-    if (synced) {
-      console.info('Pending offline reports synchronized.');
-      // Dispatch a custom event to notify components if they want to trigger toasts
-      window.dispatchEvent(new Event('store-offline-synced'));
-    }
+    storeActions.syncPending().then(synced => {
+      if (synced) {
+        console.info('Pending offline reports synchronized.');
+        window.dispatchEvent(new Event('store-offline-synced'));
+      }
+    });
   });
 }
