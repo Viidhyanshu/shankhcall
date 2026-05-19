@@ -123,45 +123,14 @@ export default function DisasterSelector() {
         className="absolute inset-0 pointer-events-none z-10"
       />
 
-      {/* Split background layout */}
+      {/* Split background layout — no dividing line */}
       <div className="absolute inset-0 z-0 flex flex-col md:flex-row">
         {/* Left Side: Forest (Emerald Theme) */}
-        <div className="relative w-full md:w-1/2 h-1/2 md:h-full overflow-hidden bg-gradient-to-br from-[#041e15]/40 via-[#060913] to-[#060913] border-b md:border-b-0 md:border-r border-slate-900/60">
+        <div className="relative w-full md:w-1/2 h-1/2 md:h-full overflow-hidden bg-gradient-to-br from-[#041e15]/40 via-[#060913] to-[#060913]">
           {/* Emerald animated grid */}
           <div className="absolute inset-0 opacity-40 bg-[linear-gradient(rgba(16,185,129,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.02)_1px,transparent_1px)] bg-[size:50px_50px] animate-grid-move [transform:rotateX(60deg)_translateZ(-100px)] origin-center" />
           {/* Glowing Green Orb */}
           <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-radial from-emerald-500/10 to-transparent blur-[80px] opacity-75 animate-orb-float" />
-
-          {/* Floating Leaves */}
-          {[
-            { top: '10%', left: '15%', size: 28, delay: '0s', dur: '12s', rotate: 25 },
-            { top: '25%', left: '60%', size: 22, delay: '2s', dur: '15s', rotate: -15 },
-            { top: '50%', left: '30%', size: 32, delay: '4s', dur: '18s', rotate: 40 },
-            { top: '65%', left: '75%', size: 20, delay: '1s', dur: '14s', rotate: -30 },
-            { top: '80%', left: '20%', size: 26, delay: '3s', dur: '16s', rotate: 10 },
-            { top: '40%', left: '80%', size: 18, delay: '5s', dur: '13s', rotate: -45 },
-            { top: '15%', left: '45%', size: 24, delay: '6s', dur: '17s', rotate: 55 },
-            { top: '70%', left: '50%', size: 30, delay: '2.5s', dur: '11s', rotate: -20 },
-          ].map((leaf, i) => (
-            <svg
-              key={`leaf-${i}`}
-              className="absolute text-emerald-500/[0.07] animate-orb-float pointer-events-none"
-              style={{
-                top: leaf.top,
-                left: leaf.left,
-                width: leaf.size,
-                height: leaf.size,
-                animationDelay: leaf.delay,
-                animationDuration: leaf.dur,
-                transform: `rotate(${leaf.rotate}deg)`,
-              }}
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7 8 17 8 17 8Z" />
-            </svg>
-          ))}
         </div>
 
         {/* Right Side: Ocean (Blue Theme) */}
@@ -170,39 +139,77 @@ export default function DisasterSelector() {
           <div className="absolute inset-0 opacity-40 bg-[linear-gradient(rgba(14,165,233,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(14,165,233,0.02)_1px,transparent_1px)] bg-[size:50px_50px] animate-grid-move [transform:rotateX(60deg)_translateZ(-100px)] origin-center" />
           {/* Glowing Ocean Blue Orb */}
           <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-radial from-sky-500/10 to-transparent blur-[80px] opacity-75 animate-orb-float [animation-delay:3s]" />
-
-          {/* Animated Ocean Waves */}
-          <svg className="absolute bottom-0 left-0 w-full h-[40%] pointer-events-none" viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path className="animate-[wave_8s_ease-in-out_infinite]" fill="rgba(14,165,233,0.04)" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,186.7C960,160,1056,128,1152,128C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
-            <path className="animate-[wave_10s_ease-in-out_infinite_1s]" fill="rgba(14,165,233,0.03)" d="M0,288L48,272C96,256,192,224,288,213.3C384,203,480,213,576,229.3C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,208L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
-            <path className="animate-[wave_12s_ease-in-out_infinite_2s]" fill="rgba(56,189,248,0.02)" d="M0,256L48,245.3C96,235,192,213,288,208C384,203,480,213,576,234.7C672,256,768,288,864,277.3C960,267,1056,213,1152,192C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
-          </svg>
-
-          {/* Floating water droplets */}
-          {[
-            { top: '15%', left: '20%', size: 6, delay: '0s', dur: '8s' },
-            { top: '30%', left: '55%', size: 4, delay: '1.5s', dur: '10s' },
-            { top: '45%', left: '35%', size: 5, delay: '3s', dur: '9s' },
-            { top: '20%', left: '75%', size: 7, delay: '2s', dur: '11s' },
-            { top: '55%', left: '65%', size: 3, delay: '4s', dur: '7s' },
-            { top: '35%', left: '85%', size: 5, delay: '1s', dur: '12s' },
-            { top: '60%', left: '15%', size: 4, delay: '5s', dur: '9s' },
-            { top: '10%', left: '45%', size: 6, delay: '3.5s', dur: '10s' },
-          ].map((drop, i) => (
-            <div
-              key={`drop-${i}`}
-              className="absolute rounded-full bg-sky-400/[0.06] animate-orb-float pointer-events-none"
-              style={{
-                top: drop.top,
-                left: drop.left,
-                width: drop.size,
-                height: drop.size,
-                animationDelay: drop.delay,
-                animationDuration: drop.dur,
-              }}
-            />
-          ))}
         </div>
+      </div>
+
+      {/* Floating Leaves — scattered across entire background */}
+      {[
+        { top: '8%',  left: '10%', size: 28, delay: '0s',   dur: '12s', rotate: 25 },
+        { top: '22%', left: '55%', size: 22, delay: '2s',   dur: '15s', rotate: -15 },
+        { top: '48%', left: '25%', size: 32, delay: '4s',   dur: '18s', rotate: 40 },
+        { top: '60%', left: '70%', size: 20, delay: '1s',   dur: '14s', rotate: -30 },
+        { top: '78%', left: '15%', size: 26, delay: '3s',   dur: '16s', rotate: 10 },
+        { top: '35%', left: '82%', size: 18, delay: '5s',   dur: '13s', rotate: -45 },
+        { top: '12%', left: '40%', size: 24, delay: '6s',   dur: '17s', rotate: 55 },
+        { top: '68%', left: '48%', size: 30, delay: '2.5s', dur: '11s', rotate: -20 },
+        { top: '5%',  left: '75%', size: 20, delay: '1.5s', dur: '14s', rotate: 35 },
+        { top: '42%', left: '5%',  size: 26, delay: '3.5s', dur: '15s', rotate: -10 },
+        { top: '85%', left: '60%', size: 22, delay: '4.5s', dur: '12s', rotate: 60 },
+        { top: '30%', left: '92%', size: 18, delay: '0.5s', dur: '16s', rotate: -55 },
+        { top: '55%', left: '38%', size: 24, delay: '7s',   dur: '13s', rotate: 15 },
+        { top: '18%', left: '88%', size: 28, delay: '2s',   dur: '11s', rotate: -40 },
+        { top: '72%', left: '85%', size: 20, delay: '6s',   dur: '17s', rotate: 30 },
+      ].map((leaf, i) => (
+        <svg
+          key={`leaf-${i}`}
+          className="absolute z-[1] text-emerald-500/[0.06] animate-orb-float pointer-events-none"
+          style={{
+            top: leaf.top,
+            left: leaf.left,
+            width: leaf.size,
+            height: leaf.size,
+            animationDelay: leaf.delay,
+            animationDuration: leaf.dur,
+            transform: `rotate(${leaf.rotate}deg)`,
+          }}
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7 8 17 8 17 8Z" />
+        </svg>
+      ))}
+
+      {/* Footer Waves & Droplets — full-width bottom */}
+      <div className="absolute bottom-0 left-0 w-full z-[1] pointer-events-none">
+        <svg className="w-full h-[120px] md:h-[160px]" viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path className="animate-[wave_8s_ease-in-out_infinite]" fill="rgba(14,165,233,0.05)" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,229.3C672,235,768,213,864,186.7C960,160,1056,128,1152,128C1248,128,1344,160,1392,176L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
+          <path className="animate-[wave_10s_ease-in-out_infinite_1s]" fill="rgba(14,165,233,0.04)" d="M0,288L48,272C96,256,192,224,288,213.3C384,203,480,213,576,229.3C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,208L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
+          <path className="animate-[wave_12s_ease-in-out_infinite_2s]" fill="rgba(56,189,248,0.03)" d="M0,256L48,245.3C96,235,192,213,288,208C384,203,480,213,576,234.7C672,256,768,288,864,277.3C960,267,1056,213,1152,192C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" />
+        </svg>
+        {/* Floating water droplets across footer area */}
+        {[
+          { bottom: '30px',  left: '8%',  size: 5 , delay: '0s',   dur: '8s'  },
+          { bottom: '60px',  left: '22%', size: 4 , delay: '1.5s', dur: '10s' },
+          { bottom: '45px',  left: '38%', size: 6 , delay: '3s',   dur: '9s'  },
+          { bottom: '70px',  left: '52%', size: 3 , delay: '2s',   dur: '11s' },
+          { bottom: '35px',  left: '65%', size: 5 , delay: '4s',   dur: '7s'  },
+          { bottom: '55px',  left: '78%', size: 4 , delay: '1s',   dur: '12s' },
+          { bottom: '80px',  left: '90%', size: 6 , delay: '5s',   dur: '9s'  },
+        ].map((drop, i) => (
+          <div
+            key={`drop-${i}`}
+            className="absolute rounded-full bg-sky-400/[0.08] animate-orb-float"
+            style={{
+              bottom: drop.bottom,
+              left: drop.left,
+              width: drop.size,
+              height: drop.size,
+              animationDelay: drop.delay,
+              animationDuration: drop.dur,
+            }}
+          />
+        ))}
       </div>
 
       {/* Watermark Navbar */}
