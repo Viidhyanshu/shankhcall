@@ -224,17 +224,43 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
     onClose();
   };
 
+  const isForest = mode === 'forest';
+  
+  const theme = {
+    border: isForest ? 'border-emerald-500/20' : 'border-cyan-500/20',
+    shadow: isForest 
+      ? 'shadow-[0_0_50px_-12px_rgba(16,185,129,0.15)]' 
+      : 'shadow-[0_0_50px_-12px_rgba(6,182,212,0.15)]',
+    radialBg: isForest 
+      ? 'bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.05),transparent)]' 
+      : 'bg-[radial-gradient(circle_at_top_right,rgba(0,194,255,0.05),transparent)]',
+    dotBg: isForest ? 'bg-emerald-500' : 'bg-cyan-500',
+    dotShadow: isForest ? 'shadow-[0_0_10px_#10b981]' : 'shadow-[0_0_10px_#06b6d4]',
+    inputFocus: isForest 
+      ? 'hover:border-emerald-500/30 focus:border-emerald-500 focus:ring-emerald-500/10' 
+      : 'hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-cyan-500/10',
+    locateBtn: isForest
+      ? 'hover:bg-emerald-500/10 hover:border-emerald-500/30 text-emerald-450 hover:text-emerald-300'
+      : 'hover:bg-cyan-500/10 hover:border-cyan-500/30 text-cyan-450 hover:text-cyan-300',
+    uploadBorder: isForest ? 'hover:border-emerald-500/20' : 'hover:border-cyan-500/20',
+    uploadIcon: isForest ? 'group-hover:text-emerald-400 group-hover:border-emerald-500/20' : 'group-hover:text-cyan-400 group-hover:border-cyan-500/20',
+    consentCard: isForest ? 'bg-emerald-955/5 border-l-2 border-emerald-500/30' : 'bg-cyan-955/5 border-l-2 border-cyan-500/30',
+    submitBtn: isForest
+      ? 'from-emerald-500 to-teal-650 hover:from-emerald-450 hover:to-teal-550 shadow-[0_0_15px_rgba(16,185,129,0.25)] hover:shadow-[0_0_20px_rgba(16,185,129,0.35)]'
+      : 'from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-[0_0_15px_rgba(6,182,212,0.25)] hover:shadow-[0_0_20px_rgba(6,182,212,0.35)]',
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-2xl max-h-[90vh] rounded-2xl glass-panel border border-cyan-500/20 bg-[#080d19]/95 text-slate-100 flex flex-col p-6 shadow-[0_0_50px_-12px_rgba(6,182,212,0.15)] relative">
+      <div className={`w-full max-w-2xl max-h-[90vh] rounded-2xl glass-panel border ${theme.border} bg-[#080d19]/95 text-slate-100 flex flex-col p-6 ${theme.shadow} relative`}>
         
         {/* Decorative corner light overlay */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-[radial-gradient(circle_at_top_right,rgba(0,194,255,0.05),transparent)] pointer-events-none"></div>
+        <div className={`absolute top-0 right-0 w-32 h-32 ${theme.radialBg} pointer-events-none`}></div>
 
         {/* Header */}
         <div className="flex justify-between items-center pb-4 border-b border-slate-800/60 mb-6 select-none">
           <div className="flex items-center gap-2.5">
-            <div className="h-2 w-2 rounded-full bg-cyan-500 shadow-[0_0_10px_#06b6d4] animate-pulse"></div>
+            <div className={`h-2 w-2 rounded-full ${theme.dotBg} ${theme.dotShadow} animate-pulse`}></div>
             <h2 className="text-sm font-extrabold tracking-[0.08em] text-slate-200 uppercase">
               {t('newReport')}
             </h2>
@@ -262,13 +288,13 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
               
               {/* Event Type */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-2 select-none">
                   {t('eventType')}
                 </label>
                 <select
                   value={eventType}
                   onChange={(e) => setEventType(e.target.value)}
-                  className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs cursor-pointer shadow-inner"
+                  className={`w-full bg-slate-950/40 border border-slate-800/80 ${theme.inputFocus} rounded-xl p-3 text-slate-200 outline-none transition-all text-xs cursor-pointer shadow-inner`}
                   required
                 >
                   {categories.map((opt) => (
@@ -281,7 +307,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
 
               {/* Description */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-2 select-none">
                   {t('description')}
                 </label>
                 <textarea
@@ -289,7 +315,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
                   placeholder={t('descPlaceholder')}
-                  className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all resize-none placeholder-slate-600 text-xs leading-relaxed"
+                  className={`w-full bg-slate-950/40 border border-slate-800/80 ${theme.inputFocus} rounded-xl p-3 text-slate-200 outline-none transition-all resize-none placeholder-slate-600 text-xs leading-relaxed`}
                   required
                 />
               </div>
@@ -304,7 +330,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                     type="datetime-local"
                     value={timestamp}
                     onChange={(e) => setTimestamp(e.target.value)}
-                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-2.5 text-slate-200 outline-none transition-all text-xs"
+                    className={`w-full bg-slate-950/40 border border-slate-800/80 ${theme.inputFocus} rounded-xl p-2.5 text-slate-200 outline-none transition-all text-xs`}
                   />
                 </div>
 
@@ -315,7 +341,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                   <select
                     value={reportLang}
                     onChange={(e) => setReportLang(e.target.value as SupportedLanguages)}
-                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs cursor-pointer"
+                    className={`w-full bg-slate-950/40 border border-slate-800/80 ${theme.inputFocus} rounded-xl p-3 text-slate-200 outline-none transition-all text-xs cursor-pointer`}
                   >
                     <option value="en" className="bg-slate-950 text-slate-200">English</option>
                     <option value="hi" className="bg-slate-950 text-slate-200">हिन्दी</option>
@@ -336,7 +362,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
               
               {/* Location */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-2 select-none">
                   {t('locationLabel')}
                 </label>
                 <div className="flex gap-2">
@@ -345,7 +371,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                     value={lat}
                     onChange={(e) => setLat(e.target.value)}
                     placeholder="Latitude"
-                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs"
+                    className={`w-full bg-slate-950/40 border border-slate-800/80 ${theme.inputFocus} rounded-xl p-3 text-slate-200 outline-none transition-all text-xs`}
                     required
                   />
                   <input
@@ -353,14 +379,14 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
                     value={lng}
                     onChange={(e) => setLng(e.target.value)}
                     placeholder="Longitude"
-                    className="w-full bg-slate-950/40 border border-slate-800/80 hover:border-cyan-500/30 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/10 rounded-xl p-3 text-slate-200 outline-none transition-all text-xs"
+                    className={`w-full bg-slate-950/40 border border-slate-800/80 ${theme.inputFocus} rounded-xl p-3 text-slate-200 outline-none transition-all text-xs`}
                     required
                   />
                   <button
                     type="button"
                     onClick={handleGetLocation}
                     disabled={isLocating}
-                    className="p-3 bg-slate-950/80 hover:bg-cyan-500/10 border border-slate-800/80 hover:border-cyan-500/30 rounded-xl text-cyan-450 hover:text-cyan-300 disabled:opacity-50 transition-all flex items-center justify-center aspect-square cursor-pointer shrink-0"
+                    className={`p-3 bg-slate-950/80 border border-slate-800/80 ${theme.locateBtn} rounded-xl disabled:opacity-50 transition-all flex items-center justify-center aspect-square cursor-pointer shrink-0`}
                     title="Get Current Location"
                   >
                     <Locate size={15} className={isLocating ? 'animate-spin' : ''} />
@@ -370,14 +396,14 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
 
               {/* Media Upload */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-2 select-none">
                   {t('media')}
                 </label>
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border border-dashed border-slate-800 hover:border-cyan-500/20 bg-slate-950/25 hover:bg-slate-950/40 rounded-xl p-4.5 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5 group select-none animate-fade-in"
+                  className={`border border-dashed border-slate-800 ${theme.uploadBorder} bg-slate-950/25 hover:bg-slate-950/40 rounded-xl p-4.5 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-1.5 group select-none animate-fade-in`}
                 >
-                  <div className="h-8.5 w-8.5 rounded-full bg-slate-900/60 border border-slate-800/80 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-500/20 group-hover:scale-105 transition-all">
+                  <div className={`h-8.5 w-8.5 rounded-full bg-slate-900/60 border border-slate-800/80 flex items-center justify-center text-slate-400 ${theme.uploadIcon} group-hover:scale-105 transition-all`}>
                     <ImageIcon size={15} />
                   </div>
                   <div className="text-xs text-slate-400 font-medium tracking-wide">Click to select files (Max 4, limit 3.5MB each)</div>
@@ -418,10 +444,10 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
 
               {/* Consent Card */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-450 uppercase tracking-widest mb-2 select-none">
+                <label className="block text-[10px] font-bold text-slate-455 uppercase tracking-widest mb-2 select-none">
                   {t('consent')}
                 </label>
-                <div className="p-3 bg-cyan-955/5 border-l-2 border-cyan-500/30 rounded-r-xl rounded-l-md text-[11px] leading-relaxed text-slate-400 font-sans shadow-inner">
+                <div className={`p-3 rounded-r-xl rounded-l-md text-[11px] leading-relaxed text-slate-400 font-sans shadow-inner ${theme.consentCard}`}>
                   By submitting, you confirm media is yours or permitted and does not include personal data without consent.
                 </div>
               </div>
@@ -441,7 +467,7 @@ export default function ReportModal({ isOpen, onClose, mode, lang }: ReportModal
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold transition-all shadow-[0_0_15px_rgba(6,182,212,0.25)] hover:shadow-[0_0_20px_rgba(6,182,212,0.35)] cursor-pointer"
+              className={`px-5 py-2 rounded-xl bg-gradient-to-r ${theme.submitBtn} text-white text-xs font-bold transition-all cursor-pointer`}
             >
               {t('submit').toUpperCase()}
             </button>

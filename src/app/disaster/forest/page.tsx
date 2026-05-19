@@ -698,7 +698,7 @@ export default function ForestDashboard() {
                               {/* Media tag indicator */}
                               {Array.isArray(r.media) && r.media.length > 0 && (
                                 <div className="flex gap-1.5 mt-1.5">
-                                  <span className="text-[8px] font-semibold text-sky-400/80 bg-sky-500/5 border border-sky-500/10 px-1.5 py-0.5 rounded uppercase">
+                                  <span className="text-[8px] font-semibold text-emerald-400/80 bg-emerald-500/5 border border-emerald-500/10 px-1.5 py-0.5 rounded uppercase">
                                     {t('attachment')}
                                   </span>
                                 </div>
