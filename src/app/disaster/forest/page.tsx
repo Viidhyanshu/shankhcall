@@ -683,6 +683,7 @@ export default function ForestDashboard() {
                             onClick={() => {
                               setMapCenter([r.lat, r.lng]);
                               setMapZoom(13);
+                              handleOpenMedia(r);
                             }}
                             className="p-3 bg-[#0a0e1a]/80 hover:bg-slate-900/50 border border-slate-900/60 rounded-xl cursor-pointer transition-all hover:scale-[1.01] hover:border-slate-800"
                           >
