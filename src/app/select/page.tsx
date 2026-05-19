@@ -123,17 +123,31 @@ export default function DisasterSelector() {
         className="absolute inset-0 pointer-events-none z-10"
       />
 
-      {/* Animated Background Grid */}
-      <div className="absolute inset-0 z-0 bg-[linear-gradient(rgba(0,194,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,194,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] animate-grid-move [transform:rotateX(60deg)_translateZ(-100px)] origin-center" />
+      {/* Split background layout */}
+      <div className="absolute inset-0 z-0 flex flex-col md:flex-row">
+        {/* Left Side: Forest (Emerald Theme) */}
+        <div className="relative w-full md:w-1/2 h-1/2 md:h-full overflow-hidden bg-gradient-to-br from-[#041e15]/40 via-[#060913] to-[#060913] border-b md:border-b-0 md:border-r border-slate-900/60">
+          {/* Emerald animated grid */}
+          <div className="absolute inset-0 opacity-40 bg-[linear-gradient(rgba(16,185,129,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.02)_1px,transparent_1px)] bg-[size:50px_50px] animate-grid-move [transform:rotateX(60deg)_translateZ(-100px)] origin-center" />
+          {/* Glowing Green Orb */}
+          <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-radial from-emerald-500/10 to-transparent blur-[80px] opacity-75 animate-orb-float" />
+        </div>
 
-      {/* Neon glow orbs */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-radial from-cyan-500/20 to-transparent blur-[80px] opacity-75 animate-orb-float z-0" />
-      <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-radial from-blue-600/20 to-transparent blur-[80px] opacity-75 animate-orb-float z-0 [animation-delay:5s]" />
-      <div className="absolute top-[40%] right-[30%] w-[400px] h-[400px] rounded-full bg-radial from-emerald-500/10 to-transparent blur-[80px] opacity-60 animate-orb-float z-0 [animation-delay:10s]" />
+        {/* Right Side: Ocean (Blue Theme) */}
+        <div className="relative w-full md:w-1/2 h-1/2 md:h-full overflow-hidden bg-gradient-to-bl from-[#021f35]/40 via-[#060913] to-[#060913]">
+          {/* Blue animated grid */}
+          <div className="absolute inset-0 opacity-40 bg-[linear-gradient(rgba(14,165,233,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(14,165,233,0.02)_1px,transparent_1px)] bg-[size:50px_50px] animate-grid-move [transform:rotateX(60deg)_translateZ(-100px)] origin-center" />
+          {/* Glowing Ocean Blue Orb */}
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-radial from-sky-500/10 to-transparent blur-[80px] opacity-75 animate-orb-float [animation-delay:3s]" />
+        </div>
+      </div>
 
       {/* Watermark Navbar */}
-      <header className="absolute top-8 left-8 md:left-12 z-20 flex items-center gap-3">
-        <span className="text-2xl font-extrabold tracking-widest bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent uppercase animate-glow-pulse font-sans">
+      <header className="absolute top-8 left-8 md:left-12 z-20 flex items-center gap-3 select-none">
+        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 border border-cyan-400/20">
+          <i className="fa-solid fa-cloud-showers-water text-white text-base"></i>
+        </div>
+        <span className="text-xl font-bold tracking-widest bg-gradient-to-r from-white via-cyan-400 to-white bg-clip-text text-transparent uppercase font-sans">
           शंखcall
         </span>
       </header>
