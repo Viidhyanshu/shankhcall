@@ -46,6 +46,8 @@ export default function ForestDashboard() {
   const [lang, setLang] = useState<SupportedLanguages>('en');
   const [role, setRole] = useState<'citizen' | 'official'>('citizen');
   const [isOnline, setIsOnline] = useState(true);
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState(true);
+  const [isFeedExpanded, setIsFeedExpanded] = useState(true);
 
   // Filters State
   const [filterType, setFilterType] = useState('all');
@@ -519,93 +521,100 @@ export default function ForestDashboard() {
               
               {/* Filters Card */}
               <div className="glass-panel p-4 rounded-xl space-y-4">
-                <h3 className="text-xs font-bold text-emerald-450 uppercase tracking-widest flex items-center gap-2 border-b border-slate-900 pb-2 mb-1.5">
+                <h3 
+                  onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
+                  className="text-xs font-bold text-emerald-450 uppercase tracking-widest flex items-center gap-2 border-b border-slate-900 pb-2 mb-1.5 cursor-pointer select-none"
+                >
                   <Filter size={13} />
                   {t('filters')} & {t('hotspots')}
-                  <ChevronDown size={13} className="ml-auto text-slate-500" />
+                  <ChevronDown size={13} className={`ml-auto text-slate-500 transition-transform duration-200 ${isFiltersExpanded ? '' : '-rotate-90'}`} />
                 </h3>
 
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('eventType')}</label>
-                    <select
-                      value={filterType}
-                      onChange={(e) => setFilterType(e.target.value)}
-                      className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
-                    >
-                      <option value="all">{t('all')}</option>
-                      <option value="Tree">{t('tree')}</option>
-                      <option value="Fire">{t('fire')}</option>
-                      <option value="Hunting">{t('hunting')}</option>
-                      <option value="Poaching">{t('poaching')}</option>
-                      <option value="Logging">{t('logging')}</option>
-                      <option value="Wind">{t('wind')}</option>
-                    </select>
-                  </div>
+                {isFiltersExpanded && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('eventType')}</label>
+                        <select
+                          value={filterType}
+                          onChange={(e) => setFilterType(e.target.value)}
+                          className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
+                        >
+                          <option value="all">{t('all')}</option>
+                          <option value="Tree">{t('tree')}</option>
+                          <option value="Fire">{t('fire')}</option>
+                          <option value="Hunting">{t('hunting')}</option>
+                          <option value="Poaching">{t('poaching')}</option>
+                          <option value="Logging">{t('logging')}</option>
+                          <option value="Wind">{t('wind')}</option>
+                        </select>
+                      </div>
 
-                  <div>
-                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('source')}</label>
-                    <select
-                      value={filterSource}
-                      onChange={(e) => setFilterSource(e.target.value)}
-                      className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
-                    >
-                      <option value="all">{t('all')}</option>
-                      <option value="citizen">{t('roleCitizen')}</option>
-                      <option value="verified">{t('verified')}</option>
-                    </select>
-                  </div>
+                      <div>
+                        <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('source')}</label>
+                        <select
+                          value={filterSource}
+                          onChange={(e) => setFilterSource(e.target.value)}
+                          className="w-full bg-[#111625] border border-slate-800 hover:border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all cursor-pointer font-semibold"
+                        >
+                          <option value="all">{t('all')}</option>
+                          <option value="citizen">{t('roleCitizen')}</option>
+                          <option value="verified">{t('verified')}</option>
+                        </select>
+                      </div>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('from')}</label>
-                      <input
-                        type="date"
-                        value={fromDate}
-                        onChange={(e) => setFromDate(e.target.value)}
-                        className="w-full bg-[#111625] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all font-semibold"
-                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('from')}</label>
+                          <input
+                            type="date"
+                            value={fromDate}
+                            onChange={(e) => setFromDate(e.target.value)}
+                            className="w-full bg-[#111625] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all font-semibold"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('to')}</label>
+                          <input
+                            type="date"
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
+                            className="w-full bg-[#111625] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all font-semibold"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="relative pt-1">
+                        <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('location')}</label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder={t('searchPlaceholder')}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-[#111625] border border-slate-800 focus:border-slate-700 rounded-lg pl-3 pr-9 py-1.5 text-xs text-slate-200 outline-none transition-all placeholder-slate-700 font-semibold"
+                          />
+                          <Search size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('to')}</label>
-                      <input
-                        type="date"
-                        value={toDate}
-                        onChange={(e) => setToDate(e.target.value)}
-                        className="w-full bg-[#111625] border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 outline-none transition-all font-semibold"
-                      />
+
+                    <div className="flex gap-2.5 pt-2">
+                      <button
+                        onClick={handleApplyFilters}
+                        className="flex-grow py-2 rounded-lg bg-emerald-600/95 hover:bg-emerald-500 border border-emerald-600 text-white text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
+                      >
+                        {t('apply')}
+                      </button>
+                      <button
+                        onClick={handleResetFilters}
+                        className="flex-grow py-2 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-300 text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
+                      >
+                        {t('reset')}
+                      </button>
                     </div>
                   </div>
-
-                  <div className="relative pt-1">
-                    <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t('location')}</label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder={t('searchPlaceholder')}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-[#111625] border border-slate-800 focus:border-slate-700 rounded-lg pl-3 pr-9 py-1.5 text-xs text-slate-200 outline-none transition-all placeholder-slate-700 font-semibold"
-                      />
-                      <Search size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-2.5 pt-2">
-                  <button
-                    onClick={handleApplyFilters}
-                    className="flex-grow py-2 rounded-lg bg-emerald-600/95 hover:bg-emerald-500 border border-emerald-600 text-white text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
-                  >
-                    {t('apply')}
-                  </button>
-                  <button
-                    onClick={handleResetFilters}
-                    className="flex-grow py-2 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-300 text-xs font-bold tracking-wider uppercase transition-all cursor-pointer"
-                  >
-                    {t('reset')}
-                  </button>
-                </div>
+                )}
               </div>
 
               {/* Large ADD REPORT Floating Button */}
@@ -624,122 +633,123 @@ export default function ForestDashboard() {
             </div>
 
             {/* RIGHT FLOATING COLUMN: TALL UNIFIED FEED */}
-            <div className="w-full lg:w-[350px] lg:h-full pointer-events-auto flex flex-col lg:max-h-full shrink-0">
+            <div className={`w-full lg:w-[350px] ${isFeedExpanded ? 'lg:h-full lg:max-h-full' : 'lg:h-auto'} pointer-events-auto flex flex-col shrink-0 transition-all duration-300`}>
               <div className="glass-panel p-4 rounded-2xl flex flex-col h-full overflow-hidden">
-                <h3 className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-slate-900/60 pb-2.5 mb-3 shrink-0">
-                  {t('unifiedFeed')}
+                <h3 
+                  onClick={() => setIsFeedExpanded(!isFeedExpanded)}
+                  className="text-xs font-bold text-slate-200 uppercase tracking-widest border-b border-slate-900/60 pb-2.5 mb-3 shrink-0 cursor-pointer select-none flex items-center justify-between"
+                >
+                  <span>{t('unifiedFeed')}</span>
+                  <ChevronDown size={13} className={`text-slate-500 transition-transform duration-200 ${isFeedExpanded ? '' : '-rotate-90'}`} />
                 </h3>
 
-                {/* Scrollable list */}
-                <div className="flex-grow overflow-y-auto space-y-3 pr-1">
-                  {sortedReports.length > 0 ? (
-                    sortedReports.map(r => {
-                      const verifiedCls = r.verified ? 'ok' : 'warn';
-                      
-                      // Sentiment Styling
-                      const sentimentCls = r.sentiment > 0.2 ? 'ok' : r.sentiment < -0.2 ? 'danger' : 'warn';
+                {isFeedExpanded && (
+                  /* Scrollable list */
+                  <div className="flex-grow overflow-y-auto space-y-3 pr-1 animate-fade-in">
+                    {sortedReports.length > 0 ? (
+                      sortedReports.map(r => {
+                        const verifiedCls = r.verified ? 'ok' : 'warn';
+                        
+                        // Sentiment Styling
+                        const sentimentCls = r.sentiment > 0.2 ? 'ok' : r.sentiment < -0.2 ? 'danger' : 'warn';
 
-                      // Icon determination
-                      const getDisasterIcon = (type: string) => {
-                        const lower = type.toLowerCase();
-                        if (lower.includes('fire')) {
+                        // Icon determination
+                        const getDisasterIcon = (type: string) => {
+                          const lower = type.toLowerCase();
+                          if (lower.includes('fire')) {
+                            return (
+                              <div className="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
+                                <Flame size={18} />
+                              </div>
+                            );
+                          }
+                          if (lower.includes('tree') || lower.includes('forest') || lower.includes('logging')) {
+                            return (
+                              <div className="h-9 w-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                                <TreePine size={18} />
+                              </div>
+                            );
+                          }
                           return (
-                            <div className="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
-                              <Flame size={18} />
-                            </div>
-                          );
-                        }
-                        if (lower.includes('tree') || lower.includes('logging')) {
-                          return (
-                            <div className="h-9 w-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                            <div className="h-9 w-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
                               <TreePine size={18} />
                             </div>
                           );
-                        }
+                        };
+
                         return (
-                          <div className="h-9 w-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                            <Activity size={18} />
-                          </div>
-                        );
-                      };
-
-                      return (
-                        <div 
-                          key={r.id} 
-                          onClick={() => handleOpenMedia(r)}
-                          className="p-3 bg-slate-950/45 hover:bg-slate-950/70 border border-slate-900/50 hover:border-slate-800 rounded-xl cursor-pointer transition-all flex flex-col gap-2 group"
-                        >
-                          <div className="flex gap-3">
-                            {getDisasterIcon(r.type)}
-                            <div className="flex-grow min-w-0">
-                              <div className="flex justify-between items-start gap-1">
-                                <strong className="text-xs font-bold text-slate-100 group-hover:text-emerald-400 transition-colors uppercase tracking-wide truncate">
-                                  {t(r.type.toLowerCase() as any)}
-                                </strong>
-                                <div className="flex items-center gap-1.5 shrink-0">
-                                  <span className="text-[9px] text-slate-500 font-mono">
-                                    {new Date(r.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          <div 
+                            key={r.id} 
+                            onClick={() => {
+                              setMapCenter([r.lat, r.lng]);
+                              setMapZoom(13);
+                            }}
+                            className="p-3 bg-[#0a0e1a]/80 hover:bg-slate-900/50 border border-slate-900/60 rounded-xl cursor-pointer transition-all hover:scale-[1.01] hover:border-slate-800"
+                          >
+                            <div className="flex gap-3">
+                              {getDisasterIcon(r.type)}
+                              
+                              <div className="flex-grow min-w-0">
+                                <div className="flex justify-between items-start gap-1">
+                                  <span className="text-[10px] font-bold text-slate-300 uppercase truncate">
+                                    {t(r.type.toLowerCase() as any) || r.type}
                                   </span>
-                                  <span className="font-mono text-[8px] bg-slate-900 px-1.5 py-0.5 rounded border border-slate-850 uppercase text-slate-450 font-semibold select-none">
-                                    {r.lang}
+                                  <span className="text-[9px] text-slate-500 font-mono shrink-0">
+                                    {new Date(r.ts).toLocaleTimeString(lang === 'en' ? 'en-US' : 'hi-IN', { hour: '2-digit', minute: '2-digit' })}
                                   </span>
                                 </div>
-                              </div>
-                              
-                              <p className="text-[10px] text-slate-400 mt-0.5 font-mono truncate">
-                                Lt: {r.lat?.toFixed(3)}, {r.lng?.toFixed(3)}
-                              </p>
-                              
-                              <p className="text-[11px] text-slate-455 leading-normal line-clamp-2 mt-1">
-                                {r.desc}
-                              </p>
-
-                              {/* Media tag indicator */}
-                              {Array.isArray(r.media) && r.media.length > 0 && (
-                                <div className="flex gap-1.5 mt-1.5">
-                                  <span className="text-[8px] font-semibold text-emerald-400/80 bg-emerald-500/5 border border-emerald-500/10 px-1.5 py-0.5 rounded uppercase">
-                                    {t('attachment')}
-                                  </span>
-                                </div>
-                              )}
-
-                              <div className="flex flex-wrap items-center gap-1.5 mt-2.5 border-t border-slate-900/40 pt-2 text-[9px] text-slate-500">
-                                <span className="capitalize font-semibold">
-                                  {t(r.src === 'citizen' ? 'roleCitizen' : r.src === 'social' ? 'social' : 'verified')}
-                                </span>
-                                <span>•</span>
-                                <span className={`chip ${verifiedCls}`}>
-                                  {r.verified ? t('verified') : t('unverified')}
-                                </span>
-                                <span>•</span>
-                                <span className={`chip ${sentimentCls}`}>
-                                  {r.sentiment > 0.2 ? t('positive') : r.sentiment < -0.2 ? t('negative') : t('neutral')}
-                                </span>
                                 
-                                {(!r.verified && role === 'official') && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      storeActions.verifyReport(r.id);
-                                    }}
-                                    className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 text-[8px] font-bold tracking-wider hover:bg-emerald-500 hover:text-white cursor-pointer uppercase transition-all ml-1 shrink-0"
-                                  >
-                                    VERIFY
-                                  </button>
+                                <p className="text-[11px] text-slate-400 leading-normal mt-1 break-words font-sans">
+                                  {r.desc}
+                                </p>
+
+                                {/* Media tag indicator */}
+                                {Array.isArray(r.media) && r.media.length > 0 && (
+                                  <div className="flex gap-1.5 mt-1.5">
+                                    <span className="text-[8px] font-semibold text-sky-400/80 bg-sky-500/5 border border-sky-500/10 px-1.5 py-0.5 rounded uppercase">
+                                      {t('attachment')}
+                                    </span>
+                                  </div>
                                 )}
+
+                                <div className="flex flex-wrap items-center gap-1.5 mt-2.5 border-t border-slate-900/40 pt-2 text-[9px] text-slate-550 font-semibold uppercase">
+                                  <span className="capitalize">
+                                    {t(r.src === 'citizen' ? 'roleCitizen' : r.src === 'social' ? 'social' : 'verified')}
+                                  </span>
+                                  <span>•</span>
+                                  <span className={`chip ${verifiedCls}`}>
+                                    {r.verified ? t('verified') : t('unverified')}
+                                  </span>
+                                  <span>•</span>
+                                  <span className={`chip ${sentimentCls}`}>
+                                    {r.sentiment > 0.2 ? t('positive') : r.sentiment < -0.2 ? t('negative') : t('neutral')}
+                                  </span>
+                                  
+                                  {(!r.verified && role === 'official') && (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        storeActions.verifyReport(r.id);
+                                      }}
+                                      className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 text-[8px] font-bold tracking-wider hover:bg-emerald-500 hover:text-white cursor-pointer uppercase transition-all ml-1 shrink-0"
+                                    >
+                                      VERIFY
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center py-12 flex flex-col justify-center items-center text-slate-600 gap-2 shrink-0">
-                      <AlertCircle size={20} className="text-slate-700" />
-                      <div className="text-[11px] uppercase tracking-wider">{t('noItems')}</div>
-                    </div>
-                  )}
-                </div>
+                        );
+                      })
+                    ) : (
+                      <div className="text-center py-12 flex flex-col justify-center items-center text-slate-600 gap-2 shrink-0">
+                        <AlertCircle size={20} className="text-slate-700" />
+                        <div className="text-[11px] uppercase tracking-wider">{t('noItems')}</div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
