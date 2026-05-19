@@ -308,31 +308,33 @@ export default function LoginPage() {
       </div>
 
       {/* Main card panel */}
-      <div className="relative z-10 w-full max-w-[900px] min-h-[550px] rounded-3xl glass-panel bg-slate-950/60 border border-sky-500/10 flex flex-col md:flex-row overflow-hidden shadow-2xl p-2">
+      <div className="relative z-10 w-full max-w-[900px] min-h-[550px] md:h-[600px] rounded-3xl glass-panel bg-slate-950/60 border border-sky-500/10 flex flex-col md:flex-row overflow-hidden shadow-2xl p-2">
         
         {/* Toggle Panel Left/Right Banner */}
-        <div className={`w-full md:w-5/12 bg-gradient-to-br from-[#0c1328] to-[#060913] p-8 flex flex-col justify-center items-center text-center relative border border-slate-900 rounded-2xl ${isSignUp ? 'md:order-2' : ''} transition-all duration-500`}>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.06)_0%,transparent_70%)]" />
+        <div className={`w-full md:w-5/12 bg-gradient-to-br from-[#0c1328] to-[#060913] p-8 flex flex-col justify-center items-center text-center relative border border-slate-900 rounded-2xl login-toggle-panel ${isSignUp ? 'login-toggle-panel-active' : ''}`}>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,194,255,0.06)_0%,transparent_70%)] rounded-2xl" />
           
-          <h2 className="text-3xl font-extrabold tracking-wider text-slate-100 font-sans mb-4 uppercase">
-            {isSignUp ? 'शंखcall' : 'शंखcall'}
-          </h2>
-          <p className="text-slate-400 text-sm leading-relaxed max-w-[280px] mb-8 font-light">
-            {isSignUp
-              ? 'Register with your personal details to access real-time citizen disaster reporting boards.'
-              : 'Enter your credentials to manage active hazards and monitor unified social feeds.'}
-          </p>
+          <div className="relative z-10 flex flex-col items-center">
+            <h2 className="text-3xl font-extrabold tracking-wider text-slate-100 font-sans mb-4 uppercase">
+              शंखcall
+            </h2>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-[280px] mb-8 font-light">
+              {isSignUp
+                ? 'Register with your personal details to access real-time citizen disaster reporting boards.'
+                : 'Enter your credentials to manage active hazards and monitor unified social feeds.'}
+            </p>
 
-          <button
-            onClick={() => handleToggleMode(!isSignUp)}
-            className="px-6 py-2.5 rounded-full border border-sky-400/30 hover:border-sky-400 hover:bg-sky-400/10 text-sky-400 hover:text-sky-300 font-medium text-xs tracking-wider uppercase transition-all shadow-lg glow-btn cursor-pointer"
-          >
-            {isSignUp ? 'Sign In' : 'Sign Up'}
-          </button>
+            <button
+              onClick={() => handleToggleMode(!isSignUp)}
+              className="px-6 py-2.5 rounded-full border border-sky-400/30 hover:border-sky-400 hover:bg-sky-400/10 text-sky-400 hover:text-sky-300 font-medium text-xs tracking-wider uppercase transition-all shadow-lg glow-btn cursor-pointer"
+            >
+              {isSignUp ? 'Sign In' : 'Sign Up'}
+            </button>
+          </div>
         </div>
 
         {/* Form Container */}
-        <div className={`w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center relative ${isSignUp ? 'md:order-1' : ''} transition-all duration-500`}>
+        <div className={`w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center relative login-form-container ${isSignUp ? 'login-form-container-active' : ''}`}>
           
           {error && (
             <div className="p-3 bg-red-950/40 border border-red-500/25 text-red-400 rounded-lg text-xs mb-4">

@@ -86,6 +86,26 @@ body {
   box-shadow: 0 12px 40px 0 rgba(0, 194, 255, 0.15);
 }
 
+/* Login Transition Utilities to prevent jitter and enable smooth hardware-accelerated transitions */
+.login-toggle-panel {
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+.login-form-container {
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+@media (min-width: 768px) {
+  .login-toggle-panel-active {
+    transform: translateX(140%);
+  }
+  .login-form-container-active {
+    transform: translateX(-71.428%);
+  }
+}
+
 /* Neon Glow Elements */
 .glow-text {
   background: linear-gradient(135deg, #00c2ff, #0066ff);
