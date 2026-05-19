@@ -3,13 +3,14 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCa37b-LuakNl2TwsZQES2-p_DgGgIJEuA",
-  authDomain: "login-db9bb.firebaseapp.com",
-  projectId: "login-db9bb",
-  storageBucket: "login-db9bb.firebasestorage.app",
-  messagingSenderId: "132451184061",
-  appId: "1:132451184061:web:972c781b670cdff773f6d4"
+  apiKey: "AIzaSyAf3sxtgaLYjuhUOepK5Hljm2kI4BtEKxg",
+  authDomain: "shankhcall.firebaseapp.com",
+  projectId: "shankhcall",
+  storageBucket: "shankhcall.firebasestorage.app",
+  messagingSenderId: "797642858514",
+  appId: "1:797642858514:web:13970ef7e1243848f278cb"
 };
+
 
 // Initialize Firebase using the singleton pattern for Next.js
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
