@@ -3,7 +3,9 @@
 :root {
   --background: #060913;
   --foreground: #f8fafc;
-  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+  --font-rajdhani: var(--font-rajdhani), sans-serif;
   
   /* Harmonious Dark Palette */
   --primary-glow: radial-gradient(circle, rgba(0, 194, 255, 0.15) 0%, transparent 60%);
@@ -29,6 +31,8 @@
 
 @theme {
   --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-rajdhani: var(--font-rajdhani);
   
   /* Custom Animations and Keyframes */
   --animate-grid-move: gridMove 20s linear infinite;
@@ -63,6 +67,22 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   overflow-x: hidden;
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6,
+label,
+button,
+select,
+option,
+strong,
+.font-rajdhani {
+  font-family: var(--font-rajdhani);
+  font-weight: 600; /* Semibold */
+}
+
+.font-mono {
+  font-family: var(--font-mono) !important;
 }
 
 /* Glassmorphism Utilities */
