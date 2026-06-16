@@ -105,23 +105,21 @@ export default function Footer() {
         >
           {/* Brand */}
           <div style={{ display: "flex", alignItems: "flex-start", gap: "0.85rem" }}>
-            <div style={{ flexShrink: 0, filter: "drop-shadow(0 0 12px rgba(0,194,255,0.55))" }}>
-              <svg viewBox="0 0 36 36" fill="none" style={{ width: 36, height: 36 }}>
-                <circle cx="18" cy="18" r="17" stroke="url(#footerGrad)" strokeWidth="2" />
-                <path
-                  d="M11 18c0-3.866 3.134-7 7-7s7 3.134 7 7"
-                  stroke="url(#footerGrad)"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                />
-                <circle cx="18" cy="18" r="3" fill="url(#footerGrad)" />
-                <defs>
-                  <linearGradient id="footerGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#00c2ff" />
-                    <stop offset="1" stopColor="#0066ff" />
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div
+              style={{
+                flexShrink: 0,
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: "linear-gradient(135deg, #00c2ff, #0066ff)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 0 12px rgba(0, 194, 255, 0.4)",
+                border: "1px solid rgba(0, 194, 255, 0.2)",
+              }}
+            >
+              <i className="fa-solid fa-cloud-showers-water" style={{ color: "#ffffff", fontSize: "0.95rem" }}></i>
             </div>
             <div>
               <p
@@ -210,33 +208,10 @@ export default function Footer() {
             >
               Mission
             </p>
-            <p style={{ fontSize: "0.875rem", color: "#64748b", lineHeight: 1.75, marginBottom: "1.25rem" }}>
+            <p style={{ fontSize: "0.875rem", color: "#64748b", lineHeight: 1.75 }}>
               Empowering citizens and responders with real-time multilingual disaster monitoring
               across ocean and forest ecosystems — built for India, designed for the world.
             </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-              {[
-                { label: "🌊 Ocean",     bg: "rgba(0,194,255,0.08)",   color: "#38bdf8", border: "rgba(0,194,255,0.28)" },
-                { label: "🌿 Forest",    bg: "rgba(16,185,129,0.08)",  color: "#34d399", border: "rgba(16,185,129,0.28)" },
-                { label: "⚡ AI-Powered",bg: "rgba(139,92,246,0.08)",  color: "#a78bfa", border: "rgba(139,92,246,0.28)" },
-              ].map((b) => (
-                <span
-                  key={b.label}
-                  style={{
-                    fontSize: "0.7rem",
-                    fontWeight: 600,
-                    padding: "0.28rem 0.7rem",
-                    borderRadius: 999,
-                    letterSpacing: "0.04em",
-                    background: b.bg,
-                    color: b.color,
-                    border: `1px solid ${b.border}`,
-                  }}
-                >
-                  {b.label}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
