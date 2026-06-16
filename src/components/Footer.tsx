@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -41,6 +42,7 @@ const SOCIAL_LINKS = [
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const pathname = usePathname();
 
   return (
     <footer
@@ -161,6 +163,12 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
+                    onClick={(e) => {
+                      if (pathname === "/" && link.href !== "/") {
+                        e.preventDefault();
+                        alert("Please login first.");
+                      }
+                    }}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
