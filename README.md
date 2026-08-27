@@ -208,8 +208,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 👨‍💻 Author
 
-**Vidhyanshu**  [GitHub](https://github.com/Viidhyanshu)
-**Roséhead**  [GitHub](https://github.com/roseehead)
+Vidhyanshu [GitHub](https://github.com/Viidhyanshu) <br>
+
+Roséhead  [GitHub](https://github.com/roseehead)
+
 ---
 
 ## 📄 License
