@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { LogOut, Activity } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
-import { signOutAction } from '@/app/actions';
+import { signOutApi } from '@/lib/api';
 
 interface Particle {
   x: number;
@@ -29,7 +29,7 @@ export default function DisasterSelector() {
   // Sign out helper
   const handleSignOut = async () => {
     try {
-      await signOutAction();
+      await signOutApi();
       router.push('/');
     } catch (e) {
       console.warn('Sign out error', e);

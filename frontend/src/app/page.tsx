@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUpAction, signInAction } from '@/app/actions';
+import { signUpApi, signInApi } from '@/lib/api';
 
 import ThemeToggle from '@/components/ThemeToggle';
 import AuthBackground from '@/components/AuthBackground';
@@ -84,7 +84,7 @@ export default function LoginPage() {
     }
 
     try {
-      const result = await signUpAction({
+      const result = await signUpApi({
         name,
         email,
         phone,
@@ -106,14 +106,14 @@ export default function LoginPage() {
     }
   };
 
-  // Handle Login Execution via Neon PostgreSQL
+  // Handle Login Execution via Backend Neon API
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const result = await signInAction({
+      const result = await signInApi({
         email,
         password,
       });
