@@ -7,11 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:seed": "node --env-file=.env scripts/seed.mjs"
+    "db:seed": "node --env-file=.env scripts/seed.mjs",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",
     "chart.js": "^4.5.1",
+    "drizzle-orm": "^0.45.3",
     "firebase": "^12.13.0",
     "leaflet": "^1.9.4",
     "leaflet.heat": "^0.2.0",
@@ -29,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",

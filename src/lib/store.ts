@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { scoreSentiment } from './nlp';
 import { db } from './firebase';
 import { collection, doc, setDoc, updateDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { addReportAction, verifyReportAction } from '@/app/actions';
 
 export interface HazardMedia {
   type: 'image' | 'video';
@@ -247,7 +248,22 @@ export const storeActions = {
       notify();
     }
 
-    // 2. Perform background write to Firestore
+    // 2. Perform background write to Neon PostgreSQL
+    addReportAction({
+      id: report.id,
+      lat: report.lat,
+      lng: report.lng,
+      type: report.type,
+      description: report.desc,
+      src: report.src,
+      verified: report.verified,
+      ts: report.ts,
+      lang: report.lang,
+      sentiment: reportWithSentiment.sentiment,
+      media: report.media
+    }).catch(e => console.warn("Failed background upload to Neon DB:", e));
+
+    // 3. Perform background write to Firestore
     const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
     if (isOnline) {
       try {
@@ -287,7 +303,10 @@ export const storeActions = {
       notify();
     }
 
-    // 2. Sync state update to Firestore in background
+    // 2. Sync state update to Neon DB in background
+    verifyReportAction(id).catch(e => console.warn("Could not sync verification to Neon DB:", e));
+
+    // 3. Sync state update to Firestore in background
     try {
       await updateDoc(doc(db, "reports", id), {
         verified: true
@@ -306,6 +325,9 @@ export const storeActions = {
       saveStore();
       notify();
 
+      // Sync Neon DB
+      verifyReportAction(latest.id).catch(e => console.warn("Could not sync latest verification to Neon DB:", e));
+
       // Sync Firestore
       try {
         await updateDoc(doc(db, "reports", latest.id), {
@@ -321,6 +343,21 @@ export const storeActions = {
     if (globalState.pending.length > 0) {
       try {
         for (const report of globalState.pending) {
+          // Sync Neon DB
+          addReportAction({
+            id: report.id,
+            lat: report.lat,
+            lng: report.lng,
+            type: report.type,
+            description: report.desc,
+            src: report.src,
+            verified: report.verified,
+            ts: report.ts,
+            lang: report.lang,
+            sentiment: report.sentiment,
+            media: report.media
+          }).catch(e => console.warn("Failed syncing offline report to Neon DB:", e));
+
           await setDoc(doc(db, "reports", report.id), {
             lat: report.lat,
             lng: report.lng,
@@ -350,9 +387,23 @@ export const storeActions = {
     saveStore();
     notify();
 
-    // Push to Firestore in background
+    // Push to Neon DB & Firestore in background
     try {
       for (const report of reports) {
+        addReportAction({
+          id: report.id,
+          lat: report.lat,
+          lng: report.lng,
+          type: report.type,
+          description: report.desc,
+          src: report.src,
+          verified: report.verified,
+          ts: report.ts,
+          lang: report.lang,
+          sentiment: report.sentiment,
+          media: report.media
+        }).catch(e => console.warn("Failed background bulk Neon save:", report.id, e));
+
         setDoc(doc(db, "reports", report.id), {
           lat: report.lat,
           lng: report.lng,

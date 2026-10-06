@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
+import { saveUserAction } from '@/app/actions';
 
 import ThemeToggle from '@/components/ThemeToggle';
 import AuthBackground from '@/components/AuthBackground';
@@ -150,7 +151,7 @@ export default function LoginPage() {
       }
 
       try {
-        // Save User fields inside Firestore
+        // 1. Save User fields inside Firestore
         await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
           name: name,
@@ -159,6 +160,15 @@ export default function LoginPage() {
           role: selectedRole,
           createdAt: new Date()
         });
+
+        // 2. Save User fields inside Neon PostgreSQL
+        saveUserAction({
+          id: user.uid,
+          name: name,
+          email: email,
+          phone: phone || '',
+          role: selectedRole || 'citizen',
+        }).catch(neonErr => console.warn('Failed saving user to Neon DB:', neonErr));
       } catch (dbErr) {
         console.error('Error saving user data to Firestore:', dbErr);
       }
