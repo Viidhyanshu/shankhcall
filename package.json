@@ -16,7 +16,6 @@
     "@neondatabase/serverless": "^1.2.0",
     "chart.js": "^4.5.1",
     "drizzle-orm": "^0.45.3",
-    "firebase": "^12.13.0",
     "leaflet": "^1.9.4",
     "leaflet.heat": "^0.2.0",
     "leaflet.markercluster": "^1.5.3",

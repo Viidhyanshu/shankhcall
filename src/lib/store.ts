@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { scoreSentiment } from './nlp';
-import { db } from './firebase';
-import { collection, doc, setDoc, updateDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { addReportAction, verifyReportAction } from '@/app/actions';
+import { addReportAction, verifyReportAction, getReports } from '@/app/actions';
 
 export interface HazardMedia {
   type: 'image' | 'video';
@@ -78,7 +76,7 @@ export function loadStore() {
   }
 }
 
-// Seed mock data to Firestore (and locally)
+// Seed mock data to Neon DB (and locally)
 export async function seedMockData() {
   const now = Date.now();
   const forestSamples = [
@@ -100,8 +98,6 @@ export async function seedMockData() {
   ];
 
   let idx = 0;
-  
-  // Update local state first so we have immediate data
   const seededReports: HazardReport[] = [];
 
   for (const s of forestSamples) {
@@ -114,19 +110,21 @@ export async function seedMockData() {
       sentiment: scoreSentiment(s.desc)
     };
     seededReports.push(rep);
-    
-    // Write to Firestore in background
-    setDoc(doc(db, "reports", id), {
+
+    // Save to Neon DB
+    addReportAction({
+      id,
       lat: s.lat,
       lng: s.lng,
       type: s.type,
-      desc: s.desc,
+      description: s.desc,
       src: s.src,
       verified: s.verified,
       ts: rep.ts,
       lang: s.lang,
+      sentiment: rep.sentiment,
       media: []
-    }).catch(e => console.warn("Failed seeding document to Firestore:", id, e));
+    }).catch(e => console.warn("Failed seeding report to Neon DB:", id, e));
   }
 
   for (const s of oceanSamples) {
@@ -140,18 +138,20 @@ export async function seedMockData() {
     };
     seededReports.push(rep);
 
-    // Write to Firestore in background
-    setDoc(doc(db, "reports", id), {
+    // Save to Neon DB
+    addReportAction({
+      id,
       lat: s.lat,
       lng: s.lng,
       type: s.type,
-      desc: s.desc,
+      description: s.desc,
       src: s.src,
       verified: s.verified,
       ts: rep.ts,
       lang: s.lang,
+      sentiment: rep.sentiment,
       media: []
-    }).catch(e => console.warn("Failed seeding document to Firestore:", id, e));
+    }).catch(e => console.warn("Failed seeding report to Neon DB:", id, e));
   }
 
   globalState.reports = seededReports.sort((a, b) => b.ts - a.ts);
@@ -159,58 +159,56 @@ export async function seedMockData() {
   notify();
 }
 
-// Initial Local Storage Load
+// Fetch and sync latest reports from Neon PostgreSQL
+export async function syncFromNeon() {
+  try {
+    const dbReports = await getReports();
+    if (dbReports && dbReports.length > 0) {
+      const fetchedReports: HazardReport[] = dbReports.map((r: any) => ({
+        id: r.id,
+        lat: Number(r.lat),
+        lng: Number(r.lng),
+        type: String(r.type),
+        desc: String(r.description),
+        src: (r.src as any) || 'citizen',
+        verified: Boolean(r.verified),
+        ts: Number(r.ts),
+        lang: String(r.lang || 'en'),
+        sentiment: Number(r.sentiment || 0),
+        media: (r.media as HazardMedia[]) || []
+      }));
+
+      // Merge: Keep local reports ONLY if they are in the offline "pending" upload queue
+      const localPending = globalState.reports.filter(
+        local => globalState.pending.some(p => p.id === local.id)
+      );
+
+      globalState.reports = [...localPending, ...fetchedReports].sort((a, b) => b.ts - a.ts);
+      saveStore();
+      notify();
+    }
+  } catch (error) {
+    console.warn("Neon database sync failed:", error);
+  }
+}
+
+// Initial Local Storage Load & Neon DB Sync
 if (typeof window !== 'undefined') {
   loadStore();
-  
+
   const hasSeeded = localStorage.getItem('oceanwatch_seeded');
   if (!hasSeeded && globalState.reports.length === 0) {
-    // Seed locally first if we have nothing in Local Storage
     seedMockData();
     localStorage.setItem('oceanwatch_seeded', 'true');
   }
 
-  // Subscribe to Firestore for live external updates
-  const reportsQuery = query(collection(db, "reports"), orderBy("ts", "desc"));
-  onSnapshot(reportsQuery, async (snapshot) => {
-    if (snapshot.empty) {
-      console.log("Firestore collection is empty.");
-      // If Firestore is empty, show only offline pending reports
-      globalState.reports = [...globalState.pending];
-      saveStore();
-      notify();
-      return;
-    }
+  // Fetch reports from Neon DB on app startup
+  syncFromNeon();
 
-    const fetchedReports: HazardReport[] = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      fetchedReports.push({
-        id: doc.id,
-        lat: Number(data.lat),
-        lng: Number(data.lng),
-        type: String(data.type),
-        desc: String(data.desc),
-        src: data.src,
-        verified: Boolean(data.verified),
-        ts: Number(data.ts),
-        lang: String(data.lang || 'en'),
-        sentiment: scoreSentiment(String(data.desc)),
-        media: data.media || []
-      });
-    });
-
-    // Merge: Keep local reports ONLY if they are in the offline "pending" upload queue
-    const localPending = globalState.reports.filter(
-      local => globalState.pending.some(p => p.id === local.id)
-    );
-
-    globalState.reports = [...localPending, ...fetchedReports].sort((a, b) => b.ts - a.ts);
-    saveStore();
-    notify();
-  }, (error) => {
-    console.error("Firestore real-time subscription blocked or failed:", error);
-  });
+  // Periodic polling every 15s to keep reports up-to-date
+  setInterval(() => {
+    syncFromNeon();
+  }, 15000);
 }
 
 // React custom hook to subscribe to store updates
@@ -233,7 +231,7 @@ export function useDisasterStore() {
   return state;
 }
 
-// Core Operations
+// Core Operations (Neon PostgreSQL)
 export const storeActions = {
   addReport: async (report: Omit<HazardReport, 'sentiment'>) => {
     const reportWithSentiment: HazardReport = {
@@ -249,38 +247,29 @@ export const storeActions = {
     }
 
     // 2. Perform background write to Neon PostgreSQL
-    addReportAction({
-      id: report.id,
-      lat: report.lat,
-      lng: report.lng,
-      type: report.type,
-      description: report.desc,
-      src: report.src,
-      verified: report.verified,
-      ts: report.ts,
-      lang: report.lang,
-      sentiment: reportWithSentiment.sentiment,
-      media: report.media
-    }).catch(e => console.warn("Failed background upload to Neon DB:", e));
-
-    // 3. Perform background write to Firestore
     const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
     if (isOnline) {
       try {
-        await setDoc(doc(db, "reports", report.id), {
+        const result = await addReportAction({
+          id: report.id,
           lat: report.lat,
           lng: report.lng,
           type: report.type,
-          desc: report.desc,
+          description: report.desc,
           src: report.src,
           verified: report.verified,
           ts: report.ts,
           lang: report.lang,
+          sentiment: reportWithSentiment.sentiment,
           media: report.media
         });
-        console.log("Successfully synchronized new report to Firestore!");
+
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+        console.log("Successfully saved report to Neon PostgreSQL!");
       } catch (e) {
-        console.warn("Failed background upload to Firestore. Saving to offline sync queue.", e);
+        console.warn("Failed upload to Neon DB. Saving to offline sync queue.", e);
         if (!globalState.pending.some(p => p.id === report.id)) {
           globalState.pending.push(reportWithSentiment);
           saveStore();
@@ -305,21 +294,12 @@ export const storeActions = {
 
     // 2. Sync state update to Neon DB in background
     verifyReportAction(id).catch(e => console.warn("Could not sync verification to Neon DB:", e));
-
-    // 3. Sync state update to Firestore in background
-    try {
-      await updateDoc(doc(db, "reports", id), {
-        verified: true
-      });
-    } catch (e) {
-      console.warn("Could not sync verification to Firestore:", e);
-    }
   },
 
   verifyLatest: async () => {
     if (globalState.reports.length > 0) {
       const latest = globalState.reports[0];
-      
+
       // Update local state first
       latest.verified = true;
       saveStore();
@@ -327,15 +307,6 @@ export const storeActions = {
 
       // Sync Neon DB
       verifyReportAction(latest.id).catch(e => console.warn("Could not sync latest verification to Neon DB:", e));
-
-      // Sync Firestore
-      try {
-        await updateDoc(doc(db, "reports", latest.id), {
-          verified: true
-        });
-      } catch (e) {
-        console.warn("Could not sync latest verification to Firestore:", e);
-      }
     }
   },
 
@@ -343,8 +314,7 @@ export const storeActions = {
     if (globalState.pending.length > 0) {
       try {
         for (const report of globalState.pending) {
-          // Sync Neon DB
-          addReportAction({
+          await addReportAction({
             id: report.id,
             lat: report.lat,
             lng: report.lng,
@@ -356,18 +326,6 @@ export const storeActions = {
             lang: report.lang,
             sentiment: report.sentiment,
             media: report.media
-          }).catch(e => console.warn("Failed syncing offline report to Neon DB:", e));
-
-          await setDoc(doc(db, "reports", report.id), {
-            lat: report.lat,
-            lng: report.lng,
-            type: report.type,
-            desc: report.desc,
-            src: report.src,
-            verified: report.verified,
-            ts: report.ts,
-            lang: report.lang,
-            media: report.media
           });
         }
         globalState.pending = [];
@@ -375,7 +333,7 @@ export const storeActions = {
         notify();
         return true;
       } catch (e) {
-        console.warn("Failed syncing offline queue:", e);
+        console.warn("Failed syncing offline queue to Neon:", e);
       }
     }
     return false;
@@ -387,7 +345,7 @@ export const storeActions = {
     saveStore();
     notify();
 
-    // Push to Neon DB & Firestore in background
+    // Push to Neon DB in background
     try {
       for (const report of reports) {
         addReportAction({
@@ -403,21 +361,9 @@ export const storeActions = {
           sentiment: report.sentiment,
           media: report.media
         }).catch(e => console.warn("Failed background bulk Neon save:", report.id, e));
-
-        setDoc(doc(db, "reports", report.id), {
-          lat: report.lat,
-          lng: report.lng,
-          type: report.type,
-          desc: report.desc,
-          src: report.src,
-          verified: report.verified,
-          ts: report.ts,
-          lang: report.lang,
-          media: report.media
-        }).catch(e => console.warn("Failed background bulk item save:", report.id, e));
       }
     } catch (e) {
-      console.warn("Failed bulk Firestore save:", e);
+      console.warn("Failed bulk Neon save:", e);
     }
   }
 };
@@ -427,7 +373,7 @@ if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
     storeActions.syncPending().then(synced => {
       if (synced) {
-        console.info('Pending offline reports synchronized.');
+        console.info('Pending offline reports synchronized to Neon.');
         window.dispatchEvent(new Event('store-offline-synced'));
       }
     });

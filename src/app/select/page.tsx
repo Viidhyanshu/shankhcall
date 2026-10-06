@@ -3,9 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogOut, Activity } from 'lucide-react';
-import { auth } from '@/lib/firebase';
 import ThemeToggle from '@/components/ThemeToggle';
-import { signOut } from 'firebase/auth';
 
 interface Particle {
   x: number;
@@ -27,9 +25,11 @@ export default function DisasterSelector() {
   const [activeCard, setActiveCard] = useState<'forest' | 'ocean' | null>(null);
 
   // Sign out helper
-  const handleSignOut = async () => {
+  const handleSignOut = () => {
     try {
-      await signOut(auth);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('shankhcall_user');
+      }
       router.push('/');
     } catch (e) {
       console.warn('Sign out error', e);

@@ -2,10 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth, db } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
-import { saveUserAction } from '@/app/actions';
+import { signUpAction, signInAction } from '@/app/actions';
 
 import ThemeToggle from '@/components/ThemeToggle';
 import AuthBackground from '@/components/AuthBackground';
@@ -14,9 +11,8 @@ import AuthBanner from '@/components/AuthBanner';
 import SignInForm from '@/components/SignInForm';
 import SignUpRoleStep, { SelectedRole } from '@/components/SignUpRoleStep';
 import SignUpDetailsStep from '@/components/SignUpDetailsStep';
-import SignUpVerificationStep from '@/components/SignUpVerificationStep';
 
-export type SignUpStep = 'role' | 'details' | 'otp';
+export type SignUpStep = 'role' | 'details';
 export type { SelectedRole };
 
 export default function LoginPage() {
@@ -65,7 +61,7 @@ export default function LoginPage() {
     setSignUpStep('details');
   };
 
-  // Details Submission -> Create Firebase Auth user & Send Real Verification Email
+  // Details Submission -> Create user account in Neon PostgreSQL
   const handleDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -88,124 +84,58 @@ export default function LoginPage() {
     }
 
     try {
-      // Create user in Firebase Auth immediately
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const result = await signUpAction({
+        name,
+        email,
+        phone,
+        role: selectedRole,
+        password,
+      });
 
-      // Send real verification link to their Gmail
-      await sendEmailVerification(user);
-
-      // Advance to check email step
-      setSignUpStep('otp');
-    } catch (err: any) {
-      console.error('Error during registration start:', err);
-      if (err.code === 'auth/email-already-in-use') {
-        setError('This email address is already in use.');
-      } else if (err.code === 'auth/weak-password') {
-        setError('The password is too weak.');
-      } else {
-        setError('An error occurred during account creation. Please try again.');
+      if (!result.success) {
+        setError(result.error || 'Failed to create account.');
+        return;
       }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('shankhcall_user', JSON.stringify(result.user));
+      }
+
+      alert('Account created successfully in Neon database! Please sign in.');
+      handleToggleMode(false); // Switch to Sign In
+    } catch (err: any) {
+      console.error('Error during registration:', err);
+      setError('An error occurred during account creation. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Resend the verification email link
-  const handleResendVerification = async () => {
-    setError('');
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        await sendEmailVerification(user);
-        alert('Verification email resent successfully!');
-      } catch (err: any) {
-        console.error('Error resending verification email:', err);
-        setError('Could not resend verification email. Please try again shortly.');
-      }
-    } else {
-      setError('No active signup session found. Please fill out details again.');
-    }
-  };
-
-  // Final completion: checks if the user verified the email, then saves to Firestore
-  const handleSignUpExecute = async () => {
-    setError('');
-    setLoading(true);
-
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        setError('No active session found. Please try signing up again.');
-        setLoading(false);
-        return;
-      }
-
-      // Reload profile to refresh emailVerified state
-      await user.reload();
-
-      if (!user.emailVerified) {
-        setError('Your email is not verified yet. Please open your Gmail, click the verification link, and then click "I have verified".');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        // 1. Save User fields inside Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
-          name: name,
-          email: email,
-          phone: phone || '',
-          role: selectedRole,
-          createdAt: new Date()
-        });
-
-        // 2. Save User fields inside Neon PostgreSQL
-        saveUserAction({
-          id: user.uid,
-          name: name,
-          email: email,
-          phone: phone || '',
-          role: selectedRole || 'citizen',
-        }).catch(neonErr => console.warn('Failed saving user to Neon DB:', neonErr));
-      } catch (dbErr) {
-        console.error('Error saving user data to Firestore:', dbErr);
-      }
-
-      alert('Account verified and created successfully! Please sign in.');
-      handleToggleMode(false); // Switch back to Sign In
-    } catch (err: any) {
-      console.error('Error completing account verification:', err);
-      setError('An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle Login Execution
+  // Handle Login Execution via Neon PostgreSQL
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Signed in successfully:', userCredential.user.uid);
-      
-      alert('Sign in successful!');
+      const result = await signInAction({
+        email,
+        password,
+      });
+
+      if (!result.success) {
+        setError(result.error || 'Invalid email or password.');
+        return;
+      }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('shankhcall_user', JSON.stringify(result.user));
+      }
+
       router.push('/select');
     } catch (err: any) {
-      console.error('Error logging in', err);
-      if (
-        err.code === 'auth/user-not-found' ||
-        err.code === 'auth/wrong-password' ||
-        err.code === 'auth/invalid-credential'
-      ) {
-        setError('Invalid email or password.');
-      } else {
-        setError('An error occurred. Please check your credentials and try again.');
-      }
+      console.error('Error logging in:', err);
+      setError('An error occurred. Please check your credentials and try again.');
     } finally {
       setLoading(false);
     }
@@ -277,17 +207,6 @@ export default function LoginPage() {
                   setRobotChecked={setRobotChecked}
                   onBack={() => setSignUpStep('role')}
                   onSubmit={handleDetailsSubmit}
-                  loading={loading}
-                />
-              )}
-
-              {/* Step 3: Real Email Link Verification */}
-              {signUpStep === 'otp' && (
-                <SignUpVerificationStep
-                  email={email}
-                  onBack={() => setSignUpStep('details')}
-                  onVerify={handleSignUpExecute}
-                  onResend={handleResendVerification}
                   loading={loading}
                 />
               )}
