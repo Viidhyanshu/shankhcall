@@ -97,12 +97,7 @@ export default function LoginPage() {
         return;
       }
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('shankhcall_user', JSON.stringify(result.user));
-      }
-
-      alert('Account created successfully in Neon database! Please sign in.');
-      handleToggleMode(false); // Switch to Sign In
+      router.push('/select');
     } catch (err: any) {
       console.error('Error during registration:', err);
       setError('An error occurred during account creation. Please try again.');
@@ -126,10 +121,6 @@ export default function LoginPage() {
       if (!result.success) {
         setError(result.error || 'Invalid email or password.');
         return;
-      }
-
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('shankhcall_user', JSON.stringify(result.user));
       }
 
       router.push('/select');

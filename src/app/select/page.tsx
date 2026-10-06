@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { LogOut, Activity } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
+import { signOutAction } from '@/app/actions';
+
 interface Particle {
   x: number;
   y: number;
@@ -25,11 +27,9 @@ export default function DisasterSelector() {
   const [activeCard, setActiveCard] = useState<'forest' | 'ocean' | null>(null);
 
   // Sign out helper
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     try {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('shankhcall_user');
-      }
+      await signOutAction();
       router.push('/');
     } catch (e) {
       console.warn('Sign out error', e);

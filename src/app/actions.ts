@@ -1,6 +1,7 @@
 "use server";
-import { db, reports, users } from "@/db";
-import { desc, eq } from "drizzle-orm";
+import { db, reports, users, sessions } from "@/db";
+import { desc, eq, and, gt } from "drizzle-orm";
+import { cookies } from "next/headers";
 import crypto from "crypto";
 
 // Password hashing helpers
@@ -21,7 +22,32 @@ function verifyPassword(password: string, combined: string): boolean {
   }
 }
 
-// 1. Sign Up User (Neon PostgreSQL)
+// Server-side Session Helper: writes to Neon and sets HTTP-only cookie
+async function createServerSession(userId: string) {
+  const sessionId = "sess-" + crypto.randomUUID();
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+  // Persist session in Neon PostgreSQL
+  await db.insert(sessions).values({
+    id: sessionId,
+    userId,
+    expiresAt,
+  });
+
+  // Set HTTP-only secure cookie
+  const cookieStore = await cookies();
+  cookieStore.set("session_token", sessionId, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    expires: expiresAt,
+  });
+
+  return sessionId;
+}
+
+// 1. Sign Up (Neon Server-Side Auth)
 export async function signUpAction(params: {
   name: string;
   email: string;
@@ -32,7 +58,7 @@ export async function signUpAction(params: {
   try {
     const normalizedEmail = params.email.trim().toLowerCase();
 
-    // Check if user already exists
+    // Check if user already exists in Neon
     const existing = await db
       .select()
       .from(users)
@@ -58,6 +84,9 @@ export async function signUpAction(params: {
       })
       .returning();
 
+    // Establish Neon server-side session
+    await createServerSession(newUser.id);
+
     return {
       success: true,
       user: {
@@ -74,7 +103,7 @@ export async function signUpAction(params: {
   }
 }
 
-// 2. Sign In User (Neon PostgreSQL)
+// 2. Sign In (Neon Server-Side Auth)
 export async function signInAction(params: {
   email: string;
   password?: string;
@@ -92,13 +121,16 @@ export async function signInAction(params: {
       return { success: false, error: "Invalid email or password." };
     }
 
-    // If a password was stored, verify it
+    // Verify password if set
     if (user.password && params.password) {
       const isValid = verifyPassword(params.password, user.password);
       if (!isValid) {
         return { success: false, error: "Invalid email or password." };
       }
     }
+
+    // Establish Neon server-side session
+    await createServerSession(user.id);
 
     return {
       success: true,
@@ -116,7 +148,67 @@ export async function signInAction(params: {
   }
 }
 
-// 3. Fetch Reports (Neon PostgreSQL)
+// 3. Get Current User (Neon Server-Side Verification)
+export async function getCurrentUserAction() {
+  try {
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get("session_token")?.value;
+
+    if (!sessionId) {
+      return null;
+    }
+
+    const now = new Date();
+    const rows = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        phone: users.phone,
+        expiresAt: sessions.expiresAt,
+      })
+      .from(sessions)
+      .innerJoin(users, eq(sessions.userId, users.id))
+      .where(and(eq(sessions.id, sessionId), gt(sessions.expiresAt, now)))
+      .limit(1);
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return {
+      id: rows[0].id,
+      name: rows[0].name,
+      email: rows[0].email,
+      role: rows[0].role,
+      phone: rows[0].phone,
+    };
+  } catch (error) {
+    console.error("Error fetching current user from Neon:", error);
+    return null;
+  }
+}
+
+// 4. Sign Out (Neon Server-Side Logout)
+export async function signOutAction() {
+  try {
+    const cookieStore = await cookies();
+    const sessionId = cookieStore.get("session_token")?.value;
+
+    if (sessionId) {
+      await db.delete(sessions).where(eq(sessions.id, sessionId));
+    }
+
+    cookieStore.delete("session_token");
+    return { success: true };
+  } catch (error) {
+    console.error("Sign out error in Neon:", error);
+    return { success: false };
+  }
+}
+
+// 5. Fetch Reports (Neon PostgreSQL)
 export async function getReports() {
   try {
     return await db.select().from(reports).orderBy(desc(reports.ts));
@@ -126,7 +218,7 @@ export async function getReports() {
   }
 }
 
-// 4. Add Report (Neon PostgreSQL)
+// 6. Add Report (Neon PostgreSQL)
 export async function addReportAction(report: {
   id: string;
   lat: number;
@@ -165,7 +257,7 @@ export async function addReportAction(report: {
   }
 }
 
-// 5. Verify Report (Neon PostgreSQL)
+// 7. Verify Report (Neon PostgreSQL)
 export async function verifyReportAction(id: string) {
   try {
     const [updated] = await db
@@ -177,41 +269,6 @@ export async function verifyReportAction(id: string) {
     return { success: true, data: updated };
   } catch (error: any) {
     console.error("Failed to verify report in Neon DB:", error);
-    return { success: false, error: error.message };
-  }
-}
-
-// 6. Save/update user profile (Neon PostgreSQL)
-export async function saveUserAction(user: {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  role?: string;
-}) {
-  try {
-    const [inserted] = await db
-      .insert(users)
-      .values({
-        id: user.id,
-        name: user.name,
-        email: user.email.trim().toLowerCase(),
-        phone: user.phone || null,
-        role: user.role || "citizen",
-      })
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          name: user.name,
-          phone: user.phone || null,
-          role: user.role || "citizen",
-        },
-      })
-      .returning();
-
-    return { success: true, data: inserted };
-  } catch (error: any) {
-    console.error("Failed to save user in Neon DB:", error);
     return { success: false, error: error.message };
   }
 }

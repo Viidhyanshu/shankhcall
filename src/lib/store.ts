@@ -4,7 +4,7 @@ import { addReportAction, verifyReportAction, getReports } from '@/app/actions';
 
 export interface HazardMedia {
   type: 'image' | 'video';
-  data: string; // Base64 DataURL
+  data: string; // Base64 DataURL or URL
   name: string;
 }
 
@@ -24,59 +24,57 @@ export interface HazardReport {
 
 export interface StoreState {
   reports: HazardReport[];
-  pending: HazardReport[];
+  loading: boolean;
 }
 
-const LOCAL_STORAGE_KEY = 'oceanwatch_store_v3';
-
-// Private in-memory state
+// In-memory state for active React session (backed by Neon PostgreSQL server)
 let globalState: StoreState = {
   reports: [],
-  pending: []
+  loading: true
 };
 
-// Subscriptions
 const listeners = new Set<(state: StoreState) => void>();
 
 function notify() {
   listeners.forEach(l => l({ ...globalState }));
 }
 
-// Save complete state locally for instant offline/error resilience
-export function saveStore() {
-  if (typeof window === 'undefined') return;
+// Fetch and sync latest reports from Neon PostgreSQL server
+export async function syncFromNeon() {
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
-      reports: globalState.reports,
-      pending: globalState.pending
-    }));
-  } catch (e) {
-    console.warn('Saving local store failed', e);
-  }
-}
+    const dbReports = await getReports();
+    if (dbReports && dbReports.length > 0) {
+      const fetchedReports: HazardReport[] = dbReports.map((r: any) => ({
+        id: r.id,
+        lat: Number(r.lat),
+        lng: Number(r.lng),
+        type: String(r.type),
+        desc: String(r.description),
+        src: (r.src as any) || 'citizen',
+        verified: Boolean(r.verified),
+        ts: Number(r.ts),
+        lang: String(r.lang || 'en'),
+        sentiment: Number(r.sentiment || 0),
+        media: (r.media as HazardMedia[]) || []
+      }));
 
-// Load state from local storage at startup
-export function loadStore() {
-  if (typeof window === 'undefined') return;
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (raw) {
-      const obj = JSON.parse(raw);
-      globalState.reports = (obj.reports || []).map((r: any) => ({
-        ...r,
-        sentiment: scoreSentiment(r.desc)
-      }));
-      globalState.pending = (obj.pending || []).map((r: any) => ({
-        ...r,
-        sentiment: scoreSentiment(r.desc)
-      }));
+      globalState.reports = fetchedReports.sort((a, b) => b.ts - a.ts);
+      globalState.loading = false;
+      notify();
+    } else {
+      // If server database is empty, seed initial reports to Neon
+      await seedMockData();
+      globalState.loading = false;
+      notify();
     }
-  } catch (e) {
-    console.warn('Loading local store failed', e);
+  } catch (error) {
+    console.error("Neon database sync failed:", error);
+    globalState.loading = false;
+    notify();
   }
 }
 
-// Seed mock data to Neon DB (and locally)
+// Seed mock data directly to Neon PostgreSQL server
 export async function seedMockData() {
   const now = Date.now();
   const forestSamples = [
@@ -111,7 +109,6 @@ export async function seedMockData() {
     };
     seededReports.push(rep);
 
-    // Save to Neon DB
     addReportAction({
       id,
       lat: s.lat,
@@ -138,7 +135,6 @@ export async function seedMockData() {
     };
     seededReports.push(rep);
 
-    // Save to Neon DB
     addReportAction({
       id,
       lat: s.lat,
@@ -155,65 +151,22 @@ export async function seedMockData() {
   }
 
   globalState.reports = seededReports.sort((a, b) => b.ts - a.ts);
-  saveStore();
   notify();
 }
 
-// Fetch and sync latest reports from Neon PostgreSQL
-export async function syncFromNeon() {
-  try {
-    const dbReports = await getReports();
-    if (dbReports && dbReports.length > 0) {
-      const fetchedReports: HazardReport[] = dbReports.map((r: any) => ({
-        id: r.id,
-        lat: Number(r.lat),
-        lng: Number(r.lng),
-        type: String(r.type),
-        desc: String(r.description),
-        src: (r.src as any) || 'citizen',
-        verified: Boolean(r.verified),
-        ts: Number(r.ts),
-        lang: String(r.lang || 'en'),
-        sentiment: Number(r.sentiment || 0),
-        media: (r.media as HazardMedia[]) || []
-      }));
-
-      // Merge: Keep local reports ONLY if they are in the offline "pending" upload queue
-      const localPending = globalState.reports.filter(
-        local => globalState.pending.some(p => p.id === local.id)
-      );
-
-      globalState.reports = [...localPending, ...fetchedReports].sort((a, b) => b.ts - a.ts);
-      saveStore();
-      notify();
-    }
-  } catch (error) {
-    console.warn("Neon database sync failed:", error);
-  }
-}
-
-// Initial Local Storage Load & Neon DB Sync
+// Initial server sync & periodic polling
 if (typeof window !== 'undefined') {
-  loadStore();
-
-  const hasSeeded = localStorage.getItem('oceanwatch_seeded');
-  if (!hasSeeded && globalState.reports.length === 0) {
-    seedMockData();
-    localStorage.setItem('oceanwatch_seeded', 'true');
-  }
-
-  // Fetch reports from Neon DB on app startup
   syncFromNeon();
 
-  // Periodic polling every 15s to keep reports up-to-date
+  // Periodic poll from Neon server every 10 seconds
   setInterval(() => {
     syncFromNeon();
-  }, 15000);
+  }, 10000);
 }
 
 // React custom hook to subscribe to store updates
 export function useDisasterStore() {
-  const [state, setState] = useState<StoreState>({ reports: [], pending: [] });
+  const [state, setState] = useState<StoreState>({ reports: globalState.reports, loading: globalState.loading });
 
   useEffect(() => {
     setState({ ...globalState });
@@ -231,151 +184,82 @@ export function useDisasterStore() {
   return state;
 }
 
-// Core Operations (Neon PostgreSQL)
+// Core Operations directly on Neon PostgreSQL Server
 export const storeActions = {
+  // Add a new report to Neon PostgreSQL server
   addReport: async (report: Omit<HazardReport, 'sentiment'>) => {
     const reportWithSentiment: HazardReport = {
       ...report,
       sentiment: scoreSentiment(report.desc)
     };
 
-    // 1. Instant local visual update & Local Storage save
+    // Optimistic UI update
     if (!globalState.reports.some(r => r.id === report.id)) {
       globalState.reports.unshift(reportWithSentiment);
-      saveStore();
       notify();
     }
 
-    // 2. Perform background write to Neon PostgreSQL
-    const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
-    if (isOnline) {
-      try {
-        const result = await addReportAction({
-          id: report.id,
-          lat: report.lat,
-          lng: report.lng,
-          type: report.type,
-          description: report.desc,
-          src: report.src,
-          verified: report.verified,
-          ts: report.ts,
-          lang: report.lang,
-          sentiment: reportWithSentiment.sentiment,
-          media: report.media
-        });
+    try {
+      const result = await addReportAction({
+        id: report.id,
+        lat: report.lat,
+        lng: report.lng,
+        type: report.type,
+        description: report.desc,
+        src: report.src,
+        verified: report.verified,
+        ts: report.ts,
+        lang: report.lang,
+        sentiment: reportWithSentiment.sentiment,
+        media: report.media
+      });
 
-        if (!result.success) {
-          throw new Error(result.error);
-        }
-        console.log("Successfully saved report to Neon PostgreSQL!");
-      } catch (e) {
-        console.warn("Failed upload to Neon DB. Saving to offline sync queue.", e);
-        if (!globalState.pending.some(p => p.id === report.id)) {
-          globalState.pending.push(reportWithSentiment);
-          saveStore();
-        }
+      if (!result.success) {
+        throw new Error(result.error);
       }
-    } else {
-      if (!globalState.pending.some(p => p.id === report.id)) {
-        globalState.pending.push(reportWithSentiment);
-        saveStore();
-      }
+      console.log("Report saved to Neon server successfully!");
+    } catch (e) {
+      console.error("Failed to write report to Neon server:", e);
     }
   },
 
+  // Verify a report on Neon PostgreSQL server
   verifyReport: async (id: string) => {
-    // 1. Instant local verification state update
     const report = globalState.reports.find(r => r.id === id);
     if (report) {
       report.verified = true;
-      saveStore();
       notify();
     }
 
-    // 2. Sync state update to Neon DB in background
-    verifyReportAction(id).catch(e => console.warn("Could not sync verification to Neon DB:", e));
+    try {
+      await verifyReportAction(id);
+    } catch (e) {
+      console.error("Failed to update verification on Neon server:", e);
+    }
   },
 
+  // Verify latest report on Neon PostgreSQL server
   verifyLatest: async () => {
     if (globalState.reports.length > 0) {
       const latest = globalState.reports[0];
-
-      // Update local state first
       latest.verified = true;
-      saveStore();
       notify();
 
-      // Sync Neon DB
-      verifyReportAction(latest.id).catch(e => console.warn("Could not sync latest verification to Neon DB:", e));
-    }
-  },
-
-  syncPending: async () => {
-    if (globalState.pending.length > 0) {
       try {
-        for (const report of globalState.pending) {
-          await addReportAction({
-            id: report.id,
-            lat: report.lat,
-            lng: report.lng,
-            type: report.type,
-            description: report.desc,
-            src: report.src,
-            verified: report.verified,
-            ts: report.ts,
-            lang: report.lang,
-            sentiment: report.sentiment,
-            media: report.media
-          });
-        }
-        globalState.pending = [];
-        saveStore();
-        notify();
-        return true;
+        await verifyReportAction(latest.id);
       } catch (e) {
-        console.warn("Failed syncing offline queue to Neon:", e);
+        console.error("Failed to update latest verification on Neon server:", e);
       }
     }
-    return false;
   },
 
-  addBulkReports: async (reports: HazardReport[]) => {
-    // Save locally
-    globalState.reports.push(...reports);
-    saveStore();
-    notify();
+  // Manually trigger server synchronization
+  sync: async () => {
+    await syncFromNeon();
+  },
 
-    // Push to Neon DB in background
-    try {
-      for (const report of reports) {
-        addReportAction({
-          id: report.id,
-          lat: report.lat,
-          lng: report.lng,
-          type: report.type,
-          description: report.desc,
-          src: report.src,
-          verified: report.verified,
-          ts: report.ts,
-          lang: report.lang,
-          sentiment: report.sentiment,
-          media: report.media
-        }).catch(e => console.warn("Failed background bulk Neon save:", report.id, e));
-      }
-    } catch (e) {
-      console.warn("Failed bulk Neon save:", e);
-    }
+  // Sync pending or refresh from server
+  syncPending: async () => {
+    await syncFromNeon();
   }
 };
-
-// Wire online listener in browser environment
-if (typeof window !== 'undefined') {
-  window.addEventListener('online', () => {
-    storeActions.syncPending().then(synced => {
-      if (synced) {
-        console.info('Pending offline reports synchronized to Neon.');
-        window.dispatchEvent(new Event('store-offline-synced'));
-      }
-    });
-  });
-}
