@@ -14,19 +14,33 @@ export interface AuthRequest extends Request {
   user?: AuthenticatedUser;
 }
 
-// Middleware to verify session_token from HTTP-only cookie against Neon sessions table
+// Extract session token from either HTTP-only cookie or Authorization Bearer header
+function extractToken(req: Request): string | null {
+  if (req.cookies?.session_token) {
+    return req.cookies.session_token;
+  }
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7).trim();
+  }
+
+  return null;
+}
+
+// 1. Mandatory Authentication Middleware: Rejects if session is missing, expired, or invalid
 export async function authenticate(
   req: AuthRequest,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const sessionToken = req.cookies?.session_token;
+    const sessionToken = extractToken(req);
 
     if (!sessionToken) {
       return res.status(401).json({
         success: false,
-        error: 'Unauthorized: No active session.',
+        error: 'Unauthorized: No active session. Please log in.',
       });
     }
 
@@ -52,7 +66,6 @@ export async function authenticate(
       });
     }
 
-    // Attach validated user to the request object
     req.user = {
       id: rows[0].id,
       name: rows[0].name,
@@ -70,3 +83,72 @@ export async function authenticate(
     });
   }
 }
+
+// 2. Optional Authentication Middleware: Attaches user if token exists, but doesn't block request
+export async function optionalAuth(
+  req: AuthRequest,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    const sessionToken = extractToken(req);
+
+    if (!sessionToken) {
+      return next();
+    }
+
+    const now = new Date();
+    const rows = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        phone: users.phone,
+        expiresAt: sessions.expiresAt,
+      })
+      .from(sessions)
+      .innerJoin(users, eq(sessions.userId, users.id))
+      .where(and(eq(sessions.id, sessionToken), gt(sessions.expiresAt, now)))
+      .limit(1);
+
+    if (rows.length > 0) {
+      req.user = {
+        id: rows[0].id,
+        name: rows[0].name,
+        email: rows[0].email,
+        role: rows[0].role,
+        phone: rows[0].phone,
+      };
+    }
+
+    return next();
+  } catch (error) {
+    console.error('Optional auth middleware error:', error);
+    return next();
+  }
+}
+
+// 3. Role-Based Authorization Middleware: Checks if user possesses allowed role(s)
+export function requireRole(...allowedRoles: string[]) {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: Please log in first.',
+      });
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: `Forbidden: This action requires one of the following roles: [${allowedRoles.join(', ')}]. Your current role is "${req.user.role}".`,
+      });
+    }
+
+    return next();
+  };
+}
+
+// 4. Official Guard: Specialized middleware for disaster verification & official tasks
+export const requireOfficial = requireRole('official', 'admin');

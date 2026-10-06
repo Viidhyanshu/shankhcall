@@ -1,10 +1,11 @@
 import { Router, Request, Response } from 'express';
 import { db, reports } from '../db/index.js';
 import { desc, eq } from 'drizzle-orm';
+import { authenticate, AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
-// GET /api/reports - Fetch all reports
+// GET /api/reports - Fetch all reports (public feed)
 router.get('/', async (_req: Request, res: Response) => {
   try {
     const allReports = await db.select().from(reports).orderBy(desc(reports.ts));
@@ -15,14 +16,17 @@ router.get('/', async (_req: Request, res: Response) => {
   }
 });
 
-// POST /api/reports - Add a new hazard report
-router.post('/', async (req: Request, res: Response) => {
+// POST /api/reports - Add a new hazard report (protected by authenticate middleware)
+router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
   try {
     const { id, lat, lng, type, description, src, verified, ts, lang, sentiment, media } = req.body;
 
     if (!id || lat === undefined || lng === undefined || !type || !description) {
       return res.status(400).json({ success: false, error: 'Missing required report fields.' });
     }
+
+    // Default source to user's registered role if available
+    const reportSource = src || req.user?.role || 'citizen';
 
     const [inserted] = await db
       .insert(reports)
@@ -32,7 +36,7 @@ router.post('/', async (req: Request, res: Response) => {
         lng: Number(lng),
         type: String(type),
         description: String(description),
-        src: src || 'citizen',
+        src: reportSource,
         verified: Boolean(verified),
         ts: Number(ts || Date.now()),
         lang: String(lang || 'en'),
@@ -48,15 +52,15 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// PATCH /api/reports/:id/verify - Verify a report
-router.patch('/:id/verify', async (req: Request, res: Response) => {
+// PATCH /api/reports/:id/verify - Verify a report (protected by authenticate middleware)
+router.patch('/:id/verify', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     const [updated] = await db
       .update(reports)
       .set({ verified: true })
-      .where(eq(reports.id, String(id)))
+      .where(eq(reports.id, id))
       .returning();
 
     if (!updated) {
