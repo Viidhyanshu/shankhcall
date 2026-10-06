@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:seed": "node --env-file=.env scripts/seed.mjs"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
     "chart.js": "^4.5.1",
     "firebase": "^12.13.0",
     "leaflet": "^1.9.4",
